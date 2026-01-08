@@ -3,12 +3,11 @@
 import { useAuth } from '@/hooks/useAuth'
 import Image from 'next/image'
 import dynamic from 'next/dynamic'
+import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
 
 // Dynamically import heavy components
 const Dashboard = dynamic(() => import('./Dashboard'), {
-    loading: () => <LoadingScreen />
-})
-const LandingPage = dynamic(() => import('./LandingPage'), {
     loading: () => <LoadingScreen />
 })
 
@@ -26,6 +25,13 @@ function LoadingScreen() {
 
 export default function HomeWrapper() {
     const { user, loading } = useAuth()
+    const router = useRouter()
+
+    useEffect(() => {
+        if (!loading && !user) {
+            router.push('/welcome')
+        }
+    }, [user, loading, router])
 
     if (loading) {
         return <LoadingScreen />
@@ -35,5 +41,6 @@ export default function HomeWrapper() {
         return <Dashboard user={user} />
     }
 
-    return <LandingPage />
+    // While redirecting
+    return <LoadingScreen />
 }

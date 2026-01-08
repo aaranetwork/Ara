@@ -2,8 +2,10 @@
 
 import React from 'react'
 import { motion } from 'framer-motion'
-import { ArrowRight, Brain, Shield, FileText, Sparkles, Activity, BookOpen } from 'lucide-react'
+import { ArrowRight, Brain, Shield, FileText, Sparkles, Activity, BookOpen, X } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
+import { useAuth } from '@/hooks/useAuth'
 import Image from 'next/image'
 
 const MARQUEE_ITEMS = [
@@ -15,11 +17,54 @@ const MARQUEE_ITEMS = [
     { icon: Sparkles, title: 'Growth Tools', desc: 'Build mental resilience' },
 ]
 
-export default function WelcomePage() {
+const AuthBanner = () => {
+    const [isVisible, setIsVisible] = React.useState(true)
+    const { user } = useAuth()
     const router = useRouter()
 
+    // Don't show if user is logged in or banner is dismissed
+    if (user || !isVisible) return null
+
     return (
-        <div className="min-h-[100dvh] bg-[#050505] text-white flex flex-col items-center justify-center p-6 relative overflow-hidden">
+        <div className="fixed bottom-0 left-0 right-0 z-50 bg-[#050505]/90 backdrop-blur-xl border-t border-white/10 pb-6 pt-6 animate-fade-in-up">
+            <button
+                onClick={() => setIsVisible(false)}
+                className="absolute top-4 right-4 p-2 text-white/40 hover:text-white transition-colors"
+                aria-label="Close"
+            >
+                <X size={18} />
+            </button>
+            <div className="container mx-auto px-6 lg:px-12 max-w-5xl">
+                <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+                    <div className="text-center md:text-left">
+                        <h2 className="text-white text-xl md:text-2xl font-bold mb-1">
+                            Start your <span className="text-indigo-400">mental wellness journey</span>
+                        </h2>
+                        <p className="text-gray-400 text-sm md:text-base hidden md:block">
+                            Discover emotional patterns, track moods, and generate clinical reports.
+                        </p>
+                    </div>
+
+                    <div className="w-full md:w-auto min-w-[200px]">
+                        <button
+                            onClick={() => router.push('/auth/login')}
+                            className="w-full py-3 px-8 bg-indigo-500 hover:bg-indigo-600 text-white font-semibold rounded-xl transition-all shadow-lg shadow-indigo-500/20 text-sm md:text-base whitespace-nowrap"
+                        >
+                            Login / Signup
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    )
+}
+
+export default function WelcomePage() {
+    const router = useRouter()
+    const { user } = useAuth()
+
+    return (
+        <div className="min-h-[100dvh] bg-[#050505] text-white flex flex-col items-center justify-center p-6 relative overflow-hidden pb-40">
 
             {/* Background Ambience */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -81,16 +126,24 @@ export default function WelcomePage() {
                 <motion.button
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    onClick={() => router.push('/plans')}
+                    onClick={() => {
+                        if (user) {
+                            router.push('/')
+                        } else {
+                            router.push('/auth/login')
+                        }
+                    }}
                     className="w-full py-4 bg-white text-black rounded-xl font-bold text-sm tracking-wide uppercase shadow-xl hover:bg-gray-100 transition-all flex items-center justify-center gap-3"
                 >
-                    Begin Your Journey <ArrowRight size={18} />
+                    Continue <ArrowRight size={18} />
                 </motion.button>
 
                 <p className="mt-6 text-[10px] md:text-xs text-gray-600">
-                    Choose a plan to activate your account.
+                    Your safe space awaits.
                 </p>
             </motion.div>
+
+            <AuthBanner />
         </div>
     )
 }
