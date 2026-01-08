@@ -1,7 +1,9 @@
 import type { Metadata, Viewport } from 'next'
+import Script from 'next/script'
 import { Poppins, Inter } from 'next/font/google'
 import './globals.css'
 import { FeatureAccessProvider } from '@/components/providers/FeatureAccessProvider'
+import { AuthProvider } from '@/context/AuthContext'
 import RoutePrefetcher from '@/components/RoutePrefetcher'
 import NextTopLoader from 'nextjs-toploader'
 
@@ -90,6 +92,21 @@ export default function RootLayout({
         <link rel="manifest" href="/manifest.json" />
         <link rel="icon" href="/favicon.ico" />
         <link rel="apple-touch-icon" href="/icon-192.png" />
+        {/* Google tag (GA4) */}
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_ID}`}
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${process.env.NEXT_PUBLIC_GA_ID}', {
+              page_path: window.location.pathname,
+            });
+          `}
+        </Script>
       </head>
       <body className="font-sans antialiased bg-gradient-to-br from-[#0B0C10] to-[#1C1E24] min-h-screen text-white">
         <NextTopLoader
@@ -104,8 +121,10 @@ export default function RootLayout({
           shadow="0 0 10px #00AEEF,0 0 5px #00AEEF"
         />
         <FeatureAccessProvider>
-          <RoutePrefetcher />
-          {children}
+          <AuthProvider>
+            <RoutePrefetcher />
+            {children}
+          </AuthProvider>
         </FeatureAccessProvider>
       </body>
     </html>

@@ -8,7 +8,7 @@ import { motion } from 'framer-motion'
 import { useState, useCallback, useEffect } from 'react'
 import {
     MessageSquare, Clock, Zap, TrendingUp, Users, Star,
-    Calendar as CalendarIcon, Brain, ArrowRight
+    Calendar as CalendarIcon, Brain, ArrowRight, Sparkles
 } from 'lucide-react'
 import Navbar from '../layout/Navbar'
 import dynamic from 'next/dynamic'
@@ -47,31 +47,8 @@ function StatCard({ label, value, icon: Icon, color = 'blue' }: any) {
 }
 
 // Recent Session Card
-function RecentSession() {
-    return (
-        <div className="p-8 bg-[#0e0e12] rounded-2xl relative overflow-hidden transition-all hover:bg-[#111116] shadow-xl active:scale-[0.99]">
-            <div className="absolute -top-10 -right-10 p-4 opacity-[0.02]">
-                <Brain size={160} className="text-blue-500" />
-            </div>
+// RecentSession component removed
 
-            <div className="relative z-10">
-                <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/5 border border-white/10 text-gray-400 text-[9px] font-bold uppercase tracking-widest rounded-full mb-6">
-                    Latest Insight
-                </div>
-                <h3 className="text-2xl font-bold mb-3 text-white">Career Focus</h3>
-                <p className="text-sm text-gray-500 mb-8 leading-relaxed max-w-xs font-medium">
-                    You identified a pattern of cognitive clarity in the mornings, but increasing tension towards end-of-week deadlines.
-                </p>
-
-                <Link href="/chat">
-                    <button className="px-6 py-3 bg-white text-black text-[11px] font-bold uppercase tracking-widest rounded-xl hover:bg-gray-100 transition-all flex items-center gap-3 shadow-lg active:scale-95">
-                        <span>Resume</span> <ArrowRight size={14} />
-                    </button>
-                </Link>
-            </div>
-        </div>
-    )
-}
 
 export default function Dashboard({ user }: { user: any }) {
     // Mock Date
@@ -228,17 +205,7 @@ export default function Dashboard({ user }: { user: any }) {
                         {/* Left Column (Main Stats & content) */}
                         <div className="lg:col-span-2 space-y-3 sm:space-y-6">
 
-                            {/* Stats Row - 3 columns on all screens */}
-                            <motion.div
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 0.1 }}
-                                className="grid grid-cols-3 gap-2 sm:gap-4"
-                            >
-                                <StatCard label="Total Entries" value={stats.entries} icon={Zap} color="yellow" />
-                                <StatCard label="Total Minutes" value={stats.totalMinutes} icon={Clock} color="blue" />
-                                <StatCard label="Clarity Score" value={`${stats.clarityScore}%`} icon={TrendingUp} color="green" />
-                            </motion.div>
+                            {/* Stats Grid Removed */}
 
                             {/* Mood Flow Card - mobile only (below stats) */}
                             {!checkInComplete && !loadingData && (
@@ -269,7 +236,17 @@ export default function Dashboard({ user }: { user: any }) {
                                 transition={{ delay: 0.3 }}
                                 className="grid sm:grid-cols-2 gap-4"
                             >
-                                <Link href="/therapists" className="block group p-6 bg-[#0e0e12] hover:bg-[#111116] rounded-2xl transition-all shadow-xl active:scale-[0.98] sm:col-span-2">
+                                {/* Report Card */}
+                                <Link href="/report/therapist" className="block group p-6 bg-[#0e0e12] hover:bg-[#111116] rounded-2xl transition-all shadow-xl active:scale-[0.98]">
+                                    <div className="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 mb-5 group-hover:bg-purple-500/20 transition-all">
+                                        <TrendingUp size={20} className="group-hover:scale-110 transition-transform" />
+                                    </div>
+                                    <h3 className="text-[11px] font-bold uppercase tracking-widest text-gray-500 group-hover:text-white transition-colors mb-1">Clinical Insights</h3>
+                                    <p className="text-lg font-bold text-white/80 group-hover:text-white transition-colors">View your progress</p>
+                                </Link>
+
+                                {/* Expert Network Card */}
+                                <Link href="/therapists" className="block group p-6 bg-[#0e0e12] hover:bg-[#111116] rounded-2xl transition-all shadow-xl active:scale-[0.98] sm:col-span-1">
                                     <div className="w-12 h-12 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 mb-5 group-hover:bg-indigo-500/20 transition-all">
                                         <Users size={20} className="group-hover:scale-110 transition-transform" />
                                     </div>
@@ -282,6 +259,22 @@ export default function Dashboard({ user }: { user: any }) {
 
                         {/* Right Column (Sidebar) */}
                         <div className="space-y-6">
+                            {/* Daily Insight (Redesigned) */}
+                            <motion.div
+                                initial={{ opacity: 0, x: 20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: 0.3 }}
+                                className="p-6 bg-gradient-to-br from-white/5 to-black/20 border border-white/5 rounded-2xl backdrop-blur-3xl shadow-xl relative overflow-hidden group"
+                            >
+                                <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none" />
+                                <div className="flex items-center gap-2 mb-4 text-indigo-300/90 text-[10px] font-bold uppercase tracking-[0.2em]">
+                                    <Sparkles size={12} /> Daily Insight
+                                </div>
+                                <p className="text-sm md:text-base font-serif italic text-white/90 leading-relaxed relative z-10">
+                                    &quot;Naming an emotion is the first step to taming it. Try to be specific today.&quot;
+                                </p>
+                            </motion.div>
+
                             {/* Mood Flow Card - desktop only (hidden on mobile, visible on lg+) */}
                             {!checkInComplete && !loadingData && (
                                 <motion.div
@@ -294,28 +287,9 @@ export default function Dashboard({ user }: { user: any }) {
                                 </motion.div>
                             )}
 
-                            <motion.div
-                                initial={{ opacity: 0, x: 20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{ delay: 0.5 }}
-                            >
-                                <RecentSession />
-                            </motion.div>
+                            {/* Recent Session Removed */}
 
-                            {/* Daily Tip */}
-                            <motion.div
-                                initial={{ opacity: 0, x: 20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{ delay: 0.5 }}
-                                className="p-6 bg-[#0e0e12] rounded-2xl"
-                            >
-                                <div className="flex items-center gap-2 mb-3 text-yellow-500/80 text-xs font-bold uppercase tracking-wider">
-                                    <Star size={12} fill="currentColor" /> Daily Insight
-                                </div>
-                                <p className="text-sm font-serif italic text-gray-300 leading-relaxed">
-                                    &quot;Naming an emotion is the first step to taming it. Try to be specific today.&quot;
-                                </p>
-                            </motion.div>
+                            {/* Daily Tip Moved */}
 
 
                             {/* Calendar Stub */}
