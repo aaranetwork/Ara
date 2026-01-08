@@ -71,7 +71,7 @@ export default function AaraReportPage() {
     // --- Data Fetching & Analysis Engine ---
     useEffect(() => {
         async function fetchAndAnalyze() {
-            if (!user) return
+            if (!user || !db) return
 
             try {
                 // 1. Fetch Moods
@@ -290,7 +290,7 @@ export default function AaraReportPage() {
                                         <div key={step} className="flex flex-col items-center gap-2">
                                             <div
                                                 className={`w-3 h-3 rounded-full transition-all duration-500 border-2 ${isCompleted ? 'bg-indigo-500 border-indigo-500 scale-110' :
-                                                        isTarget ? 'bg-zinc-800 border-zinc-700' : 'bg-transparent border-zinc-800'
+                                                    isTarget ? 'bg-zinc-800 border-zinc-700' : 'bg-transparent border-zinc-800'
                                                     }`}
                                             />
                                             {isTarget && <span className="absolute -right-2 -bottom-6 text-[10px] font-bold text-zinc-500">Report</span>}
