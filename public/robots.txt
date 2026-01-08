@@ -3,7 +3,7 @@ User-agent: *
 Allow: /
 
 # Host
-Host: https://aara.ai
+Host: https://aara.site
 
 # Sitemaps
-Sitemap: https://aara.ai/sitemap.xml
+Sitemap: https://aara.site/sitemap.xml
