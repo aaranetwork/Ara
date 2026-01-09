@@ -76,38 +76,7 @@ export default function TherapistMatchingPage() {
         processing: 100,
     }
 
-    // GATING
-    const { isPaid } = useFeatureGate()
-
     if (loading) return null
-
-    if (!isPaid) {
-        return (
-            <div className="min-h-screen bg-[#08080c] flex items-center justify-center p-6 text-center">
-                <Navbar />
-                <div className="max-w-md">
-                    <div className="w-20 h-20 mx-auto rounded-full bg-white/[0.05] flex items-center justify-center mb-6">
-                        <Users size={32} className="text-white/40" />
-                        <div className="absolute bg-[#08080c] rounded-full p-1 -bottom-1 -right-1">
-                            <Lock size={16} className="text-white/60" />
-                        </div>
-                    </div>
-                    <h1 className="text-2xl font-bold text-white mb-3">Therapist Matching</h1>
-                    <p className="text-gray-500 mb-8 leading-relaxed">
-                        Connect with licensed professionals who align with your needs.
-                        This feature is available exclusively in AARA Plus.
-                    </p>
-                    {/* Placeholder for Upgrade Button - link to plans */}
-                    <button
-                        onClick={() => router.push('/plans')}
-                        className="px-8 py-3 bg-white text-black rounded-xl font-bold text-sm hover:scale-105 transition-transform"
-                    >
-                        Explore AARA Plus
-                    </button>
-                </div>
-            </div>
-        )
-    }
 
     return (
         <div className="min-h-screen bg-[#08080c] text-white selection:bg-blue-500/30">

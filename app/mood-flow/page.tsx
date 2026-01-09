@@ -34,9 +34,7 @@ export default function MoodFlowPage() {
     const [moods, setMoods] = useState<MoodEntry[]>([])
     const [dataLoading, setDataLoading] = useState(true)
 
-    // Feature Access
-    const { canAccess, loading: accessLoading } = useFeatureAccess()
-    const pageAccess = canAccess('view_mood_trends_page')
+
 
     useEffect(() => {
         if (!loading && !user) {
@@ -109,7 +107,7 @@ export default function MoodFlowPage() {
 
     const chartData = getLast7DaysData()
 
-    if (loading || !user || accessLoading) {
+    if (loading || !user) {
         return (
             <div className="h-[100dvh] bg-[#050505] flex items-center justify-center">
                 <Activity size={32} className="text-indigo-500 animate-pulse" />
@@ -117,25 +115,7 @@ export default function MoodFlowPage() {
         )
     }
 
-    if (!pageAccess.hasAccess) {
-        return (
-            <div className="min-h-screen bg-[#050505] text-white">
-                <div className="flex flex-col items-center justify-center min-h-[80vh] px-6 text-center">
-                    <div className="w-20 h-20 rounded-full bg-white/5 flex items-center justify-center mb-6 border border-white/5">
-                        <Lock size={32} className="text-gray-500" />
-                    </div>
-                    <h1 className="text-2xl font-bold mb-2">Mood Trends</h1>
-                    <p className="text-gray-500 max-w-xs mx-auto mb-8 leading-relaxed">{pageAccess.label}</p>
-                    <Link href="/plans">
-                        <button className="px-8 py-3 bg-white text-black rounded-xl font-bold text-xs uppercase tracking-widest hover:scale-105 active:scale-95 transition-all">
-                            Upgrade Plan
-                        </button>
-                    </Link>
-                </div>
-                <Navbar />
-            </div>
-        )
-    }
+
 
     return (
         <div className="min-h-screen bg-[#050505] text-white overflow-x-hidden">

@@ -14,6 +14,7 @@ import Navbar from '../layout/Navbar'
 import dynamic from 'next/dynamic'
 import { db } from '@/lib/firebase/config'
 import { collection, query, orderBy, getDocs } from 'firebase/firestore'
+import FeedbackModal from '../FeedbackModal'
 
 // Dynamic Imports for performance
 const MoodFlowCard = dynamic(() => import('../MoodFlowCard').then(mod => mod.MoodFlowCard), {
@@ -60,6 +61,7 @@ export default function Dashboard({ user }: { user: any }) {
     const [stats, setStats] = useState({ entries: 0, totalMinutes: 0, clarityScore: 65 })
     const [checkInComplete, setCheckInComplete] = useState(false)
     const [loadingData, setLoadingData] = useState(true)
+    const [showFeedback, setShowFeedback] = useState(false)
     const [moodData, setMoodData] = useState<{ labels: string[], values: number[], overallAvg: string }>({
         labels: ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'],
         values: [0, 0, 0, 0, 0, 0, 0],
@@ -275,6 +277,26 @@ export default function Dashboard({ user }: { user: any }) {
                                 </p>
                             </motion.div>
 
+                            {/* Feedback CTA */}
+                            <motion.button
+                                initial={{ opacity: 0, x: 20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: 0.35 }}
+                                onClick={() => setShowFeedback(true)}
+                                className="w-full p-4 bg-[#0e0e12] border border-white/5 rounded-2xl flex items-center justify-between hover:bg-white/5 transition-all group"
+                            >
+                                <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center text-green-400 group-hover:bg-green-500/20 transition-all">
+                                        <MessageSquare size={18} />
+                                    </div>
+                                    <div className="text-left">
+                                        <p className="text-sm font-bold text-white">Feedback</p>
+                                        <p className="text-[10px] text-gray-500">Help us improve</p>
+                                    </div>
+                                </div>
+                                <ArrowRight size={16} className="text-gray-600 group-hover:text-white transition-colors" />
+                            </motion.button>
+
                             {/* Mood Flow Card - desktop only (hidden on mobile, visible on lg+) */}
                             {!checkInComplete && !loadingData && (
                                 <motion.div
@@ -313,6 +335,8 @@ export default function Dashboard({ user }: { user: any }) {
                     </div>
                 </div>
             </main>
+
+            <FeedbackModal isOpen={showFeedback} onClose={() => setShowFeedback(false)} />
         </div>
     )
 }
