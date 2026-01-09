@@ -10,7 +10,7 @@ import {
   User, Mail, LogOut, Settings, ChevronRight, Shield,
   BookOpen, MessageSquare, Calendar, Flame, TrendingUp,
   Sparkles, Edit3, Bell, Moon, Sun, Crown, Heart,
-  Zap, CheckCircle2, Camera, X, Check, Save, HelpCircle, FileText, Lock
+  Zap, CheckCircle2, Camera, X, Check, Save, HelpCircle, FileText, Lock, Send
 } from 'lucide-react'
 import Navbar from '@/components/layout/Navbar'
 import { collection, getDocs, query, orderBy, limit, doc, getDoc, setDoc } from 'firebase/firestore'
@@ -31,6 +31,12 @@ export default function ProfilePage() {
   const [showPrivacy, setShowPrivacy] = useState(false)
   const [showLanguage, setShowLanguage] = useState(false)
   const [showHelp, setShowHelp] = useState(false)
+  const [showFeedback, setShowFeedback] = useState(false)
+
+  // Feedback State
+  const [feedbackMessage, setFeedbackMessage] = useState('')
+  const [feedbackType, setFeedbackType] = useState<'general' | 'bug'>('general')
+  const [sendingFeedback, setSendingFeedback] = useState(false)
 
   // Edit profile state
   const [displayName, setDisplayName] = useState('')
@@ -115,6 +121,38 @@ export default function ProfilePage() {
     if (confirm('Are you sure you want to sign out?')) {
       await signOut()
       router.push('/')
+    }
+  }
+
+  const handleSendFeedback = async () => {
+    if (!feedbackMessage.trim()) return
+
+    setSendingFeedback(true)
+    try {
+      const token = await user?.getIdToken()
+      const res = await fetch('/api/feedback', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          message: feedbackMessage,
+          type: feedbackType
+        })
+      })
+
+      if (!res.ok) throw new Error('Failed to send')
+
+      // Success
+      setFeedbackMessage('')
+      setShowFeedback(false)
+      alert('Thank you for your feedback!')
+    } catch (e) {
+      console.error(e)
+      alert('Failed to send feedback. Please try again.')
+    } finally {
+      setSendingFeedback(false)
     }
   }
 
@@ -266,31 +304,7 @@ export default function ProfilePage() {
                 </div>
               </div>
 
-              {/* Subscription Card */}
-              <div className="p-6 rounded-3xl bg-gradient-to-br from-indigo-900/20 to-blue-900/10 border border-indigo-500/20 relative overflow-hidden mb-8">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 blur-[50px] rounded-full" />
-                <div className="relative z-10 flex items-start justify-between">
-                  <div>
-                    <h3 className="text-lg font-bold text-white mb-2">
-                      {userPlan === 'free' ? 'Upgrade to Plus' : 'You are a Plus Member'}
-                    </h3>
-                    <p className="text-sm text-indigo-200/60 max-w-[200px] mb-6 leading-relaxed">
-                      {userPlan === 'free'
-                        ? 'Unlock unlimited chats, detailed reports, and therapist matching.'
-                        : 'Enjoy unlimited access to all features.'}
-                    </p>
-                    <button
-                      onClick={() => router.push('/plans')}
-                      className="px-5 py-2.5 bg-white text-black rounded-xl text-xs font-bold uppercase tracking-wide hover:scale-105 active:scale-95 transition-all shadow-lg shadow-indigo-500/10"
-                    >
-                      {userPlan === 'free' ? 'Upgrade Now' : 'Manage Subscription'}
-                    </button>
-                  </div>
-                  <div className="w-12 h-12 rounded-2xl bg-indigo-500/20 flex items-center justify-center border border-indigo-500/20">
-                    <Crown size={24} className="text-indigo-400" />
-                  </div>
-                </div>
-              </div>
+
 
             </motion.div>
           ) : (
@@ -309,6 +323,7 @@ export default function ProfilePage() {
               <SettingRow icon={Lock} label="Privacy & Data" desc="Control your footprint" onClick={() => setShowPrivacy(true)} />
 
               <SectionHeader title="Support" />
+              <SettingRow icon={MessageSquare} label="Send Feedback" desc="Help us improve" onClick={() => setShowFeedback(true)} />
               <SettingRow icon={HelpCircle} label="Help & Support" desc="FAQs and Contact" href="#" />
               <SettingRow icon={FileText} label="Terms & Policies" desc="Legal Information" href="#" />
 
@@ -322,7 +337,7 @@ export default function ProfilePage() {
               </div>
 
               <p className="text-center text-[10px] text-gray-600 mt-6 uppercase tracking-widest opacity-50">
-                Aara App v1.0.0
+                Aara App Alpha
               </p>
             </motion.div>
           )}
@@ -330,7 +345,7 @@ export default function ProfilePage() {
 
       </motion.div>
 
-      {/* Edit Profile Modal (Simplified) */}
+      {/* Edit Profile Modal */}
       <AnimatePresence>
         {showEditProfile && (
           <motion.div
@@ -355,6 +370,90 @@ export default function ProfilePage() {
                 <button onClick={handleSaveProfile} className="flex-1 py-3 bg-indigo-500 rounded-xl text-sm font-bold text-white hover:bg-indigo-600">
                   {saving ? 'Saving...' : 'Save'}
                 </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Feedback Modal */}
+      <AnimatePresence>
+        {showFeedback && (
+          <motion.div
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-6"
+            onClick={() => setShowFeedback(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0, y: 20 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.95, opacity: 0, y: 20 }}
+              onClick={(e) => e.stopPropagation()}
+              className="w-full max-w-md bg-[#0e0e12] border border-white/10 p-6 rounded-3xl shadow-2xl relative"
+            >
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-10 h-10 rounded-full bg-indigo-500/10 flex items-center justify-center text-indigo-400">
+                  <MessageSquare size={20} />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-white">Send Feedback</h3>
+                  <p className="text-xs text-gray-500">Help us improve AARA</p>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 block">Type</label>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => setFeedbackType('general')}
+                      className={`flex-1 py-2.5 rounded-xl text-xs font-bold border ${feedbackType === 'general' ? 'bg-indigo-500 text-white border-transparent' : 'bg-white/5 text-gray-400 border-white/5 hover:bg-white/10'}`}
+                    >
+                      General
+                    </button>
+                    <button
+                      onClick={() => setFeedbackType('bug')}
+                      className={`flex-1 py-2.5 rounded-xl text-xs font-bold border ${feedbackType === 'bug' ? 'bg-red-500 text-white border-transparent' : 'bg-white/5 text-gray-400 border-white/5 hover:bg-white/10'}`}
+                    >
+                      Bug Report
+                    </button>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 block">Message</label>
+                  <textarea
+                    value={feedbackMessage}
+                    onChange={(e) => setFeedbackMessage(e.target.value)}
+                    placeholder={feedbackType === 'bug' ? "Describe the issue..." : "Share your thoughts..."}
+                    rows={5}
+                    className="w-full bg-[#050505] border border-white/10 rounded-xl p-4 text-sm text-white placeholder:text-gray-600 focus:outline-none focus:border-indigo-500/50 resize-none"
+                  />
+                </div>
+
+                <div className="flex gap-3 pt-2">
+                  <button
+                    onClick={() => setShowFeedback(false)}
+                    className="flex-1 py-3 bg-white/5 rounded-xl text-sm font-bold text-gray-400 hover:bg-white/10"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleSendFeedback}
+                    disabled={sendingFeedback || !feedbackMessage.trim()}
+                    className="flex-1 py-3 bg-indigo-500 rounded-xl text-sm font-bold text-white hover:bg-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  >
+                    {sendingFeedback ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        <span>Sending...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Send size={16} />
+                        <span>Send Feedback</span>
+                      </>
+                    )}
+                  </button>
+                </div>
               </div>
             </motion.div>
           </motion.div>

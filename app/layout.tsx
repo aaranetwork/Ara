@@ -6,6 +6,7 @@ import { FeatureAccessProvider } from '@/components/providers/FeatureAccessProvi
 import { AuthProvider } from '@/context/AuthContext'
 import RoutePrefetcher from '@/components/RoutePrefetcher'
 import NextTopLoader from 'nextjs-toploader'
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 const poppins = Poppins({
   weight: ['300', '400', '500', '600', '700'],
@@ -25,7 +26,7 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: 'AARA - Your AI Therapist',
+    default: 'AARA — Your Pre-Therapy Insight',
     template: '%s | AARA',
   },
   description: 'Talk, play, and grow your mind with Aara. Your AI Therapist — calm, caring, always here.',
@@ -35,7 +36,7 @@ export const metadata: Metadata = {
   publisher: 'AARA',
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://aara.app'),
   openGraph: {
-    title: 'AARA - Your AI Therapist',
+    title: 'AARA — Your Pre-Therapy Insight',
     description: 'Talk, play, and grow your mind with Aara. Your AI Therapist — calm, caring, always here.',
     type: 'website',
     locale: 'en_US',
@@ -67,10 +68,9 @@ export const metadata: Metadata = {
     },
   },
   manifest: '/manifest.json',
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: 'black-translucent',
-    title: 'AARA',
+  icons: {
+    icon: '/aara-logo.png',
+    apple: '/icon-192.png',
   },
 }
 
@@ -90,8 +90,6 @@ export default function RootLayout({
     <html lang="en" className={`${poppins.variable} ${inter.variable}`}>
       <head>
         <link rel="manifest" href="/manifest.json" />
-        <link rel="icon" href="/favicon.ico" />
-        <link rel="apple-touch-icon" href="/icon-192.png" />
         {/* Google tag (GA4) */}
         <Script
           src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_ID}`}
@@ -124,6 +122,7 @@ export default function RootLayout({
           <AuthProvider>
             <RoutePrefetcher />
             {children}
+            <SpeedInsights />
           </AuthProvider>
         </FeatureAccessProvider>
       </body>

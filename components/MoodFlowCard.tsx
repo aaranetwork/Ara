@@ -74,8 +74,7 @@ export function MoodFlowCard({ onComplete }: MoodFlowCardProps) {
     const [todayCount, setTodayCount] = useState(0)
     const [loading, setLoading] = useState(true)
     const [showComplete, setShowComplete] = useState(false)
-    const { isPaid } = useFeatureGate()
-    const DAILY_LIMIT = isPaid ? 999 : 3
+    const DAILY_LIMIT = 999
 
     const signal = MOOD_SIGNALS[currentStep]
     const progress = ((currentStep + 1) / MOOD_SIGNALS.length) * 100
@@ -148,19 +147,7 @@ export function MoodFlowCard({ onComplete }: MoodFlowCardProps) {
         setIsOpen(true)
     }
 
-    if (todayCount >= DAILY_LIMIT) {
-        return (
-            <div className="p-5 bg-[#0e0e12] border border-white/10 rounded-2xl flex items-center justify-between opacity-60 hover:opacity-100 transition-opacity">
-                <div>
-                    <p className="text-gray-400 font-bold text-sm">Daily Limit Reached</p>
-                    <p className="text-[10px] text-gray-600">Upgrade for unlimited entries</p>
-                </div>
-                <Link href="/plans" className="text-xs bg-indigo-500/10 text-indigo-400 px-3 py-1.5 rounded-lg font-bold hover:bg-indigo-500/20 transition-colors">
-                    Unlock
-                </Link>
-            </div>
-        )
-    }
+
 
     if (loading) return <div className="p-5 bg-[#0e0e12] rounded-2xl animate-pulse h-20" />
 

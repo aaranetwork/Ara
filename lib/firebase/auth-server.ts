@@ -5,17 +5,27 @@ import { auth } from './config'
  * This is a placeholder - in production, use Firebase Admin SDK
  */
 export async function verifyIdToken(token: string) {
-  // For now, we'll use client SDK verification
-  // In production, replace with Firebase Admin SDK
   try {
-    const { getAuth } = await import('firebase/auth')
-    // This is a simplified version - use Admin SDK in production
+    const { adminAuth } = await import('./admin')
+
+    if (!adminAuth) {
+      console.warn('Firebase Admin Auth not initialized, falling back to mock (dev only)')
+      // Only for local dev without admin creds
+      return {
+        uid: 'dev-user',
+        email: 'dev@example.com',
+        name: 'Dev User',
+      }
+    }
+
+    const decodedToken = await adminAuth.verifyIdToken(token)
     return {
-      uid: 'verified-user', // Placeholder
-      email: 'user@example.com',
-      name: 'User',
+      uid: decodedToken.uid,
+      email: decodedToken.email,
+      name: decodedToken.name || decodedToken.email?.split('@')[0],
     }
   } catch (error) {
+    console.error('Verify ID Token Error:', error)
     throw new Error('Invalid token')
   }
 }

@@ -127,26 +127,15 @@ export function FeatureAccessProvider({ children }: { children: React.ReactNode 
     }, [user, loading, pathname])
 
     useEffect(() => {
-        // Redirect Logic
-
-        // 1. Needs Onboarding -> /welcome
         if (needsOnboarding) {
-            const allowed = ['/welcome', '/plans', '/profile', '/sign-in']
+            const allowed = ['/welcome', '/profile', '/sign-in']
             if (!allowed.some(path => pathname?.startsWith(path))) {
                 router.replace('/welcome')
             }
         }
-        // 2. Expired -> /plans
-        else if (isExpired) {
-            const allowed = ['/plans', '/profile', '/sign-in']
-            if (!allowed.some(path => pathname?.startsWith(path))) {
-                router.replace('/plans')
-            }
-        }
-    }, [isExpired, needsOnboarding, pathname, router])
+    }, [needsOnboarding, pathname, router])
 
-    const isRestricted = (needsOnboarding && !['/welcome', '/plans', '/profile'].some(p => pathname?.startsWith(p))) ||
-        (isExpired && !['/plans', '/profile'].some(p => pathname?.startsWith(p)))
+    const isRestricted = (needsOnboarding && !['/welcome', '/profile'].some(p => pathname?.startsWith(p)))
 
     if (isRestricted) {
         return null // Hide protected content
