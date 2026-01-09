@@ -1,21 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:mobile="http://www.google.com/schemas/sitemap-mobile/1.0" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
-<url><loc>https://aara.site/about</loc><lastmod>2026-01-08T13:11:11.756Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://aara.site/auth/login</loc><lastmod>2026-01-08T13:11:11.757Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://aara.site/auth/therapist-login</loc><lastmod>2026-01-08T13:11:11.757Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://aara.site/auth/signup</loc><lastmod>2026-01-08T13:11:11.757Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://aara.site/contact</loc><lastmod>2026-01-08T13:11:11.757Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://aara.site/chat</loc><lastmod>2026-01-08T13:11:11.757Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://aara.site/growth</loc><lastmod>2026-01-08T13:11:11.757Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://aara.site/journal</loc><lastmod>2026-01-08T13:11:11.757Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://aara.site/mood-flow</loc><lastmod>2026-01-08T13:11:11.757Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://aara.site</loc><lastmod>2026-01-08T13:11:11.757Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://aara.site/plans</loc><lastmod>2026-01-08T13:11:11.757Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://aara.site/privacy</loc><lastmod>2026-01-08T13:11:11.757Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://aara.site/profile</loc><lastmod>2026-01-08T13:11:11.757Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://aara.site/report/therapist</loc><lastmod>2026-01-08T13:11:11.757Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://aara.site/terms</loc><lastmod>2026-01-08T13:11:11.757Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://aara.site/therapists</loc><lastmod>2026-01-08T13:11:11.757Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://aara.site/therapists/results</loc><lastmod>2026-01-08T13:11:11.757Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://aara.site/welcome</loc><lastmod>2026-01-08T13:11:11.757Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://aara.ai/about</loc><lastmod>2026-01-09T12:21:58.871Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://aara.ai/auth/login</loc><lastmod>2026-01-09T12:21:58.871Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://aara.ai/auth/signup</loc><lastmod>2026-01-09T12:21:58.871Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://aara.ai/auth/therapist-login</loc><lastmod>2026-01-09T12:21:58.871Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://aara.ai/contact</loc><lastmod>2026-01-09T12:21:58.871Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://aara.ai/growth</loc><lastmod>2026-01-09T12:21:58.871Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://aara.ai/mood-flow</loc><lastmod>2026-01-09T12:21:58.871Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://aara.ai</loc><lastmod>2026-01-09T12:21:58.871Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://aara.ai/privacy</loc><lastmod>2026-01-09T12:21:58.871Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://aara.ai/report/therapist</loc><lastmod>2026-01-09T12:21:58.871Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://aara.ai/terms</loc><lastmod>2026-01-09T12:21:58.871Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://aara.ai/therapists</loc><lastmod>2026-01-09T12:21:58.871Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://aara.ai/plans</loc><lastmod>2026-01-09T12:21:58.871Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
 </urlset>
