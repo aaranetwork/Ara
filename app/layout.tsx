@@ -34,10 +34,10 @@ export const metadata: Metadata = {
   authors: [{ name: 'AARA' }],
   creator: 'AARA',
   publisher: 'AARA',
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://aara.app'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://aara.site'),
   openGraph: {
     title: 'AARA — Your Pre-Therapy Insight',
-    description: 'Talk, play, and grow your mind with Aara. Your AI Therapist — calm, caring, always here.',
+    description: 'AARA helps you understand your emotions before therapy. Track moods, journal your thoughts, and get AI-powered mental health insights.',
     type: 'website',
     locale: 'en_US',
     siteName: 'AARA',
