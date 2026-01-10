@@ -27,8 +27,8 @@ export interface SessionResponse {
 }
 
 // API Base URL - FORCE HARDCODED for debugging
-const API_BASE_URL = 'http://localhost:3005'
-// const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'
+// const API_BASE_URL = 'http://localhost:3005'
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'
 
 /**
  * Get authorization headers
@@ -49,7 +49,8 @@ export const apiClient = {
    */
   async createSession(userId: string, token?: string): Promise<SessionResponse> {
     try {
-      const response = await fetch(`${API_BASE_URL}/v1/sessions`, {
+      // Use internal API route for session creation which handles mocking
+      const response = await fetch('/api/sessions', {
         method: 'POST',
         headers: getAuthHeaders(token),
         body: JSON.stringify({ userId }),
@@ -81,12 +82,13 @@ export const apiClient = {
     token?: string
   ): Promise<ChatResponse> {
     try {
-      const response = await fetch(`${API_BASE_URL}/v1/chat/completions`, {
+      // Use internal proxy route to handle fallback logic
+      const response = await fetch('/api/chat', {
         method: 'POST',
         headers: getAuthHeaders(token),
         body: JSON.stringify({
           sessionId,
-          messages: [{ role: 'user', content: message }],
+          message, // Proxy expects 'message', not 'messages' array directly
         }),
       })
 
@@ -114,38 +116,17 @@ export const apiClient = {
     sessionId?: string | null,
     token?: string
   ): Promise<ChatResponse> {
-    try {
-      const response = await fetch('/api/chat', {
-        method: 'POST',
-        headers: getAuthHeaders(token),
-        body: JSON.stringify({ message, sessionId }),
-      })
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}))
-        throw new Error(errorData.error || 'Failed to send message')
-      }
-
-      return await response.json()
-    } catch (error: any) {
-      console.error('API Error:', error)
-      return {
-        message: '',
-        error: error.message || 'An unexpected error occurred',
-      }
-    }
+    return this.sendMessage(sessionId || '', message, token)
   },
 
   /**
    * Get User Stats (Streak, Minutes, Clarity, Activity)
    */
-  /**
-   * Get User Stats (Streak, Minutes, Clarity, Activity)
-   */
   async getUserStats(token?: string) {
     try {
-      const response = await fetch(`${API_BASE_URL}/v1/user/stats`, {
-        method: 'GET',
+      // Use internal API route
+      const response = await fetch('/api/user/stats', {
+        method: 'POST', // Using POST to be consistent with other internal routes, or GET if pref
         headers: getAuthHeaders(token),
       })
 
