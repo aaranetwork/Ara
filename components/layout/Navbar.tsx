@@ -110,13 +110,13 @@ export default function Navbar() {
                     ) : user ? (
                         <Link
                             href="/profile"
-                            className={`w-11 h-11 rounded-full flex items-center justify-center text-white text-xs font-bold transition-all group relative ${pathname === '/profile'
+                            className={`w-11 h-11 rounded-full flex items-center justify-center text-white text-xs font-bold transition-all group relative overflow-hidden ${pathname === '/profile'
                                 ? 'bg-white/20 shadow-[0_0_20px_rgba(255,255,255,0.2)]'
                                 : 'bg-white/[0.03] hover:bg-white/[0.08]'
                                 }`}
                         >
-                            <div className="absolute inset-0 bg-white/0 group-hover:bg-white/5 blur-xl transition-all" />
-                            {user.email?.[0].toUpperCase() || <User size={18} />}
+                            <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 blur-md transition-all duration-500" />
+                            {user.email?.[0].toUpperCase() || <User size={18} className="relative z-10" />}
                         </Link>
                     ) : (
                         <Link

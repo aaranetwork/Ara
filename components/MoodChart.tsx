@@ -56,8 +56,11 @@ export default function MoodChart({ labels, values, overallAvg, loading = false 
                 {/* The Bars */}
                 <div className={`flex items-end justify-between w-full h-full gap-2 relative z-10 ${!trendsAccess.hasAccess ? 'opacity-30 blur-[2px]' : ''}`}>
                     {displayValues.map((v, i) => {
-                        const height = Math.min(Math.max(v * 10, 2), 100)
-                        const isPositive = v > 0
+                        // Scale to max 75% of container height to leave room for labels and tooltips
+                        // This prevents high values (8, 9, 10) from visually overflowing/clipping and looking identical
+                        const safeValue = Number(v) || 0
+                        const height = Math.min(Math.max(safeValue * 8, 5), 80) // 10 * 8 = 80% max
+                        const isPositive = safeValue > 0
 
                         return (
                             <div key={i} className="h-full flex flex-col justify-end items-center gap-2 flex-1 group z-10">
