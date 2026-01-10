@@ -5,7 +5,7 @@ import { useAuth } from '@/hooks/useAuth'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Activity, ChevronLeft, TrendingUp, Sparkles, Lock, Clock, Calendar, Zap, Brain, Heart, Battery } from 'lucide-react'
+import { Activity, ChevronLeft, TrendingUp, Sparkles, Lock, Clock, Calendar, Zap, Brain, Heart, Battery, Leaf, Users } from 'lucide-react'
 import Navbar from '@/components/layout/Navbar'
 import { db } from '@/lib/firebase/config'
 import { collection, query, orderBy, getDocs } from 'firebase/firestore'
@@ -16,9 +16,9 @@ import { motion } from 'framer-motion'
 const SIGNAL_CONFIG = {
     emotional_state: { icon: Heart, label: 'Emotional', color: 'text-pink-400', bg: 'bg-pink-500/10', border: 'border-pink-500/20' },
     energy_level: { icon: Zap, label: 'Energy', color: 'text-yellow-400', bg: 'bg-yellow-500/10', border: 'border-yellow-500/20' },
-    stress_level: { icon: Activity, label: 'Stress', color: 'text-red-400', bg: 'bg-red-500/10', border: 'border-red-500/20' },
-    mental_clarity: { icon: Brain, label: 'Clarity', color: 'text-blue-400', bg: 'bg-blue-500/10', border: 'border-blue-500/20' },
-    connection: { icon: Sparkles, label: 'Spirit', color: 'text-purple-400', bg: 'bg-purple-500/10', border: 'border-purple-500/20' }
+    calm_level: { icon: Leaf, label: 'Calm', color: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20' },
+    mental_clarity: { icon: Brain, label: 'Clarity', color: 'text-violet-400', bg: 'bg-violet-500/10', border: 'border-violet-500/20' },
+    connection: { icon: Users, label: 'Social', color: 'text-pink-400', bg: 'bg-pink-500/10', border: 'border-pink-500/20' }
 }
 
 interface MoodEntry {
@@ -51,12 +51,20 @@ export default function MoodFlowPage() {
             const moodRef = collection(db, 'users', user.uid, 'moods')
             const q = query(moodRef, orderBy('createdAt', 'desc'))
             const snapshot = await getDocs(q)
-            const entries: MoodEntry[] = snapshot.docs.map(doc => ({
-                id: doc.id,
-                signals: doc.data().signals || {},
-                average: doc.data().average || doc.data().value || 0,
-                createdAt: doc.data().createdAt.toDate()
-            }))
+            const entries: MoodEntry[] = snapshot.docs.map(doc => {
+                const data = doc.data()
+                const signals = data.signals || {}
+                // Backward compatibility: map stress_level to calm_level
+                if (signals.stress_level && !signals.calm_level) {
+                    signals.calm_level = signals.stress_level
+                }
+                return {
+                    id: doc.id,
+                    signals: signals,
+                    average: data.average || data.value || 0,
+                    createdAt: data.createdAt.toDate()
+                }
+            })
             setMoods(entries)
         } catch (e) {
             console.error('Failed to load moods:', e)

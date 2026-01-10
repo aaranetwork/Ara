@@ -71,13 +71,12 @@ export default function Dashboard({ user }: { user: any }) {
     const loadStats = useCallback(async () => {
         if (!user?.uid) return
 
-        // We can show stale data while refreshing if we want, but for initial load let's be careful
-        // If stats are empty (0), assume initial load
-        if (stats.entries === 0 && moodData.values[0] === 0) {
+        // Show loading state on initial load if we don't have data
+        if (stats.entries === 0 && moodData.values.every(v => v === 0)) {
             setLoadingData(true)
         }
 
-        // Try to load user stats from API (optional - may fail)
+        // Try to load user stats from API
         try {
             const idToken = await user.getIdToken()
             const data = await apiClient.getUserStats(idToken)
@@ -89,28 +88,35 @@ export default function Dashboard({ user }: { user: any }) {
                 })
             }
         } catch (e) {
-            console.error('Failed to load user stats (API may be offline)', e)
+            console.error('Failed to load user stats', e)
         }
 
-        // Load mood data directly from Firestore (always runs)
+        // Load mood data from Firestore
         if (db) {
             try {
                 const moodRef = collection(db, 'users', user.uid, 'moods')
+                // Get last 30 days to be safe
+                const thirtyDaysAgo = new Date()
+                thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
+
                 const q = query(moodRef, orderBy('createdAt', 'desc'))
                 const snapshot = await getDocs(q)
 
-                const moods = snapshot.docs.map(doc => ({
-                    value: doc.data().value,
-                    createdAt: doc.data().createdAt.toDate()
-                }))
-
+                const moods = snapshot.docs.map(doc => {
+                    const data = doc.data()
+                    return {
+                        value: data.average || data.value || 0, // Fallback to average/value
+                        createdAt: data.createdAt?.toDate() || new Date()
+                    }
+                })
 
                 // Calculate overall average
-                const overallAvg = moods.length > 0
-                    ? (moods.reduce((sum, m) => sum + m.value, 0) / moods.length).toFixed(1)
+                const validMoods = moods.filter(m => m.value > 0)
+                const overallAvg = validMoods.length > 0
+                    ? (validMoods.reduce((sum, m) => sum + m.value, 0) / validMoods.length).toFixed(1)
                     : '-'
 
-                // Check if user has checked in today
+                // Check check-in status
                 const today = new Date()
                 const hasCheckedInToday = moods.some(m =>
                     m.createdAt.getDate() === today.getDate() &&
@@ -119,22 +125,23 @@ export default function Dashboard({ user }: { user: any }) {
                 )
                 setCheckInComplete(hasCheckedInToday)
 
-                // Process into daily averages for last 7 days
+                // Process last 7 days
                 const labels: string[] = []
                 const values: number[] = []
+                const daysOfWeek = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']
 
                 for (let i = 6; i >= 0; i--) {
-                    const date = new Date()
-                    date.setDate(date.getDate() - i)
-                    date.setHours(0, 0, 0, 0)
+                    const d = new Date()
+                    d.setDate(d.getDate() - i)
+                    d.setHours(0, 0, 0, 0)
 
-                    const nextDate = new Date(date)
-                    nextDate.setDate(nextDate.getDate() + 1)
+                    const nextD = new Date(d)
+                    nextD.setDate(nextD.getDate() + 1)
 
-                    labels.push(date.toLocaleDateString('en-US', { weekday: 'short' }).slice(0, 2))
+                    labels.push(daysOfWeek[d.getDay()])
 
                     const dayMoods = moods.filter(m =>
-                        m.createdAt >= date && m.createdAt < nextDate
+                        m.createdAt >= d && m.createdAt < nextD
                     )
 
                     if (dayMoods.length > 0) {
@@ -154,8 +161,7 @@ export default function Dashboard({ user }: { user: any }) {
         } else {
             setLoadingData(false)
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [user])
+    }, [user, stats.entries, moodData.values])
 
     useEffect(() => {
         loadStats()
