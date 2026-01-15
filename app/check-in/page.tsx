@@ -165,21 +165,35 @@ export default function CheckInPage() {
                         <div className="flex-1 flex flex-col justify-center items-center text-center space-y-8 min-h-[40vh]">
 
                             {/* Icon Container */}
-                            <div className="relative">
-                                <div className={`absolute inset-0 bg-gradient-to-tr ${step.color} blur-[40px] opacity-20`} />
+                            <motion.div
+                                className="relative"
+                                initial={{ scale: 0.8, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                transition={{ type: "spring", stiffness: 200, damping: 20, delay: 0.1 }}
+                            >
+                                <motion.div
+                                    className={`absolute inset-0 bg-gradient-to-tr ${step.color} blur-[40px] opacity-20`}
+                                    animate={{ scale: [1, 1.1, 1], opacity: [0.15, 0.25, 0.15] }}
+                                    transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                                />
                                 <div className="relative w-24 h-24 rounded-[2rem] flex items-center justify-center bg-[#0e0e12] border border-white/10 shadow-2xl">
                                     <step.icon size={36} className="text-white" strokeWidth={1.5} />
                                 </div>
-                            </div>
+                            </motion.div>
 
-                            <div className="space-y-4 max-w-xs mx-auto">
+                            <motion.div
+                                className="space-y-4 max-w-xs mx-auto"
+                                initial={{ opacity: 0, y: 15 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.5, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+                            >
                                 <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-indigo-400">
                                     {step.title}
                                 </h2>
                                 <h1 className="text-3xl md:text-4xl font-serif font-medium leading-tight text-white">
                                     {step.question}
                                 </h1>
-                            </div>
+                            </motion.div>
                         </div>
 
                         {/* Interactive Input Section */}
@@ -237,6 +251,7 @@ function StepInput({ step, onNext }: { step: MoodStep, onNext: (val: number) => 
                             className={`absolute left-0 top-0 bottom-0 bg-gradient-to-r ${step.color}`}
                             initial={{ width: '50%' }}
                             animate={{ width: `${value * 10}%` }}
+                            transition={{ type: "spring", stiffness: 300, damping: 25 }}
                         />
                     </div>
                 )
@@ -246,7 +261,12 @@ function StepInput({ step, onNext }: { step: MoodStep, onNext: (val: number) => 
                         {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(i => (
                             <motion.div
                                 key={i}
-                                className={`w-2.5 h-12 rounded-sm transition-all duration-300 ${i <= value
+                                animate={{
+                                    scale: i <= value ? 1 : 0.9,
+                                    opacity: i <= value ? 1 : 0.3
+                                }}
+                                transition={{ type: "spring", stiffness: 400, damping: 20 }}
+                                className={`w-2.5 h-12 rounded-sm ${i <= value
                                     ? 'bg-gradient-to-t from-yellow-500 to-amber-300 shadow-[0_0_15px_rgba(245,158,11,0.4)]'
                                     : 'bg-white/5 border border-white/5'
                                     }`}
@@ -283,6 +303,7 @@ function StepInput({ step, onNext }: { step: MoodStep, onNext: (val: number) => 
                                 scale: 0.8 + (value * 0.08),
                                 filter: `blur(${Math.max(0, 10 - value)}px)`
                             }}
+                            transition={{ type: "spring", stiffness: 200, damping: 20 }}
                             className={`w-16 h-16 rounded-full bg-gradient-to-b ${step.color} shadow-[0_0_40px_rgba(16,185,129,0.3)]`}
                         />
                     </div>
@@ -297,6 +318,7 @@ function StepInput({ step, onNext }: { step: MoodStep, onNext: (val: number) => 
                                 opacity: 0.3 + (value / 15),
                                 scale: 0.9 + (value / 50)
                             }}
+                            transition={{ type: "spring", stiffness: 150, damping: 20 }}
                             className="text-5xl font-serif text-transparent bg-clip-text bg-gradient-to-b from-white to-white/60 tracking-tight"
                         >
                             CLARITY
@@ -311,6 +333,7 @@ function StepInput({ step, onNext }: { step: MoodStep, onNext: (val: number) => 
                             <motion.div
                                 className={`absolute left-0 h-full bg-gradient-to-r ${step.color}`}
                                 animate={{ width: `${value * 10}%` }}
+                                transition={{ type: "spring", stiffness: 300, damping: 25 }}
                             />
                             {/* Nodes along the line */}
                             <div className="absolute inset-0 flex justify-between px-0.5">
@@ -342,8 +365,9 @@ function StepInput({ step, onNext }: { step: MoodStep, onNext: (val: number) => 
                     {/* Track */}
                     <div className="absolute left-0 right-0 h-1 bg-white/10 rounded-full overflow-hidden">
                         <motion.div
-                            className="h-full bg-white/20"
+                            className="h-full bg-white/30"
                             animate={{ width: `${value * 10}%` }}
+                            transition={{ type: "spring", stiffness: 300, damping: 25 }}
                         />
                     </div>
 
@@ -362,7 +386,7 @@ function StepInput({ step, onNext }: { step: MoodStep, onNext: (val: number) => 
                     <motion.div
                         className="absolute w-8 h-8 bg-white rounded-full shadow-[0_0_20px_rgba(255,255,255,0.4)] z-10 pointer-events-none flex items-center justify-center"
                         animate={{ left: `calc(${((value - 1) / 9) * 100}% - 16px)` }}
-                        transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                        transition={{ type: "spring", stiffness: 400, damping: 25 }}
                     >
                         <div className="w-2 h-2 rounded-full bg-black/20" />
                     </motion.div>
@@ -370,12 +394,14 @@ function StepInput({ step, onNext }: { step: MoodStep, onNext: (val: number) => 
             </div>
 
             {/* Continue Button */}
-            <button
+            <motion.button
                 onClick={() => onNext(value)}
-                className="w-full py-4 rounded-xl bg-indigo-500 hover:bg-indigo-400 text-white font-bold text-sm tracking-wide uppercase transition-all flex items-center justify-center gap-3 shadow-[0_0_30px_rgba(99,102,241,0.3)] active:scale-[0.98]"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="w-full py-4 rounded-xl bg-indigo-500 hover:bg-indigo-400 text-white font-bold text-sm tracking-wide uppercase transition-colors flex items-center justify-center gap-3 shadow-[0_0_30px_rgba(99,102,241,0.3)]"
             >
                 Continue <ArrowRight size={18} />
-            </button>
+            </motion.button>
         </div>
     )
 }

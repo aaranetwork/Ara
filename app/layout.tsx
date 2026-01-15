@@ -5,6 +5,9 @@ import './globals.css'
 import { FeatureAccessProvider } from '@/components/providers/FeatureAccessProvider'
 import { AuthProvider } from '@/context/AuthContext'
 import RoutePrefetcher from '@/components/RoutePrefetcher'
+import { ReadHistoryProvider } from '@/contexts/ReadHistoryContext'
+import { SavedItemsProvider } from '@/contexts/SavedItemsContext'
+import { DiscussionProvider } from '@/contexts/DiscussionContext'
 import NextTopLoader from 'nextjs-toploader'
 import { SpeedInsights } from "@vercel/speed-insights/next"
 
@@ -120,9 +123,15 @@ export default function RootLayout({
         />
         <FeatureAccessProvider>
           <AuthProvider>
-            <RoutePrefetcher />
-            {children}
-            <SpeedInsights />
+            <ReadHistoryProvider>
+              <SavedItemsProvider>
+                <DiscussionProvider>
+                  <RoutePrefetcher />
+                  {children}
+                  <SpeedInsights />
+                </DiscussionProvider>
+              </SavedItemsProvider>
+            </ReadHistoryProvider>
           </AuthProvider>
         </FeatureAccessProvider>
       </body>
