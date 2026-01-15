@@ -31,7 +31,9 @@ export default function ProfilePage() {
   const [showPrivacy, setShowPrivacy] = useState(false)
   const [showLanguage, setShowLanguage] = useState(false)
   const [showHelp, setShowHelp] = useState(false)
+
   const [showFeedback, setShowFeedback] = useState(false)
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
 
   // Feedback State
   const [feedbackMessage, setFeedbackMessage] = useState('')
@@ -117,11 +119,13 @@ export default function ProfilePage() {
     }
   }
 
-  const handleLogout = async () => {
-    if (confirm('Are you sure you want to sign out?')) {
-      await signOut()
-      router.push('/')
-    }
+  const handleLogout = () => {
+    setShowLogoutConfirm(true)
+  }
+
+  const confirmLogout = async () => {
+    await signOut()
+    router.push('/')
   }
 
   const handleSendFeedback = async () => {
@@ -454,6 +458,46 @@ export default function ProfilePage() {
                     )}
                   </button>
                 </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Logout Confirmation Modal */}
+      <AnimatePresence>
+        {showLogoutConfirm && (
+          <motion.div
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-6"
+            onClick={() => setShowLogoutConfirm(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+              className="w-full max-w-sm bg-[#0e0e12] border border-white/10 p-6 rounded-3xl shadow-2xl text-center"
+            >
+              <div className="w-16 h-16 rounded-full bg-red-500/10 flex items-center justify-center mx-auto mb-4 text-red-500">
+                <LogOut size={32} />
+              </div>
+              <h3 className="text-xl font-bold mb-2">Sign Out?</h3>
+              <p className="text-gray-400 text-sm mb-8">
+                Are you sure you want to sign out? You'll need to sign in again to access your data.
+              </p>
+
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setShowLogoutConfirm(false)}
+                  className="flex-1 py-3 bg-white/5 rounded-xl text-sm font-bold text-gray-400 hover:bg-white/10"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmLogout}
+                  className="flex-1 py-3 bg-red-500 rounded-xl text-sm font-bold text-white hover:bg-red-600"
+                >
+                  Sign Out
+                </button>
               </div>
             </motion.div>
           </motion.div>

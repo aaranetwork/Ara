@@ -112,7 +112,17 @@ export async function POST(req: Request) {
 
         return NextResponse.json(transformedResponse)
     } catch (error: any) {
-        console.error('Proxy Error:', error)
+        // Check for ECONNREFUSED to prevent log spam in dev
+        const isConnectionRefused =
+            error?.cause?.code === 'ECONNREFUSED' ||
+            (error?.cause?.errors && Array.isArray(error.cause.errors) && error.cause.errors.some((e: any) => e.code === 'ECONNREFUSED'));
+
+        if (isConnectionRefused) {
+            console.warn('[CHAT] Backend unreachable (ECONNREFUSED).');
+        } else {
+            console.error('Proxy Error:', error);
+        }
+
         return NextResponse.json(
             { error: error.message || 'Internal Server Error', details: 'Check that AARA_API_URL and AARA_API_TOKEN are set correctly in .env.local' },
             { status: 500 }

@@ -3,6 +3,10 @@ import { NextResponse } from 'next/server'
 // API Base URL from environment
 const API_BASE_URL = process.env.AARA_API_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3005'
 
+// Simple throttling to prevent log spam
+let lastLogTime = 0;
+const LOG_THROTTLE_MS = 60000; // 1 minute
+
 export async function POST(req: Request) {
     try {
         // Get the auth token from the incoming request headers
@@ -52,7 +56,22 @@ export async function POST(req: Request) {
         return NextResponse.json(data)
     } catch (error: any) {
         // Fallback to mock data if connection fails (e.g. backend down)
-        console.error('User Stats Fetch Error, falling back to mock:', error)
+
+        // Check for ECONNREFUSED (common in local dev without backend) to avoid noisy logs
+        const isConnectionRefused =
+            error?.cause?.code === 'ECONNREFUSED' ||
+            (error?.cause?.errors && Array.isArray(error.cause.errors) && error.cause.errors.some((e: any) => e.code === 'ECONNREFUSED'));
+
+        if (isConnectionRefused) {
+            const now = Date.now();
+            if (now - lastLogTime > LOG_THROTTLE_MS) {
+                console.warn('Backend currently unreachable (ECONNREFUSED). Serving mock user stats. (Log throttled for 60s)');
+                lastLogTime = now;
+            }
+        } else {
+            console.error('User Stats Fetch Error, falling back to mock:', error);
+        }
+
         return NextResponse.json({
             entries: 10,
             totalMinutes: 120,

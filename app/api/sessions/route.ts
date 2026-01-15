@@ -50,7 +50,17 @@ export async function POST(req: Request) {
 
         return NextResponse.json(data)
     } catch (error: any) {
-        console.error('Session Creation Error:', error)
+        // Check for ECONNREFUSED to prevent log spam in dev
+        const isConnectionRefused =
+            error?.cause?.code === 'ECONNREFUSED' ||
+            (error?.cause?.errors && Array.isArray(error.cause.errors) && error.cause.errors.some((e: any) => e.code === 'ECONNREFUSED'));
+
+        if (isConnectionRefused) {
+            console.warn('[SESSION] Backend unreachable (ECONNREFUSED).');
+        } else {
+            console.error('Session Creation Error:', error);
+        }
+
         return NextResponse.json(
             { error: error.message || 'Internal Server Error' },
             { status: 500 }

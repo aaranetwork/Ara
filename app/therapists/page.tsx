@@ -80,7 +80,12 @@ export default function TherapistMatchingPage() {
 
     return (
         <div className="min-h-screen bg-[#08080c] text-white selection:bg-blue-500/30">
-            <Navbar />
+            {/* Desktop Back Button */}
+            <div className="fixed top-6 left-6 z-50">
+                <a className="p-3 bg-white/5 hover:bg-white/10 rounded-full transition-colors flex items-center justify-center backdrop-blur-md border border-white/5" href="/">
+                    <ArrowLeft size={20} className="text-zinc-400" />
+                </a>
+            </div>
 
             {/* Progress Bar */}
             {step !== 'welcome' && step !== 'processing' && (

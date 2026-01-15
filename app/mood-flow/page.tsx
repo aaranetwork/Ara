@@ -127,7 +127,12 @@ export default function MoodFlowPage() {
 
     return (
         <div className="min-h-screen bg-[#050505] text-white overflow-x-hidden">
-            <Navbar />
+            {/* Desktop Back Button */}
+            <div className="fixed top-6 left-6 z-50 hidden md:block">
+                <a className="p-3 bg-white/5 hover:bg-white/10 rounded-full transition-colors flex items-center justify-center backdrop-blur-md border border-white/5" href="/">
+                    <ChevronLeft size={20} className="text-zinc-400" />
+                </a>
+            </div>
 
             {/* Background Ambience */}
             <div className="fixed inset-0 overflow-hidden pointer-events-none">
