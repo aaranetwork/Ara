@@ -180,10 +180,10 @@ export default function DiscoverDetail() {
                         <h2 className="text-2xl font-bold text-white mb-6">Why This Matters</h2>
                         <div className="prose prose-invert prose-lg max-w-none text-gray-300 leading-relaxed space-y-6">
                             <p>
-                                In today's complex health landscape, access to verified, evidence-based insights is more critical than ever. Understanding this topic empowers you to make informed decisions about your wellness journey.
+                                In today&apos;s complex health landscape, access to verified, evidence-based insights is more critical than ever. Understanding this topic empowers you to make informed decisions about your wellness journey.
                             </p>
                             <p>
-                                The integration of modern research with practical application demonstrates how knowledge can bridge gaps in traditional approaches to health and wellness. By staying informed, you're taking an active role in your own well-being.
+                                The integration of modern research with practical application demonstrates how knowledge can bridge gaps in traditional approaches to health and wellness. By staying informed, you&apos;re taking an active role in your own well-being.
                             </p>
                         </div>
                     </div>

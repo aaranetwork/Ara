@@ -357,7 +357,7 @@ export default function Dashboard({ user }: { user: any }) {
                                         <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-indigo-300/80">Daily Insight</span>
                                     </div>
                                     <p className="text-base font-serif italic text-white/90 leading-relaxed">
-                                        "Naming an emotion is the first step to taming it. Try to be specific today."
+                                        &quot;Naming an emotion is the first step to taming it. Try to be specific today.&quot;
                                     </p>
                                 </div>
                             </motion.div>

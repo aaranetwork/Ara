@@ -58,7 +58,7 @@ export default function MobileBottomNav() {
             document.removeEventListener('touchmove', onTouchMove)
             document.removeEventListener('touchend', onTouchEnd)
         }
-    }, [touchStart, touchEnd, currentIndex])
+    }, [touchStart, touchEnd, currentIndex, onTouchEnd])
 
     // Don't show on auth pages or landing page when not logged in
     const hiddenPaths = ['/auth', '/privacy', '/terms', '/about', '/contact']

@@ -482,7 +482,7 @@ export default function ProfilePage() {
               </div>
               <h3 className="text-xl font-bold mb-2">Sign Out?</h3>
               <p className="text-gray-400 text-sm mb-8">
-                Are you sure you want to sign out? You'll need to sign in again to access your data.
+                Are you sure you want to sign out? You&apos;ll need to sign in again to access your data.
               </p>
 
               <div className="flex gap-3">
