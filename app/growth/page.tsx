@@ -161,7 +161,7 @@ export default function GrowthPage() {
     if (authLoading || loading) {
         return (
             <div className="h-[100dvh] bg-[#050505] text-white flex items-center justify-center">
-                <Loader2 className="animate-spin text-white/20" size={32} />
+                <Loader2 className="animate-spin text-white/40" size={32} />
             </div>
         )
     }
@@ -197,7 +197,7 @@ export default function GrowthPage() {
                     <h1 className="text-4xl md:text-5xl font-serif font-medium tracking-tight mb-4 text-white">
                         Hello, <span className="text-indigo-300">{firstName}</span>
                     </h1>
-                    <p className="text-white/40 max-w-lg mx-auto leading-relaxed font-light text-lg">
+                    <p className="text-white/60 max-w-lg mx-auto leading-relaxed font-light text-lg">
                         Every step you take adds to your story. Here is your progress so far.
                     </p>
                 </motion.div>
@@ -221,7 +221,7 @@ export default function GrowthPage() {
                                 <stat.icon size={22} className={stat.color} strokeWidth={1.5} />
                             </div>
                             <span className="text-2xl md:text-3xl font-serif text-white mb-1">{stat.value}</span>
-                            <span className="text-[10px] uppercase tracking-widest text-white/40 font-bold">{stat.label}</span>
+                            <span className="text-[10px] uppercase tracking-widest text-white/60 font-bold">{stat.label}</span>
                         </motion.div>
                     ))}
                 </div>
@@ -261,7 +261,8 @@ export default function GrowthPage() {
                                         </div>
                                         <button
                                             onClick={() => handleDeleteGoal(goal.id)}
-                                            className="p-2 text-white/20 hover:text-rose-400 transition-colors opacity-0 group-hover:opacity-100"
+                                            aria-label="Delete Goal"
+                                            className="p-2 text-white/40 hover:text-rose-400 transition-colors opacity-0 group-hover:opacity-100"
                                         >
                                             <Trash2 size={16} />
                                         </button>
@@ -298,9 +299,9 @@ export default function GrowthPage() {
                                         {item.type === 'milestone' ? <Star size={12} fill="currentColor" /> : <div className="w-2 h-2 rounded-full bg-white/40" />}
                                     </div>
                                     <div className="pt-1">
-                                        <span className="text-[10px] font-bold text-white/30 uppercase tracking-widest block mb-1">{item.date}</span>
+                                        <span className="text-[10px] font-bold text-white/50 uppercase tracking-widest block mb-1">{item.date}</span>
                                         <h4 className={`text-base font-medium ${item.type === 'milestone' ? 'text-white' : 'text-white/70'}`}>{item.title}</h4>
-                                        <p className="text-sm text-white/40 mt-1 font-light leading-relaxed">{item.desc}</p>
+                                        <p className="text-sm text-white/60 mt-1 font-light leading-relaxed">{item.desc}</p>
                                     </div>
                                 </div>
                             ))}
@@ -318,7 +319,7 @@ export default function GrowthPage() {
                         value={newGoalText}
                         onChange={(e) => setNewGoalText(e.target.value)}
                         placeholder="What do you want to achieve?"
-                        className="w-full bg-white/[0.03] border border-white/10 rounded-2xl p-5 text-lg text-white placeholder-white/20 focus:outline-none focus:border-indigo-500/50 focus:bg-white/[0.05] transition-all"
+                        className="w-full bg-white/[0.03] border border-white/10 rounded-2xl p-5 text-lg text-white placeholder-white/40 focus:outline-none focus:border-indigo-500/50 focus:bg-white/[0.05] transition-all"
                     />
                     <div className="flex flex-wrap gap-2">
                         {["Meditate 10m", "Drink Water", "Read 10 pages", "Sleep 8h"].map(s => (

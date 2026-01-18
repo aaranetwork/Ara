@@ -163,7 +163,7 @@ export default function TherapistMatchingPage() {
                                 >
                                     <span className="relative z-10 flex items-center gap-2">Get Started <ArrowRight size={16} /></span>
                                 </button>
-                                <p className="text-[10px] text-white/20 mt-8 font-bold uppercase tracking-widest">Takes about 2 minutes</p>
+                                <p className="text-[10px] text-white/40 mt-8 font-bold uppercase tracking-widest">Takes about 2 minutes</p>
                             </motion.div>
                         )}
 

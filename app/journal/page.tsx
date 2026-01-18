@@ -129,32 +129,39 @@ export default function JournalPage() {
             </div>
 
             {/* Fixed Floating Header */}
-            <div className="fixed top-0 left-0 right-0 z-[90] px-4 py-6 pointer-events-none flex items-center justify-between">
+            <div className="fixed top-0 left-0 right-0 z-[90] px-4 py-6 pointer-events-none flex items-center justify-between w-full h-[88px]">
                 {/* Back Button - Only in Writing State */}
-                {state !== 'home' ? (
-                    <button
-                        onClick={() => setState('home')}
-                        className="pointer-events-auto flex items-center gap-2 px-4 py-2 hover:bg-white/5 rounded-xl transition-all group backdrop-blur-md bg-white/[0.03] border border-white/5"
-                    >
-                        <span className="text-[10px] font-bold tracking-widest text-white/50 group-hover:text-white uppercase transition-colors">Back</span>
-                    </button>
-                ) : (
-                    <div className="w-16" />
-                )}
+                <div className="relative z-10">
+                    {state !== 'home' ? (
+                        <button
+                            onClick={() => setState('home')}
+                            className="pointer-events-auto flex items-center gap-2 px-4 py-2 hover:bg-white/5 rounded-xl transition-all group backdrop-blur-md bg-white/[0.03] border border-white/5"
+                        >
+                            <span className="text-[10px] font-bold tracking-widest text-white/50 group-hover:text-white uppercase transition-colors">Back</span>
+                        </button>
+                    ) : (
+                        <div className="w-16" />
+                    )}
+                </div>
 
-                {/* Branding Pill */}
-                <Link href="/" className="pointer-events-auto flex items-center gap-2 px-4 py-2 rounded-full bg-white/[0.03] border border-white/5 backdrop-blur-xl hover:bg-white/5 transition-all active:scale-95 cursor-pointer shadow-2xl">
-                    <Image src="/aara-logo.png" alt="AARA" width={18} height={18} className="rounded opacity-80" />
-                    <span className="text-[10px] font-bold tracking-[0.3em] text-white/40 uppercase">JOURNAL</span>
-                </Link>
+                {/* Branding Pill - Absolute Centered to prevent CLS */}
+                <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-0">
+                    <Link href="/" className="pointer-events-auto flex items-center gap-2 px-4 py-2 rounded-full bg-white/[0.03] border border-white/5 backdrop-blur-xl hover:bg-white/5 transition-all active:scale-95 cursor-pointer shadow-2xl">
+                        <Image src="/aara-logo.png" alt="" width={18} height={18} className="rounded opacity-80" />
+                        <span className="text-[10px] font-bold tracking-[0.3em] text-white/60 uppercase">JOURNAL</span>
+                    </Link>
+                </div>
 
                 {/* Exit Button */}
-                <button
-                    onClick={handleExit}
-                    className="pointer-events-auto w-10 h-10 flex items-center justify-center hover:bg-white/5 rounded-full transition-colors group"
-                >
-                    <X size={18} className="text-white/50 group-hover:text-white transition-colors" />
-                </button>
+                <div className="relative z-10">
+                    <button
+                        onClick={handleExit}
+                        aria-label="Exit Journal"
+                        className="pointer-events-auto w-10 h-10 flex items-center justify-center hover:bg-white/5 rounded-full transition-colors group"
+                    >
+                        <X size={18} className="text-white/50 group-hover:text-white transition-colors" />
+                    </button>
+                </div>
             </div>
 
             {/* Spacer for fixed header */}
@@ -191,7 +198,7 @@ export default function JournalPage() {
                                 <button
                                     key={item.id}
                                     onClick={() => setState(item.id as JournalState)}
-                                    className={`flex flex-col items-center gap-1.5 group transition-all relative px-6 ${isActive ? 'text-white' : 'text-white/30 hover:text-white/60'}`}
+                                    className={`flex flex-col items-center gap-1.5 group transition-all relative px-6 ${isActive ? 'text-white' : 'text-white/50 hover:text-white/80'}`}
                                 >
                                     {isActive && (
                                         <motion.div

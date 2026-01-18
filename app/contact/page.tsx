@@ -44,7 +44,7 @@ export default function ContactPage() {
           className="text-center mb-12"
         >
           <h1 className="text-4xl md:text-5xl font-serif font-medium mb-4">Contact Support</h1>
-          <p className="text-white/40">We answer within 24 hours.</p>
+          <p className="text-white/60">We answer within 24 hours.</p>
         </motion.div>
 
         <AnimatePresence mode="wait">
@@ -59,7 +59,7 @@ export default function ContactPage() {
                 <CheckCircle2 size={40} />
               </div>
               <h2 className="text-2xl font-serif mb-2">Message Sent</h2>
-              <p className="text-white/40 mb-8">Thank you for reaching out. A team member will review your request shortly.</p>
+              <p className="text-white/60 mb-8">Thank you for reaching out. A team member will review your request shortly.</p>
               <Link href="/" className="inline-block px-8 py-3 bg-white/5 hover:bg-white/10 border border-white/5 rounded-xl text-sm font-bold uppercase tracking-widest transition-colors">
                 Return Home
               </Link>
@@ -81,7 +81,7 @@ export default function ContactPage() {
                     required
                     value={form.name}
                     onChange={(e) => setForm({ ...form, name: e.target.value })}
-                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/20 focus:outline-none focus:border-indigo-500/50 focus:bg-white/10 transition-all"
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/50 focus:outline-none focus:border-indigo-500/50 focus:bg-white/10 transition-all"
                     placeholder="Jane Doe"
                   />
                 </div>
@@ -92,7 +92,7 @@ export default function ContactPage() {
                     required
                     value={form.email}
                     onChange={(e) => setForm({ ...form, email: e.target.value })}
-                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/20 focus:outline-none focus:border-indigo-500/50 focus:bg-white/10 transition-all"
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/50 focus:outline-none focus:border-indigo-500/50 focus:bg-white/10 transition-all"
                     placeholder="jane@example.com"
                   />
                 </div>
@@ -105,7 +105,7 @@ export default function ContactPage() {
                   required
                   value={form.subject}
                   onChange={(e) => setForm({ ...form, subject: e.target.value })}
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/20 focus:outline-none focus:border-indigo-500/50 focus:bg-white/10 transition-all"
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/50 focus:outline-none focus:border-indigo-500/50 focus:bg-white/10 transition-all"
                   placeholder="How can we help?"
                 />
               </div>
@@ -117,7 +117,7 @@ export default function ContactPage() {
                   rows={5}
                   value={form.message}
                   onChange={(e) => setForm({ ...form, message: e.target.value })}
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/20 focus:outline-none focus:border-indigo-500/50 focus:bg-white/10 transition-all resize-none"
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/50 focus:outline-none focus:border-indigo-500/50 focus:bg-white/10 transition-all resize-none"
                   placeholder="Tell us more about your inquiry..."
                 />
               </div>

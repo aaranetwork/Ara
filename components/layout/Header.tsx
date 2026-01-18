@@ -18,29 +18,36 @@ export default function Header() {
 
   useEffect(() => {
     if (!shouldShowHeader) return
-    
+
+    let ticking = false
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20)
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setIsScrolled(window.scrollY > 20)
+          ticking = false
+        })
+        ticking = true
+      }
     }
-    window.addEventListener('scroll', handleScroll)
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
   }, [shouldShowHeader])
 
   if (!shouldShowHeader) return null
 
   return (
-    <header 
-      className={`sticky top-0 z-50 backdrop-blur-xl transition-all duration-300 ${
-        isScrolled 
-          ? 'glass-card border-b border-white/20 shadow-glass' 
+    <header
+      className={`sticky top-0 z-50 backdrop-blur-xl transition-all duration-300 ${isScrolled
+          ? 'glass-card border-b border-white/20 shadow-glass'
           : 'bg-dark-bg/80 border-b border-white/10'
-      }`}
+        }`}
     >
       <div className="container-custom py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <Link 
-            href="/" 
+          <Link
+            href="/"
             className="flex items-center gap-3"
             aria-label="AARA Home"
           >

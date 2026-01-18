@@ -31,6 +31,7 @@ const config: Config = {
         'fluid-3': 'clamp(3rem, 6vw, 6rem)',
         '18': '4.5rem',
         '88': '22rem',
+        'safe-area': 'env(safe-area-inset-bottom)',
       },
       fontSize: {
         'fluid-h1': ['clamp(2.5rem, 8vw, 6rem)', { lineHeight: '1.05', letterSpacing: '-0.04em' }],
@@ -54,10 +55,11 @@ const config: Config = {
           '50%': { transform: 'translateY(-20px) rotate(2deg)' },
         },
       },
+
     },
   },
   plugins: [],
 }
 export default config
 
-// Force rebuild: 1339
+// Force rebuild: 1340

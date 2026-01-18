@@ -25,7 +25,7 @@ const AuthBanner = () => {
     if (user || !isVisible) return null
 
     return (
-        <div className="fixed bottom-0 left-0 right-0 z-50 bg-[#0e0e12]/80 backdrop-blur-xl border-t border-white/10 pb-8 pt-6">
+        <div className="fixed bottom-0 left-0 right-0 z-50 bg-[#0e0e12] border-t border-white/10 pb-8 pt-6 shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
             <button
                 onClick={() => setIsVisible(false)}
                 className="absolute top-4 right-4 p-2 text-white/40 hover:text-white transition-colors"

@@ -519,17 +519,19 @@ export default function ChatPage() {
             <div className="fixed top-0 left-0 right-0 z-[90] p-6 pointer-events-none flex items-center justify-between">
                 <button
                     onClick={() => setShowHistory(true)}
-                    className="pointer-events-auto p-3 rounded-xl bg-white/[0.03] backdrop-blur-xl border border-white/5 text-white/50 hover:text-white hover:bg-white/10 transition-all active:scale-95 group"
+                    aria-label="Open Chat History"
+                    className="pointer-events-auto p-3 rounded-xl bg-white/[0.03] backdrop-blur-xl border border-white/5 text-white/50 hover:text-white hover:bg-white/10 transition-all active:scale-95 group will-change-transform"
                 >
                     <Menu size={20} className="group-hover:scale-110 transition-transform" />
                 </button>
 
                 <Link href="/" className="pointer-events-auto flex items-center gap-2 px-4 py-2 rounded-full bg-white/[0.03] border border-white/5 backdrop-blur-xl hover:bg-white/5 transition-all active:scale-95 cursor-pointer">
-                    <span className="text-[10px] font-bold tracking-[0.3em] text-white/40 uppercase">AARA / CHAT</span>
+                    <span className="text-[10px] font-bold tracking-[0.3em] text-white/60 uppercase">AARA / CHAT</span>
                 </Link>
 
                 <Link
                     href="/"
+                    aria-label="Exit Chat"
                     className="pointer-events-auto flex items-center gap-2 px-3 py-2 hover:bg-white/5 rounded-full transition-colors group"
                 >
                     <div className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center bg-white/[0.02] text-white/40 group-hover:text-white group-hover:border-white/20 transition-all">
@@ -587,7 +589,7 @@ export default function ChatPage() {
             </div>
 
             {/* Main Chat Area */}
-            <div className={`relative z-10 flex-1 flex flex-col overflow-hidden`}>
+            <main className={`relative z-10 flex-1 flex flex-col overflow-hidden`}>
                 <div className="flex-1 overflow-y-auto px-4 pt-24 pb-4 scroll-smooth scrollbar-hide">
                     <div className="max-w-2xl mx-auto space-y-8">
 
@@ -601,7 +603,7 @@ export default function ChatPage() {
                                     initial={{ opacity: 0 }}
                                     animate={{ opacity: 1 }}
                                     transition={{ delay: 1, duration: 1 }}
-                                    className="text-white/40 text-sm max-w-sm leading-relaxed"
+                                    className="text-white/60 text-sm max-w-sm leading-relaxed"
                                 >
                                     This is a safe space. Share what is weighing on your mind, and let us untangle it together.
                                 </motion.p>
@@ -665,11 +667,11 @@ export default function ChatPage() {
                         </div>
 
                         <div className="text-center mt-3">
-                            <p className="text-[10px] text-white/20 font-medium tracking-widest uppercase">AI-Driven Confidential Processing</p>
+                            <p className="text-[10px] text-zinc-500 font-medium tracking-widest uppercase">AI-Driven Confidential Processing</p>
                         </div>
                     </div>
                 </div>
-            </div>
+            </main>
         </div>
     )
 }

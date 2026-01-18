@@ -142,9 +142,9 @@ export default function Dashboard({ user }: { user: any }) {
             <Navbar />
 
             {/* Mobile Header */}
-            <div className="fixed top-0 left-0 right-0 z-[80] px-6 py-4 flex justify-between items-center md:hidden bg-[#030305]/80 backdrop-blur-xl border-b border-white/5">
+            <div className="fixed top-0 left-0 right-0 z-[80] px-6 py-4 flex justify-between items-center md:hidden bg-[#030305] border-b border-white/5 shadow-lg">
                 <div className="flex items-center gap-3">
-                    <Image src="/aara-logo.png" alt="AARA" width={24} height={24} className="rounded-lg opacity-80" priority />
+                    <Image src="/aara-logo.png" alt="" width={24} height={24} className="rounded-lg opacity-80" priority />
                     <span className="text-[10px] font-bold tracking-[0.2em] text-white/50 uppercase">AARA</span>
                 </div>
                 <Link href="/profile" className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center border border-white/10 text-xs font-medium text-white/70 overflow-hidden relative">
@@ -230,12 +230,12 @@ export default function Dashboard({ user }: { user: any }) {
                                                     <div className="flex items-center gap-2 mb-2">
                                                         <span className="px-2 py-0.5 rounded-full bg-white/5 border border-white/5 text-[9px] font-bold uppercase tracking-widest text-white/40">Daily Ritual</span>
                                                     </div>
-                                                    <h3 className="text-xl md:text-2xl font-serif text-white/90 group-hover:text-white transition-colors">How are you feeling?</h3>
+                                                    <h2 className="text-xl md:text-2xl font-serif text-white/90 group-hover:text-white transition-colors">How are you feeling?</h2>
                                                 </div>
                                             </div>
 
                                             <div className="flex items-center gap-3 pl-5 pr-2 py-2 rounded-full border border-white/5 bg-white/[0.02] backdrop-blur-sm group-hover:bg-white/[0.05] transition-all w-full md:w-auto justify-between md:justify-start">
-                                                <span className="text-[10px] font-bold uppercase tracking-widest text-white/40 group-hover:text-white/80 transition-colors">Begin</span>
+                                                <span className="text-[10px] font-bold uppercase tracking-widest text-white/60 group-hover:text-white/90 transition-colors">Begin</span>
                                                 <div className="w-8 h-8 rounded-full bg-[#151518] flex items-center justify-center text-white border border-white/5 group-hover:bg-white group-hover:text-black transition-all shadow-lg">
                                                     <ArrowRight size={14} />
                                                 </div>
@@ -254,7 +254,7 @@ export default function Dashboard({ user }: { user: any }) {
                                         </div>
                                         <div>
                                             <h2 className="text-lg font-serif text-white/90">Mental Flow</h2>
-                                            <p className="text-[11px] font-medium text-white/30 uppercase tracking-wider">Last 7 Days</p>
+                                            <p className="text-[11px] font-medium text-white/50 uppercase tracking-wider">Last 7 Days</p>
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-3 px-4 py-2 rounded-full bg-white/[0.02] border border-white/5">
@@ -285,7 +285,7 @@ export default function Dashboard({ user }: { user: any }) {
                                                     </div>
                                                 )}
                                             </div>
-                                            <span className="text-[9px] font-bold text-white/20 uppercase tracking-wider group-hover/bar:text-white/50 transition-colors">
+                                            <span className="text-[9px] font-bold text-white/40 uppercase tracking-wider group-hover/bar:text-white/70 transition-colors">
                                                 {moodData.labels[i]}
                                             </span>
                                         </div>
@@ -380,7 +380,7 @@ export default function Dashboard({ user }: { user: any }) {
                                     </div>
                                     <div className="flex-1">
                                         <h3 className="text-sm font-medium text-white/90">Journal</h3>
-                                        <p className="text-[10px] text-white/30 uppercase tracking-wider mt-0.5">Reflect</p>
+                                        <p className="text-[10px] text-zinc-400 uppercase tracking-wider mt-0.5">Reflect</p>
                                     </div>
                                     <ChevronRight size={14} className="text-white/20 group-hover:text-emerald-400/80 group-hover:translate-x-1 transition-all" />
                                 </Link>
@@ -391,7 +391,7 @@ export default function Dashboard({ user }: { user: any }) {
                                     </div>
                                     <div className="flex-1">
                                         <h3 className="text-sm font-medium text-white/90">Therapists</h3>
-                                        <p className="text-[10px] text-white/30 uppercase tracking-wider mt-0.5">Connect</p>
+                                        <p className="text-[10px] text-zinc-400 uppercase tracking-wider mt-0.5">Connect</p>
                                     </div>
                                     <ChevronRight size={14} className="text-white/20 group-hover:text-purple-400/80 group-hover:translate-x-1 transition-all" />
                                 </Link>
@@ -405,7 +405,7 @@ export default function Dashboard({ user }: { user: any }) {
                                     </div>
                                     <div className="flex-1">
                                         <h3 className="text-sm font-medium text-white/90">Feedback</h3>
-                                        <p className="text-[10px] text-white/30 uppercase tracking-wider mt-0.5">Improve AARA</p>
+                                        <p className="text-[10px] text-zinc-400 uppercase tracking-wider mt-0.5">Improve AARA</p>
                                     </div>
                                 </button>
                             </div>

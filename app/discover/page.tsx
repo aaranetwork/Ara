@@ -164,7 +164,7 @@ export default function DiscoverPage() {
                                 placeholder="Search insights..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="pl-12 pr-6 py-3 w-48 focus:w-72 bg-white/[0.03] hover:bg-white/[0.06] backdrop-blur-xl border border-white/5 rounded-full text-sm font-medium text-white placeholder:text-white/20 focus:outline-none focus:ring-1 focus:ring-white/10 transition-all font-serif"
+                                className="pl-12 pr-6 py-3 w-48 focus:w-72 bg-white/[0.03] hover:bg-white/[0.06] backdrop-blur-xl border border-white/5 rounded-full text-sm font-medium text-white placeholder:text-white/50 focus:outline-none focus:ring-1 focus:ring-white/10 transition-all font-serif"
                             />
                         </div>
                     </div>
@@ -182,12 +182,12 @@ export default function DiscoverPage() {
                     <div className="h-[100dvh] w-full flex items-center justify-center p-8">
                         <div className="text-center max-w-md">
                             <div className="w-24 h-24 mx-auto mb-8 rounded-full bg-white/[0.02] border border-white/5 flex items-center justify-center backdrop-blur-xl">
-                                {searchQuery ? <Search size={40} className="text-white/20" /> : <Clock size={40} className="text-white/20" />}
+                                {searchQuery ? <Search size={40} className="text-white/50" /> : <Clock size={40} className="text-white/50" />}
                             </div>
                             <h2 className="text-4xl font-serif text-white mb-4">
                                 {searchQuery ? 'No Results Found' : 'All Caught Up'}
                             </h2>
-                            <p className="text-white/40 mb-10 text-lg font-light leading-relaxed">
+                            <p className="text-white/60 mb-10 text-lg font-light leading-relaxed">
                                 {searchQuery
                                     ? `We couldn't find anything matching "${searchQuery}".`
                                     : "You've explored all current insights. Return later for fresh perspectives."
@@ -242,9 +242,9 @@ export default function DiscoverPage() {
                                 <div className="mb-auto">
                                     <div className="flex items-center gap-3 mb-6">
                                         <div className="px-4 py-1.5 bg-white/5 rounded-full border border-white/5 flex items-center gap-2">
-                                            <span className="text-[10px] font-bold tracking-widest uppercase text-white/70">{item.source}</span>
+                                            <span className="text-[10px] font-bold tracking-widest uppercase text-white/80">{item.source}</span>
                                         </div>
-                                        <span className="text-[10px] font-medium tracking-wide text-white/30">{item.time}</span>
+                                        <span className="text-[10px] font-medium tracking-wide text-white/50">{item.time}</span>
                                     </div>
 
                                     <h2 className="text-4xl md:text-5xl font-serif text-white mb-6 leading-[1.1]">

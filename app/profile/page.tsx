@@ -233,7 +233,7 @@ export default function ProfilePage() {
                   <Image src={user.photoURL} alt="Profile" width={128} height={128} className="rounded-full w-full h-full object-cover" />
                 ) : (
                   <div className="w-full h-full rounded-full bg-white/5 flex items-center justify-center">
-                    <span className="text-3xl font-serif text-white/20 font-medium">
+                    <span className="text-3xl font-serif text-white/40 font-medium">
                       {user.email?.[0].toUpperCase()}
                     </span>
                   </div>
@@ -354,7 +354,7 @@ export default function ProfilePage() {
                 </button>
               </div>
 
-              <p className="text-center text-[10px] text-white/20 mt-8 uppercase tracking-widest">
+              <p className="text-center text-[10px] text-white/40 mt-8 uppercase tracking-widest">
                 Aara App Alpha v0.9
               </p>
             </motion.div>
@@ -384,7 +384,7 @@ export default function ProfilePage() {
                     value={displayName}
                     onChange={e => setDisplayName(e.target.value)}
                     placeholder="Enter your name"
-                    className="w-full bg-white/[0.03] border border-white/10 rounded-xl p-4 text-white placeholder:text-white/20 focus:outline-none focus:border-indigo-500/50 focus:bg-white/[0.05] transition-all"
+                    className="w-full bg-white/[0.03] border border-white/10 rounded-xl p-4 text-white placeholder:text-white/50 focus:outline-none focus:border-indigo-500/50 focus:bg-white/[0.05] transition-all"
                   />
                 </div>
                 <div className="flex gap-3 pt-4">
@@ -448,7 +448,7 @@ export default function ProfilePage() {
                     onChange={(e) => setFeedbackMessage(e.target.value)}
                     placeholder={feedbackType === 'bug' ? "Describe the issue..." : "Share your thoughts..."}
                     rows={5}
-                    className="w-full bg-white/[0.03] border border-white/10 rounded-xl p-4 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-indigo-500/50 focus:bg-white/[0.05] resize-none transition-all"
+                    className="w-full bg-white/[0.03] border border-white/10 rounded-xl p-4 text-sm text-white placeholder:text-white/50 focus:outline-none focus:border-indigo-500/50 focus:bg-white/[0.05] resize-none transition-all"
                   />
                 </div>
 

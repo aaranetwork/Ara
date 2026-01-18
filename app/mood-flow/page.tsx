@@ -136,17 +136,18 @@ export default function MoodFlowPage() {
             </div>
 
             {/* Header with Back Button (Responsive) */}
-            <div className="fixed top-0 left-0 right-0 z-[90] p-6 pointer-events-none flex items-center justify-between bg-gradient-to-b from-[#050505] to-transparent">
-                <div className="pointer-events-auto">
+            <div className="fixed top-0 left-0 right-0 z-[90] p-6 pointer-events-none flex items-center justify-between bg-gradient-to-b from-[#050505] to-transparent h-[88px]">
+                <div className="pointer-events-auto relative z-10">
                     <BackButton />
                 </div>
 
                 <Link
                     href="/"
-                    className="pointer-events-auto md:hidden flex items-center gap-2 px-4 py-2 rounded-full bg-white/[0.03] border border-white/5 backdrop-blur-xl shadow-2xl hover:bg-white/5 transition-all active:scale-95 cursor-pointer"
+                    aria-label="Home"
+                    className="pointer-events-auto md:hidden flex items-center gap-2 px-4 py-2 rounded-full bg-white/[0.03] border border-white/5 backdrop-blur-xl shadow-2xl hover:bg-white/5 transition-all active:scale-95 cursor-pointer absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-0"
                 >
                     <Image
-                        alt="AARA"
+                        alt=""
                         width={20}
                         height={20}
                         className="rounded-lg border border-white/10"
@@ -251,7 +252,7 @@ export default function MoodFlowPage() {
                                                 className={`w-full max-w-[12px] md:max-w-[18px] rounded-full transition-all duration-700 ease-out border border-white/5 ${value > 0 ? 'bg-gradient-to-t from-indigo-600 to-violet-500 shadow-[0_0_20px_rgba(99,102,241,0.3)] group-hover:bg-indigo-400' : 'bg-white/5'}`}
                                                 style={{ height: `${height}%` }}
                                             />
-                                            <span className="text-[9px] font-bold text-white/30 uppercase group-hover:text-white transition-colors">
+                                            <span className="text-[9px] font-bold text-white/50 uppercase group-hover:text-white transition-colors">
                                                 {chartData.labels[i]}
                                             </span>
                                         </div>
@@ -300,8 +301,8 @@ export default function MoodFlowPage() {
                             <div className="py-12 flex justify-center"><Activity className="animate-spin text-white/20" /></div>
                         ) : moods.length === 0 ? (
                             <div className="py-20 text-center border border-white/5 border-dashed rounded-[32px] bg-white/[0.01]">
-                                <Sparkles size={24} className="mx-auto mb-4 text-white/20" />
-                                <p className="text-sm text-white/40 font-light">No mood data recorded yet.</p>
+                                <Sparkles size={24} className="mx-auto mb-4 text-white/40" />
+                                <p className="text-sm text-white/60 font-light">No mood data recorded yet.</p>
                             </div>
                         ) : (
                             moods.map((mood, idx) => (
@@ -316,9 +317,9 @@ export default function MoodFlowPage() {
                                             <p className="text-base font-medium text-white mb-1">
                                                 {mood.createdAt.toLocaleDateString('en-US', { weekday: 'long' })}
                                             </p>
-                                            <p className="text-[11px] text-white/40 uppercase tracking-wide font-medium flex items-center gap-2">
+                                            <p className="text-[11px] text-white/60 uppercase tracking-wide font-medium flex items-center gap-2">
                                                 <span>{mood.createdAt.toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}</span>
-                                                <span className="w-1 h-1 rounded-full bg-white/20" />
+                                                <span className="w-1 h-1 rounded-full bg-white/40" />
                                                 <span>{mood.createdAt.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</span>
                                             </p>
                                         </div>
