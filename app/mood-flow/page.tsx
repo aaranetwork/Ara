@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Activity, ChevronLeft, TrendingUp, Sparkles, Lock, Clock, Calendar, Zap, Brain, Heart, Battery, Leaf, Users } from 'lucide-react'
-import Navbar from '@/components/layout/Navbar'
+import BackButton from '@/components/ui/BackButton'
 import { db } from '@/lib/firebase/config'
 import { collection, query, orderBy, getDocs } from 'firebase/firestore'
 import { useFeatureAccess } from '@/hooks/useFeatureAccess'
@@ -126,13 +126,8 @@ export default function MoodFlowPage() {
 
 
     return (
-        <div className="min-h-screen bg-[#050505] text-white overflow-x-hidden">
-            {/* Desktop Back Button */}
-            <div className="fixed top-6 left-6 z-50 hidden md:block">
-                <a className="p-3 bg-white/5 hover:bg-white/10 rounded-full transition-colors flex items-center justify-center backdrop-blur-md border border-white/5" href="/">
-                    <ChevronLeft size={20} className="text-zinc-400" />
-                </a>
-            </div>
+        <div className="min-h-screen text-white selection:bg-indigo-500/30 overflow-x-hidden">
+
 
             {/* Background Ambience */}
             <div className="fixed inset-0 overflow-hidden pointer-events-none">
@@ -140,166 +135,200 @@ export default function MoodFlowPage() {
                 <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-blue-500/5 rounded-full blur-[120px]" />
             </div>
 
-            {/* Mobile Header */}
-            <div className="md:hidden fixed top-0 left-0 right-0 z-[90] p-6 pointer-events-none flex items-center justify-between bg-gradient-to-b from-[#050505] to-transparent">
-                <button
-                    onClick={() => router.back()}
-                    className="pointer-events-auto p-3 rounded-2xl bg-white/[0.03] backdrop-blur-xl border border-white/5 text-gray-400 hover:text-white hover:bg-white/10 hover:border-white/10 transition-all active:scale-95 shadow-2xl group"
-                >
-                    <ChevronLeft size={20} className="group-hover:scale-110 transition-transform" />
-                </button>
+            {/* Header with Back Button (Responsive) */}
+            <div className="fixed top-0 left-0 right-0 z-[90] p-6 pointer-events-none flex items-center justify-between bg-gradient-to-b from-[#050505] to-transparent">
+                <div className="pointer-events-auto">
+                    <BackButton />
+                </div>
 
                 <Link
                     href="/"
-                    className="pointer-events-auto flex items-center gap-2 px-4 py-2 rounded-full bg-white/[0.03] border border-white/5 backdrop-blur-xl shadow-2xl hover:bg-white/5 transition-all active:scale-95 cursor-pointer"
+                    className="pointer-events-auto md:hidden flex items-center gap-2 px-4 py-2 rounded-full bg-white/[0.03] border border-white/5 backdrop-blur-xl shadow-2xl hover:bg-white/5 transition-all active:scale-95 cursor-pointer"
                 >
-                    <Image src="/aara-logo.png" alt="AARA" width={20} height={20} className="rounded-lg border border-white/10" />
+                    <Image
+                        alt="AARA"
+                        width={20}
+                        height={20}
+                        className="rounded-lg border border-white/10"
+                        src="/aara-logo.png"
+                    />
                     <span className="text-[10px] font-black tracking-[0.4em] text-white/60 uppercase">mood</span>
                 </Link>
 
-                <div className="w-11" />
+                <div className="w-11 md:hidden" /> {/* Spacer for balance on mobile */}
             </div>
 
-            <main className="relative z-10 max-w-2xl mx-auto px-6 pb-32 pt-24 md:pt-32">
+            <main className="relative z-10 max-w-4xl mx-auto px-6 pb-32 pt-24 md:pt-32">
 
                 {/* Header Section */}
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="text-center mb-10"
+                    transition={{ duration: 0.6 }}
+                    className="text-center mb-12"
                 >
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/5 mb-4">
-                        <Activity size={12} className="text-indigo-400" />
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/5 mb-6 backdrop-blur-md">
+                        <Activity size={12} className="text-indigo-300" />
                         <span className="text-[10px] font-bold uppercase tracking-widest text-white/60">Flow Analysis</span>
                     </div>
-                    <h1 className="text-3xl md:text-4xl font-black tracking-tight mb-3">
-                        Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-indigo-400">Rhythm</span>
+                    <h1 className="text-4xl md:text-5xl font-serif font-medium tracking-tight mb-4 text-white">
+                        Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 to-purple-300">Rhythm</span>
                     </h1>
-                    <p className="text-sm text-gray-400">Understanding your emotional patterns over time.</p>
+                    <p className="text-lg text-white/40 font-light max-w-lg mx-auto leading-relaxed">
+                        Understanding your emotional patterns over time allows you to navigate life with greater clarity.
+                    </p>
                 </motion.div>
 
-                {/* Score Big Card */}
-                <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.1 }}
-                    className="relative overflow-hidden rounded-[32px] p-1 bg-gradient-to-b from-white/10 to-transparent mb-8"
-                >
-                    <div className="bg-[#0e0e12] rounded-[28px] p-8 border border-white/5 relative overflow-hidden">
-                        <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 blur-[60px] rounded-full pointer-events-none" />
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                    {/* Score Big Card */}
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: 0.1 }}
+                        className="relative overflow-hidden rounded-[32px] p-1 bg-gradient-to-br from-white/10 to-transparent"
+                    >
+                        <div className="h-full bg-[#030305]/80 backdrop-blur-2xl rounded-[28px] p-8 border border-white/5 relative overflow-hidden flex flex-col justify-between">
+                            <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 blur-[80px] rounded-full pointer-events-none" />
 
-                        <div className="flex flex-col md:flex-row items-center justify-between gap-8 relative z-10">
-                            <div className="text-center md:text-left">
-                                <span className="text-xs font-bold text-gray-500 uppercase tracking-widest block mb-1">Average Score</span>
-                                <div className="flex items-baseline justify-center md:justify-start gap-1">
-                                    <span className="text-6xl font-black text-white">{overallAvg}</span>
-                                    <span className="text-xl font-bold text-gray-600">/10</span>
+                            <div className="relative z-10 mb-8">
+                                <span className="text-xs font-bold text-white/40 uppercase tracking-widest block mb-2">Average Score</span>
+                                <div className="flex items-baseline gap-1">
+                                    <span className="text-7xl font-serif text-white tracking-tighter">{overallAvg}</span>
+                                    <span className="text-xl font-light text-white/30">/10</span>
                                 </div>
-                                <div className="mt-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-[10px] font-bold uppercase tracking-wide">
+                                <div className="mt-4 inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-[10px] font-bold uppercase tracking-wide">
                                     <TrendingUp size={12} />
                                     <span>{moods.length} Check-ins total</span>
                                 </div>
                             </div>
 
-                            {/* Detailed Stats Grid inside Card */}
-                            <div className="grid grid-cols-2 gap-3 w-full md:w-auto">
-                                {Object.entries(SIGNAL_CONFIG).slice(0, 4).map(([id, config]) => {
+                            <div className="grid grid-cols-2 gap-3 relative z-10">
+                                {Object.entries(SIGNAL_CONFIG).slice(0, 2).map(([id, config]) => {
                                     const avg = getSignalAverage(id)
                                     return (
-                                        <div key={id} className="bg-white/5 rounded-xl p-3 flex flex-col items-center justify-center min-w-[80px]">
-                                            <config.icon size={16} className={`${config.color} mb-1.5`} />
-                                            <span className="text-lg font-bold text-white leading-none mb-0.5">{avg || '-'}</span>
-                                            <span className="text-[9px] text-gray-500 uppercase tracking-wider">{config.label}</span>
+                                        <div key={id} className="bg-white/5 rounded-2xl p-4 flex flex-col items-start border border-white/5">
+                                            <config.icon size={18} className={`${config.color} mb-2 opacity-80`} />
+                                            <span className="text-2xl font-serif text-white mb-0.5">{avg || '-'}</span>
+                                            <span className="text-[10px] text-white/40 uppercase tracking-wider font-bold">{config.label}</span>
                                         </div>
                                     )
                                 })}
                             </div>
                         </div>
-                    </div>
-                </motion.div>
+                    </motion.div>
 
-                {/* Weekly Chart */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.2 }}
-                    className="mb-8"
-                >
-                    <div className="flex items-center gap-2 mb-4 px-1">
-                        <Calendar size={14} className="text-gray-500" />
-                        <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest">Last 7 Days</h3>
-                    </div>
-                    <div className="p-6 bg-[#0e0e12] border border-white/5 rounded-3xl h-48 flex items-end justify-between gap-2 relative">
-                        {/* Subtle horizontal lines */}
-                        <div className="absolute inset-0 flex flex-col justify-between py-6 px-6 pointer-events-none opacity-20">
-                            <div className="w-full h-px bg-white/10" />
-                            <div className="w-full h-px bg-white/10" />
-                            <div className="w-full h-px bg-white/10" />
-                        </div>
-
-                        {chartData.values.map((value, i) => {
-                            const height = value > 0 ? Math.max(value * 8, 4) : 2 // Adjusted height scale
-                            return (
-                                <div key={i} className="h-full flex flex-col justify-end items-center gap-2 flex-1 group z-10">
-                                    <div className="text-[10px] font-bold text-white opacity-0 group-hover:opacity-100 transition-all -translate-y-2 group-hover:translate-y-0">
-                                        {value > 0 ? value : ''}
-                                    </div>
-                                    <div
-                                        className={`w-full max-w-[24px] rounded-full transition-all duration-500 ${value > 0 ? 'bg-indigo-500 shadow-[0_0_15px_rgba(99,102,241,0.3)] group-hover:bg-indigo-400' : 'bg-white/5'}`}
-                                        style={{ height: `${height}%` }}
-                                    />
-                                    <span className="text-[9px] font-bold text-gray-600 uppercase group-hover:text-gray-400 transition-colors">
-                                        {chartData.labels[i]}
-                                    </span>
+                    {/* Weekly Chart */}
+                    <motion.div
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.2 }}
+                        className="relative overflow-hidden rounded-[32px] p-1 bg-gradient-to-bl from-white/10 to-transparent"
+                    >
+                        <div className="h-full bg-[#030305]/80 backdrop-blur-2xl rounded-[28px] p-8 border border-white/5 relative flex flex-col">
+                            <div className="flex items-center gap-3 mb-8">
+                                <div className="p-2 bg-white/5 rounded-full">
+                                    <Calendar size={16} className="text-white/60" />
                                 </div>
-                            )
-                        })}
-                    </div>
-                </motion.div>
+                                <h3 className="text-sm font-bold text-white uppercase tracking-widest">Last 7 Days</h3>
+                            </div>
+
+                            <div className="flex-1 flex items-end justify-between gap-3 relative min-h-[160px]">
+                                {/* Grid Lines */}
+                                <div className="absolute inset-0 flex flex-col justify-between pointer-events-none">
+                                    <div className="w-full h-px bg-white/5 border-t border-dashed border-white/10" />
+                                    <div className="w-full h-px bg-white/5 border-t border-dashed border-white/10" />
+                                    <div className="w-full h-px bg-white/5 border-t border-dashed border-white/10" />
+                                </div>
+
+                                {chartData.values.map((value, i) => {
+                                    const height = value > 0 ? Math.max(value * 8, 4) : 2
+                                    return (
+                                        <div key={i} className="h-full flex flex-col justify-end items-center gap-3 flex-1 group z-10 relative">
+                                            <div className="absolute -top-8 text-xs font-bold text-white opacity-0 group-hover:opacity-100 transition-all bg-white/10 px-2 py-1 rounded-lg backdrop-blur-md border border-white/10">
+                                                {value > 0 ? value : ''}
+                                            </div>
+                                            <div
+                                                className={`w-full max-w-[12px] md:max-w-[18px] rounded-full transition-all duration-700 ease-out border border-white/5 ${value > 0 ? 'bg-gradient-to-t from-indigo-600 to-violet-500 shadow-[0_0_20px_rgba(99,102,241,0.3)] group-hover:bg-indigo-400' : 'bg-white/5'}`}
+                                                style={{ height: `${height}%` }}
+                                            />
+                                            <span className="text-[9px] font-bold text-white/30 uppercase group-hover:text-white transition-colors">
+                                                {chartData.labels[i]}
+                                            </span>
+                                        </div>
+                                    )
+                                })}
+                            </div>
+                        </div>
+                    </motion.div>
+                </div>
+
+                {/* Additional Stats Grid (Remaining Signals) */}
+                <div className="grid grid-cols-3 gap-4 mb-12">
+                    {Object.entries(SIGNAL_CONFIG).slice(2, 5).map(([id, config], i) => {
+                        const avg = getSignalAverage(id)
+                        return (
+                            <motion.div
+                                key={id}
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.3 + (i * 0.1) }}
+                                className="bg-white/[0.02] border border-white/5 rounded-[24px] p-5 flex flex-col items-center justify-center backdrop-blur-md group hover:bg-white/[0.04] transition-all"
+                            >
+                                <config.icon size={20} className={`${config.color} mb-3 opacity-70 group-hover:opacity-100 transition-opacity`} strokeWidth={1.5} />
+                                <span className="text-2xl font-serif text-white mb-1">{avg || '-'}</span>
+                                <span className="text-[9px] text-white/30 uppercase tracking-widest font-bold">{config.label}</span>
+                            </motion.div>
+                        )
+                    })}
+                </div>
 
                 {/* Recent History */}
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3 }}
+                    transition={{ delay: 0.4 }}
                 >
-                    <div className="flex items-center gap-2 mb-4 px-1">
-                        <Clock size={14} className="text-gray-500" />
-                        <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest">Recent Logs</h3>
+                    <div className="flex items-center gap-3 mb-6 px-1">
+                        <div className="p-2 bg-white/5 rounded-full">
+                            <Clock size={14} className="text-white/60" />
+                        </div>
+                        <h3 className="text-sm font-bold text-white uppercase tracking-widest">Recent Logs</h3>
                     </div>
 
                     <div className="space-y-3">
                         {dataLoading ? (
                             <div className="py-12 flex justify-center"><Activity className="animate-spin text-white/20" /></div>
                         ) : moods.length === 0 ? (
-                            <div className="py-16 text-center border border-white/5 border-dashed rounded-3xl">
-                                <Sparkles size={24} className="mx-auto mb-3 text-gray-600" />
-                                <p className="text-sm text-gray-500 font-medium">No mood data recorded yet.</p>
+                            <div className="py-20 text-center border border-white/5 border-dashed rounded-[32px] bg-white/[0.01]">
+                                <Sparkles size={24} className="mx-auto mb-4 text-white/20" />
+                                <p className="text-sm text-white/40 font-light">No mood data recorded yet.</p>
                             </div>
                         ) : (
                             moods.map((mood, idx) => (
-                                <div key={mood.id} className="p-4 bg-[#0e0e12] border border-white/5 rounded-2xl flex items-center justify-between group hover:bg-white/5 transition-all">
-                                    <div className="flex items-center gap-4">
-                                        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center font-black text-lg ${mood.average >= 7 ? 'bg-green-500/10 text-green-400' :
-                                            mood.average >= 4 ? 'bg-yellow-500/10 text-yellow-400' : 'bg-red-500/10 text-red-400'
+                                <div key={mood.id} className="p-5 bg-white/[0.02] border border-white/5 rounded-[24px] flex items-center justify-between group hover:bg-white/[0.04] transition-all backdrop-blur-sm">
+                                    <div className="flex items-center gap-5">
+                                        <div className={`w-14 h-14 rounded-2xl flex items-center justify-center font-serif text-xl border border-white/5 shadow-inner ${mood.average >= 7 ? 'bg-emerald-500/10 text-emerald-300' :
+                                            mood.average >= 4 ? 'bg-amber-500/10 text-amber-300' : 'bg-rose-500/10 text-rose-300'
                                             }`}>
                                             {mood.average.toFixed(1)}
                                         </div>
                                         <div>
-                                            <p className="text-sm font-bold text-white mb-0.5">
+                                            <p className="text-base font-medium text-white mb-1">
                                                 {mood.createdAt.toLocaleDateString('en-US', { weekday: 'long' })}
                                             </p>
-                                            <p className="text-[10px] text-gray-500 uppercase tracking-wide font-medium">
-                                                {mood.createdAt.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} • {mood.createdAt.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                                            <p className="text-[11px] text-white/40 uppercase tracking-wide font-medium flex items-center gap-2">
+                                                <span>{mood.createdAt.toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}</span>
+                                                <span className="w-1 h-1 rounded-full bg-white/20" />
+                                                <span>{mood.createdAt.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</span>
                                             </p>
                                         </div>
                                     </div>
 
                                     {/* Mini Pillars Display */}
-                                    <div className="hidden md:flex gap-1">
-                                        {Object.entries(mood.signals || {}).slice(0, 3).map(([k, v]) => (
-                                            <div key={k} className="w-1 h-6 bg-white/10 rounded-full overflow-hidden">
-                                                <div className="w-full bg-white/40" style={{ height: `${(v as number) * 10}%`, marginTop: `${100 - ((v as number) * 10)}%` }} />
+                                    <div className="hidden md:flex gap-1.5 opacity-50 group-hover:opacity-100 transition-opacity">
+                                        {Object.entries(mood.signals || {}).slice(0, 5).map(([k, v]) => (
+                                            <div key={k} className="w-1.5 h-8 bg-white/5 rounded-full overflow-hidden flex flex-col justify-end">
+                                                <div className="w-full bg-white/60 rounded-full" style={{ height: `${(v as number) * 10}%` }} />
                                             </div>
                                         ))}
                                     </div>

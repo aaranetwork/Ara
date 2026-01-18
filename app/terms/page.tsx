@@ -1,59 +1,93 @@
-import Header from '@/components/layout/Header'
-import Footer from '@/components/layout/Footer'
-import GlassCard from '@/components/ui/GlassCard'
+'use client'
+
+import { motion } from 'framer-motion'
+import Link from 'next/link'
+import Image from 'next/image'
+import { ArrowLeft, Gavel } from 'lucide-react'
 
 export default function TermsPage() {
   return (
-    <div className="min-h-screen">
-      <Header />
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
-        <h1 className="text-4xl font-bold text-white mb-8">Terms of Service</h1>
+    <div className="min-h-screen text-white pt-32 pb-20 px-6">
+      <nav className="fixed top-0 left-0 w-full z-50 px-6 py-6 bg-[#030305]/80 backdrop-blur-xl border-b border-white/5">
+        <div className="max-w-5xl mx-auto flex items-center justify-between">
+          <Link href="/" className="group flex items-center gap-3 text-white/60 hover:text-white transition-colors">
+            <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center border border-white/10 group-hover:bg-white/10 transition-colors">
+              <ArrowLeft size={16} />
+            </div>
+            <span className="text-sm font-medium">Back</span>
+          </Link>
+          <div className="flex items-center gap-2 opacity-50">
+            <Image src="/aara-logo.png" alt="AARA" width={24} height={24} className="rounded-md" />
+          </div>
+        </div>
+      </nav>
 
-        <GlassCard className="p-8 space-y-6">
-          <section>
-            <h2 className="text-2xl font-semibold text-white mb-4">Service Description</h2>
-            <p className="text-white/80 leading-relaxed">
-              AARA provides AI-powered therapy support and mental wellness tools. Our services include
-              AI chat therapy, mental wellness games, and therapist booking.
+      <div className="max-w-3xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-12 border-b border-white/5 pb-12"
+        >
+          <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-400 mb-6 border border-indigo-500/20">
+            <Gavel size={24} />
+          </div>
+          <h1 className="text-4xl md:text-5xl font-serif font-medium mb-4">Terms of Service</h1>
+          <p className="text-white/40 text-sm uppercase tracking-widest font-bold">Last Updated: {new Date().toLocaleDateString()}</p>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.1 }}
+          className="space-y-12"
+        >
+          <Section title="Service Description">
+            AARA describes itself as an AI-powered consciousness processor and therapy support tool.
+            Our services provide structured self-reflection, journaling assistance, and data visualization.
+          </Section>
+
+          <Section title="Not Medical Advice">
+            <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-200/80 text-sm leading-relaxed mb-4">
+              <strong>Critical Disclaimer:</strong> AARA is not a substitute for professional medical or mental health treatment.
+            </div>
+            If you are experiencing a mental health emergency, please contact local emergency services or a mental health professional immediately.
+            AARA is a tool for self-help and organization, not diagnosis or treatment.
+          </Section>
+
+          <Section title="User Responsibilities">
+            By using AARA, you agree to:
+            <ul className="list-disc list-outside ml-4 space-y-2 mt-4 marker:text-indigo-500/50">
+              <li>Maintain the confidentiality of your account credentials.</li>
+              <li>Provide accurate information during onboarding.</li>
+              <li>Use the service lawfully and respectfully.</li>
+              <li>Not attempt to reverse-engineer the AI logic or systems.</li>
+            </ul>
+          </Section>
+
+          <Section title="Limitation of Liability">
+            AARA is provided on an "as is" and "as available" basis. We do not guarantee that the service will be uninterrupted or error-free.
+            To the maximum extent permitted by law, AARA shall not be liable for any indirect, incidental, or consequential damages arising from your use of the service.
+          </Section>
+
+          <div className="pt-8 border-t border-white/5">
+            <p className="text-white/40 text-sm">
+              Acceptance of these terms is a condition of usage for AARA services.
             </p>
-          </section>
+          </div>
 
-          <section>
-            <h2 className="text-2xl font-semibold text-white mb-4">Not Medical Advice</h2>
-            <p className="text-white/80 leading-relaxed">
-              AARA is not a substitute for professional medical or mental health treatment.
-              If you are experiencing a mental health emergency, please contact local emergency services
-              or a mental health professional immediately.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-semibold text-white mb-4">User Responsibilities</h2>
-            <p className="text-white/80 leading-relaxed">
-              Users are responsible for maintaining the confidentiality of their account.
-              Users agree to use the service in a lawful manner and not to share inappropriate content.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-semibold text-white mb-4">Limitation of Liability</h2>
-            <p className="text-white/80 leading-relaxed">
-              AARA is provided &quot;as is&quot; without warranties. We are not liable for any
-              damages arising from the use or inability to use our services.
-            </p>
-          </section>
-
-          <p className="text-white/60 text-sm mt-8">
-            Last updated: {new Date().toLocaleDateString()}
-          </p>
-        </GlassCard>
+        </motion.div>
       </div>
-      <Footer />
     </div>
   )
 }
 
-
-
-
-
+function Section({ title, children }: { title: string, children: React.ReactNode }) {
+  return (
+    <section className="space-y-4">
+      <h2 className="text-xl font-serif text-white/90">{title}</h2>
+      <div className="text-white/60 leading-relaxed text-base">
+        {children}
+      </div>
+    </section>
+  )
+}

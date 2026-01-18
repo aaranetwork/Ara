@@ -25,31 +25,46 @@ export default function TherapistLoginPage() {
     }
 
     return (
-        <div className="min-h-screen bg-[#08080c] text-white">
-            <div className="flex min-h-screen">
+        <div className="min-h-screen text-white selection:bg-purple-500/30">
+            {/* Ambient Background */}
+            <div className="fixed inset-0 z-0 pointer-events-none">
+                <div className="absolute top-[20%] left-[20%] w-[500px] h-[500px] bg-purple-600/10 blur-[150px] rounded-full" />
+                <div className="absolute bottom-[20%] right-[20%] w-[500px] h-[500px] bg-indigo-600/10 blur-[150px] rounded-full" />
+            </div>
 
-                {/* Left Panel - Benefits */}
-                <div className="hidden lg:flex lg:w-1/2 flex-col justify-between p-12 bg-gradient-to-br from-purple-900/20 to-[#08080c] border-r border-white/5">
-                    <div>
-                        <Link href="/" className="flex items-center gap-3 mb-16">
-                            <Image src="/aara-logo.png" alt="AARA" width={40} height={40} className="rounded-xl" />
-                            <span className="font-bold text-xl">AARA</span>
+            <div className="relative z-10 flex min-h-screen">
+
+                {/* Left Panel - Benefits (Glassmorphism) */}
+                <div className="hidden lg:flex lg:w-1/2 flex-col justify-between p-16 bg-white/[0.02] backdrop-blur-3xl border-r border-white/5 relative overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-transparent opacity-50" />
+
+                    <div className="relative z-10">
+                        <Link href="/" className="flex items-center gap-3 mb-20 group">
+                            <div className="relative">
+                                <div className="absolute inset-0 bg-white/20 blur-lg rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                                <Image src="/aara-logo.png" alt="AARA" width={48} height={48} className="relative rounded-2xl shadow-xl" />
+                            </div>
+                            <span className="font-serif text-2xl tracking-tight text-white/90">AARA</span>
                         </Link>
 
-                        <div className="mb-12">
-                            <div className="inline-flex items-center gap-2 px-4 py-2 bg-purple-600/20 border border-purple-500/30 rounded-full mb-6">
-                                <Shield size={16} className="text-purple-400" />
-                                <span className="text-purple-400 text-sm font-medium">For Therapists</span>
-                            </div>
-                            <h1 className="text-4xl font-bold mb-4">
+                        <div className="mb-16">
+                            <motion.div
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                className="inline-flex items-center gap-2 px-4 py-1.5 bg-purple-500/10 border border-purple-500/20 rounded-full mb-8"
+                            >
+                                <Shield size={14} className="text-purple-300" />
+                                <span className="text-purple-200 text-xs font-bold tracking-widest uppercase">For Therapists</span>
+                            </motion.div>
+                            <h1 className="text-5xl font-serif font-medium mb-6 leading-tight">
                                 Professional<br />Dashboard
                             </h1>
-                            <p className="text-gray-500 text-lg">
-                                Access client reports, manage appointments, and streamline your practice.
+                            <p className="text-white/50 text-lg max-w-md leading-relaxed font-light">
+                                Access client reports, manage appointments, and streamline your practice with AI-driven insights.
                             </p>
                         </div>
 
-                        <div className="space-y-6">
+                        <div className="space-y-8">
                             {[
                                 { icon: FileText, title: 'Client Reports', desc: 'View structured mental health summaries from AARA' },
                                 { icon: Users, title: 'Client Management', desc: 'Track client progress and session history' },
@@ -61,15 +76,15 @@ export default function TherapistLoginPage() {
                                         key={i}
                                         initial={{ opacity: 0, x: -20 }}
                                         animate={{ opacity: 1, x: 0 }}
-                                        transition={{ delay: 0.2 + i * 0.1 }}
-                                        className="flex gap-4"
+                                        transition={{ delay: 0.3 + i * 0.1 }}
+                                        className="flex gap-5 group"
                                     >
-                                        <div className="w-10 h-10 rounded-xl bg-purple-600/20 flex items-center justify-center shrink-0">
-                                            <Icon size={20} className="text-purple-400" />
+                                        <div className="w-12 h-12 rounded-2xl bg-white/[0.05] border border-white/5 flex items-center justify-center shrink-0 group-hover:bg-white/10 transition-colors">
+                                            <Icon size={22} className="text-purple-300/80 group-hover:text-purple-300 transition-colors" />
                                         </div>
                                         <div>
-                                            <h3 className="font-medium mb-1">{item.title}</h3>
-                                            <p className="text-gray-500 text-sm">{item.desc}</p>
+                                            <h3 className="font-serif text-lg text-white/90 mb-1 group-hover:text-white transition-colors">{item.title}</h3>
+                                            <p className="text-white/40 text-sm font-light">{item.desc}</p>
                                         </div>
                                     </motion.div>
                                 )
@@ -77,76 +92,79 @@ export default function TherapistLoginPage() {
                         </div>
                     </div>
 
-                    <p className="text-gray-600 text-sm">
-                        Trusted by 500+ mental health professionals
-                    </p>
+                    <div className="relative z-10 w-full pt-8 border-t border-white/5">
+                        <p className="text-white/30 text-xs uppercase tracking-widest font-bold">
+                            Trusted by 500+ mental health professionals
+                        </p>
+                    </div>
                 </div>
 
                 {/* Right Panel - Login Form */}
-                <div className="flex-1 flex items-center justify-center p-8">
+                <div className="flex-1 flex items-center justify-center p-8 lg:p-12 relative">
                     <div className="w-full max-w-md">
                         {/* Mobile Logo */}
-                        <div className="lg:hidden text-center mb-10">
-                            <Link href="/" className="inline-block mb-6">
-                                <Image src="/aara-logo.png" alt="AARA" width={48} height={48} className="rounded-xl mx-auto" />
+                        <div className="lg:hidden text-center mb-12">
+                            <Link href="/" className="inline-block mb-8">
+                                <Image src="/aara-logo.png" alt="AARA" width={56} height={56} className="rounded-2xl mx-auto shadow-2xl" />
                             </Link>
-                            <div className="inline-flex items-center gap-2 px-4 py-2 bg-purple-600/20 border border-purple-500/30 rounded-full mb-4">
-                                <Shield size={16} className="text-purple-400" />
-                                <span className="text-purple-400 text-sm font-medium">Therapist Portal</span>
+                            <div className="inline-flex items-center gap-2 px-4 py-2 bg-purple-500/10 border border-purple-500/20 rounded-full mb-4">
+                                <Shield size={16} className="text-purple-300" />
+                                <span className="text-purple-300 text-xs font-bold uppercase tracking-widest">Therapist Portal</span>
                             </div>
                         </div>
 
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.5 }}
                         >
-                            <h2 className="text-2xl font-bold mb-2">Welcome back</h2>
-                            <p className="text-gray-500 mb-8">Sign in to your therapist account</p>
+                            <h2 className="text-3xl font-serif text-white mb-3 text-center lg:text-left">Welcome back</h2>
+                            <p className="text-white/40 mb-10 text-center lg:text-left font-light">Sign in to your therapist account</p>
 
-                            <form onSubmit={handleSubmit} className="space-y-5">
-                                <div>
-                                    <label className="block text-sm text-gray-400 mb-2">Email</label>
+                            <form onSubmit={handleSubmit} className="space-y-6">
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-bold text-white/30 uppercase tracking-[0.2em] ml-1">Email</label>
                                     <div className="relative">
-                                        <Mail size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
+                                        <Mail size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30" />
                                         <input
                                             type="email"
                                             required
                                             value={form.email}
                                             onChange={(e) => setForm({ ...form, email: e.target.value })}
-                                            className="w-full pl-12 pr-4 py-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-gray-600 focus:outline-none focus:border-purple-500/50 transition-colors"
+                                            className="w-full pl-11 pr-4 py-4 bg-white/[0.03] border border-white/5 rounded-xl text-white placeholder:text-white/20 focus:outline-none focus:ring-1 focus:ring-purple-500/50 focus:bg-white/[0.05] transition-all"
                                             placeholder="therapist@email.com"
                                         />
                                     </div>
                                 </div>
 
-                                <div>
-                                    <label className="block text-sm text-gray-400 mb-2">Password</label>
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-bold text-white/30 uppercase tracking-[0.2em] ml-1">Password</label>
                                     <div className="relative">
-                                        <Lock size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
+                                        <Lock size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30" />
                                         <input
                                             type="password"
                                             required
                                             value={form.password}
                                             onChange={(e) => setForm({ ...form, password: e.target.value })}
-                                            className="w-full pl-12 pr-4 py-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-gray-600 focus:outline-none focus:border-purple-500/50 transition-colors"
+                                            className="w-full pl-11 pr-4 py-4 bg-white/[0.03] border border-white/5 rounded-xl text-white placeholder:text-white/20 focus:outline-none focus:ring-1 focus:ring-purple-500/50 focus:bg-white/[0.05] transition-all"
                                             placeholder="••••••••"
                                         />
                                     </div>
                                 </div>
 
-                                <div className="flex items-center justify-between text-sm">
-                                    <label className="flex items-center gap-2 text-gray-400 cursor-pointer">
-                                        <input type="checkbox" className="w-4 h-4 rounded border-gray-600 bg-transparent" />
+                                <div className="flex items-center justify-between text-xs">
+                                    <label className="flex items-center gap-2 text-white/40 hover:text-white/60 cursor-pointer transition-colors">
+                                        <input type="checkbox" className="w-4 h-4 rounded border-white/10 bg-white/5 checked:bg-purple-500 transition-colors" />
                                         Remember me
                                     </label>
-                                    <a href="#" className="text-purple-400 hover:underline">Forgot password?</a>
+                                    <a href="#" className="text-purple-400/80 hover:text-purple-300 transition-colors tracking-wide">Forgot password?</a>
                                 </div>
 
                                 {error && (
                                     <motion.div
-                                        initial={{ opacity: 0, y: -10 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        className="p-4 bg-purple-500/10 border border-purple-500/30 rounded-xl text-purple-300 text-sm text-center"
+                                        initial={{ opacity: 0, height: 0 }}
+                                        animate={{ opacity: 1, height: 'auto' }}
+                                        className="p-4 bg-purple-500/10 border border-purple-500/20 rounded-xl text-purple-200 text-sm text-center"
                                     >
                                         {error}
                                     </motion.div>
@@ -155,36 +173,31 @@ export default function TherapistLoginPage() {
                                 <button
                                     type="submit"
                                     disabled={loading}
-                                    className="w-full flex items-center justify-center gap-2 py-4 bg-purple-600 hover:bg-purple-500 disabled:opacity-50 rounded-xl text-white font-semibold transition-colors"
+                                    className="w-full flex items-center justify-center gap-2 py-4 bg-purple-600 hover:bg-purple-500 disabled:opacity-50 rounded-xl text-white font-semibold transition-all shadow-[0_4px_20px_-5px_rgba(147,51,234,0.3)] hover:shadow-[0_8px_25px_-5px_rgba(147,51,234,0.4)]"
                                 >
                                     {loading ? (
-                                        <span>Signing in...</span>
+                                        <span className="text-white/80">Signing in...</span>
                                     ) : (
                                         <>Sign In <ArrowRight size={18} /></>
                                     )}
                                 </button>
                             </form>
 
-                            <div className="mt-8 pt-8 border-t border-white/10 space-y-4 text-center text-sm">
-                                <p className="text-gray-500">
+                            <div className="mt-10 pt-8 border-t border-white/5 space-y-4 text-center text-sm">
+                                <p className="text-white/40">
                                     Want to partner with AARA?{' '}
-                                    <a href="#" className="text-purple-400 hover:underline">Apply as therapist</a>
+                                    <a href="#" className="text-purple-400 hover:text-purple-300 transition-colors font-medium">Apply as therapist</a>
                                 </p>
-                                <p className="text-gray-600">
+                                <p className="text-white/40">
                                     Not a therapist?{' '}
-                                    <Link href="/auth/login" className="text-gray-400 hover:text-white transition-colors">
-                                        User login →
+                                    <Link href="/auth/login" className="text-white/60 hover:text-white transition-colors ml-1 font-medium decoration-white/20 underline decoration-1 underline-offset-4">
+                                        User login
                                     </Link>
                                 </p>
                             </div>
                         </motion.div>
                     </div>
                 </div>
-            </div>
-
-            {/* Background */}
-            <div className="fixed inset-0 -z-10 pointer-events-none">
-                <div className="absolute top-1/3 right-1/4 w-[400px] h-[400px] bg-purple-900/20 blur-[180px] rounded-full" />
             </div>
         </div>
     )

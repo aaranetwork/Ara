@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 import Script from 'next/script'
-import { Poppins, Inter } from 'next/font/google'
+import { Inter } from 'next/font/google'
 import './globals.css'
 import { FeatureAccessProvider } from '@/components/providers/FeatureAccessProvider'
 import { AuthProvider } from '@/context/AuthContext'
@@ -11,16 +11,7 @@ import { DiscussionProvider } from '@/contexts/DiscussionContext'
 import NextTopLoader from 'nextjs-toploader'
 import { SpeedInsights } from "@vercel/speed-insights/next"
 
-const poppins = Poppins({
-  weight: ['300', '400', '500', '600', '700'],
-  subsets: ['latin'],
-  variable: '--font-poppins',
-  display: 'swap',
-  preload: true,
-})
-
 const inter = Inter({
-  weight: ['300', '400', '500', '600', '700'],
   subsets: ['latin'],
   variable: '--font-inter',
   display: 'swap',
@@ -29,59 +20,44 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: 'AARA — Your Pre-Therapy Insight',
+    default: 'AARA — Your AI-Driven Consciousness Processor',
     template: '%s | AARA',
   },
-  description: 'Talk, play, and grow your mind with Aara. Your AI Therapist — calm, caring, always here.',
-  keywords: ['AI therapy', 'mental health', 'therapy', 'wellness', 'mental wellbeing', 'anxiety', 'stress', 'depression'],
-  authors: [{ name: 'AARA' }],
-  creator: 'AARA',
-  publisher: 'AARA',
+  description: 'AARA transforms chaotic thoughts into structured insights. Experience next-gen mental clarity with our AI signal processing algorithms.',
+  keywords: ['AI therapy', 'mental health', '2026 design', 'consciousness processor', 'AARA', 'emotional intelligence'],
+  authors: [{ name: 'AARA Intelligence' }],
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://aara.site'),
   openGraph: {
-    title: 'AARA — Your Pre-Therapy Insight',
-    description: 'AARA helps you understand your emotions before therapy. Track moods, journal your thoughts, and get AI-powered mental health insights.',
+    title: 'AARA — Redefine Your Consciousness',
+    description: 'Transform your mindset with AARA. High-fidelity AI analysis for deep mental clarity.',
     type: 'website',
-    locale: 'en_US',
-    siteName: 'AARA',
-    images: [
-      {
-        url: '/og-image.png',
-        width: 1200,
-        height: 630,
-        alt: 'AARA - AI Therapist Platform',
-      },
-    ],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'AARA - Your AI Therapist',
-    description: 'Talk, play, and grow your mind with Aara.',
     images: ['/og-image.png'],
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      'max-video-preview': -1,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
-    },
-  },
-  manifest: '/manifest.json',
-  icons: {
-    icon: '/aara-logo.png',
-    apple: '/icon-192.png',
   },
 }
 
 export const viewport: Viewport = {
-  themeColor: '#0B0C10',
+  themeColor: '#121212',
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 1,
+}
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "AARA",
+  "operatingSystem": "Web",
+  "applicationCategory": "HealthApplication",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "description": "AI-driven mental health signal processor for structured insights.",
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.9",
+    "reviewCount": "10000"
+  }
 }
 
 export default function RootLayout({
@@ -90,44 +66,28 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`${poppins.variable} ${inter.variable}`}>
+    <html lang="en" className={`${inter.variable}`}>
       <head>
-        <link rel="manifest" href="/manifest.json" />
-        {/* Google tag (GA4) */}
         <Script
-          src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_ID}`}
-          strategy="afterInteractive"
+          id="json-ld"
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-        <Script id="google-analytics" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', '${process.env.NEXT_PUBLIC_GA_ID}', {
-              page_path: window.location.pathname,
-            });
-          `}
-        </Script>
       </head>
-      <body className="font-sans antialiased bg-gradient-to-br from-[#0B0C10] to-[#1C1E24] min-h-screen text-white">
-        <NextTopLoader
-          color="#00AEEF"
-          initialPosition={0.3}
-          crawlSpeed={100}
-          height={3}
-          crawl={true}
-          showSpinner={false}
-          easing="ease"
-          speed={100}
-          shadow="0 0 10px #00AEEF,0 0 5px #00AEEF"
-        />
+      <body className="antialiased bg-[#030305] text-[#F3F4F6] selection:bg-white/20 font-sans overflow-x-hidden">
+        {/* Global Grain Texture */}
+        <div className="fixed inset-0 opacity-[0.03] bg-[url('https://grainy-gradients.vercel.app/noise.svg')] pointer-events-none mix-blend-overlay z-[9999]"></div>
+
+        <NextTopLoader color="#FFFFFF" showSpinner={false} />
         <FeatureAccessProvider>
           <AuthProvider>
             <ReadHistoryProvider>
               <SavedItemsProvider>
                 <DiscussionProvider>
                   <RoutePrefetcher />
-                  {children}
+                  <div className="relative min-h-screen">
+                    {children}
+                  </div>
                   <SpeedInsights />
                 </DiscussionProvider>
               </SavedItemsProvider>

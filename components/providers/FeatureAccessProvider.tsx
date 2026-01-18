@@ -128,14 +128,15 @@ export function FeatureAccessProvider({ children }: { children: React.ReactNode 
 
     useEffect(() => {
         if (needsOnboarding) {
-            const allowed = ['/welcome', '/profile', '/sign-in']
+            const allowed = ['/onboarding', '/profile']
+            // If user is new, force them to onboarding. Don't let them sit on Welcome.
             if (!allowed.some(path => pathname?.startsWith(path))) {
-                router.replace('/welcome')
+                router.replace('/onboarding')
             }
         }
     }, [needsOnboarding, pathname, router])
 
-    const isRestricted = (needsOnboarding && !['/welcome', '/profile'].some(p => pathname?.startsWith(p)))
+    const isRestricted = (needsOnboarding && !['/onboarding', '/profile'].some(p => pathname?.startsWith(p)))
 
     if (isRestricted) {
         return null // Hide protected content

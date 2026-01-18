@@ -7,6 +7,9 @@ import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 
 // Dynamically import heavy components
+import LandingPage from './LandingPage'
+
+// Dynamically import heavy components
 const Dashboard = dynamic(() => import('./Dashboard'), {
     loading: () => <LoadingScreen />
 })
@@ -14,10 +17,10 @@ const Dashboard = dynamic(() => import('./Dashboard'), {
 // Shared Loading Screen
 function LoadingScreen() {
     return (
-        <div className="min-h-screen bg-[#08080c] flex items-center justify-center">
+        <div className="min-h-screen bg-aara-dark flex items-center justify-center">
             <div className="flex flex-col items-center gap-4">
                 <Image src="/aara-logo.png" alt="AARA" width={48} height={48} className="rounded-xl animate-pulse" />
-                <div className="w-8 h-1 bg-blue-500/30 rounded-full animate-pulse" />
+                <div className="w-8 h-1 bg-aara-accent/30 rounded-full animate-pulse" />
             </div>
         </div>
     )
@@ -25,13 +28,6 @@ function LoadingScreen() {
 
 export default function HomeWrapper() {
     const { user, loading } = useAuth()
-    const router = useRouter()
-
-    useEffect(() => {
-        if (!loading && !user) {
-            router.push('/welcome')
-        }
-    }, [user, loading, router])
 
     if (loading) {
         return <LoadingScreen />
@@ -41,6 +37,5 @@ export default function HomeWrapper() {
         return <Dashboard user={user} />
     }
 
-    // While redirecting
-    return <LoadingScreen />
+    return <LandingPage />
 }

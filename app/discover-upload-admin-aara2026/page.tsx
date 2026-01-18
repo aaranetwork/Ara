@@ -2,8 +2,9 @@
 
 import React, { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Upload, Check, AlertCircle, ExternalLink } from 'lucide-react'
+import { Upload, Check, AlertCircle, ExternalLink, Sparkles, LayoutDashboard } from 'lucide-react'
 import Link from 'next/link'
+import Image from 'next/image'
 
 const categories = [
     'Anxiety',
@@ -69,26 +70,35 @@ export default function AdminUploadPage() {
     }
 
     return (
-        <div className="min-h-screen bg-[#050505] text-white">
-            {/* Background */}
-            <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
-                <div className="absolute top-0 left-1/4 w-[1000px] h-[1000px] bg-indigo-500/5 rounded-full blur-[120px]" />
-                <div className="absolute bottom-0 right-0 w-[800px] h-[800px] bg-emerald-500/5 rounded-full blur-[120px]" />
-            </div>
+        <div className="min-h-screen text-white pt-32 pb-20 px-6">
+            {/* Nav */}
+            <nav className="fixed top-0 left-0 w-full z-50 px-6 py-6 bg-[#030305]/80 backdrop-blur-xl border-b border-white/5">
+                <div className="max-w-5xl mx-auto flex items-center justify-between">
+                    <Link href="/" className="group flex items-center gap-3 text-white/60 hover:text-white transition-colors">
+                        <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center border border-white/10 group-hover:bg-white/10 transition-colors">
+                            <LayoutDashboard size={16} />
+                        </div>
+                        <span className="text-sm font-medium">Dashboard</span>
+                    </Link>
+                    <div className="flex items-center gap-2 opacity-50">
+                        <Image src="/aara-logo.png" alt="AARA" width={24} height={24} className="rounded-md" />
+                    </div>
+                </div>
+            </nav>
 
-            <div className="relative z-10 max-w-3xl mx-auto px-4 py-16">
+            <div className="max-w-3xl mx-auto relative z-10">
                 {/* Header */}
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     className="text-center mb-12"
                 >
-                    <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-full text-emerald-400 text-sm font-medium mb-6">
-                        <Upload size={16} />
-                        Admin Upload
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-[10px] font-bold uppercase tracking-widest mb-6">
+                        <Sparkles size={12} />
+                        <span>Admin Console</span>
                     </div>
-                    <h1 className="text-4xl font-bold mb-4">Create Discover Topic</h1>
-                    <p className="text-gray-400">Fill in all sections below and push live to /discover</p>
+                    <h1 className="text-4xl md:text-5xl font-serif font-medium mb-4">Content Upload</h1>
+                    <p className="text-white/40">Publish new insights to the Discover feed.</p>
                 </motion.div>
 
                 {/* Success Message */}
@@ -96,20 +106,20 @@ export default function AdminUploadPage() {
                     <motion.div
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        className="mb-8 p-6 bg-emerald-500/10 border border-emerald-500/30 rounded-2xl"
+                        className="mb-8 p-6 bg-emerald-500/10 border border-emerald-500/20 rounded-[20px] backdrop-blur-md"
                     >
                         <div className="flex items-center gap-3 text-emerald-400 mb-4">
                             <Check size={24} />
-                            <span className="font-bold text-lg">Topic Published!</span>
+                            <span className="font-serif text-lg">Topic Published Successfully</span>
                         </div>
-                        <p className="text-gray-300 mb-4">Your topic is now live at:</p>
+                        <p className="text-white/60 mb-4 text-sm">Your content is now live and accessible to users.</p>
                         <Link
                             href={success.url}
                             target="_blank"
-                            className="inline-flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-indigo-400 transition-colors"
+                            className="inline-flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-emerald-400 text-sm font-medium transition-colors"
                         >
-                            {success.url}
-                            <ExternalLink size={16} />
+                            View Live Page
+                            <ExternalLink size={14} />
                         </Link>
                     </motion.div>
                 )}
@@ -119,10 +129,10 @@ export default function AdminUploadPage() {
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        className="mb-8 p-4 bg-red-500/10 border border-red-500/30 rounded-xl flex items-center gap-3 text-red-400"
+                        className="mb-8 p-4 bg-red-500/10 border border-red-500/20 rounded-xl flex items-center gap-3 text-red-400 backdrop-blur-md"
                     >
                         <AlertCircle size={20} />
-                        {error}
+                        <span className="text-sm font-medium">{error}</span>
                     </motion.div>
                 )}
 
@@ -132,65 +142,80 @@ export default function AdminUploadPage() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.1 }}
                     onSubmit={handleSubmit}
-                    className="space-y-8"
+                    className="space-y-8 bg-[#0e0e12]/50 border border-white/5 p-8 md:p-10 rounded-[32px] backdrop-blur-sm"
                 >
                     {/* Image URL */}
-                    <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-2">
-                            Image URL *
+                    <div className="space-y-2">
+                        <label className="text-xs font-bold uppercase tracking-widest text-white/40 ml-1">
+                            Cover Image
                         </label>
-                        <input
-                            type="url"
-                            required
-                            placeholder="https://example.com/image.jpg or /images/discover/image.png"
-                            value={formData.image}
-                            onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                            className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 transition-all"
-                        />
+                        <div className="relative group">
+                            <input
+                                type="url"
+                                required
+                                placeholder="https://example.com/image.jpg"
+                                value={formData.image}
+                                onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+                                className="w-full px-4 py-3.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/20 focus:outline-none focus:border-indigo-500/50 focus:bg-white/10 transition-all pl-10"
+                            />
+                            <Upload className="absolute left-3.5 top-3.5 text-white/20 group-focus-within:text-indigo-400 transition-colors" size={18} />
+                        </div>
+
                         {formData.image && (
-                            <div className="mt-3 rounded-xl overflow-hidden border border-white/10">
-                                <img src={formData.image} alt="Preview" className="w-full h-48 object-cover" />
-                            </div>
+                            <motion.div
+                                initial={{ opacity: 0, height: 0 }}
+                                animate={{ opacity: 1, height: 'auto' }}
+                                className="pt-2"
+                            >
+                                <div className="rounded-xl overflow-hidden border border-white/10 h-48 relative">
+                                    <img src={formData.image} alt="Preview" className="w-full h-full object-cover" />
+                                </div>
+                            </motion.div>
                         )}
                     </div>
 
                     {/* Title */}
-                    <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-2">
-                            Title (Question) *
+                    <div className="space-y-2">
+                        <label className="text-xs font-bold uppercase tracking-widest text-white/40 ml-1">
+                            Title (Question)
                         </label>
                         <input
                             type="text"
                             required
-                            placeholder="Why does my anxiety spike at night?"
+                            placeholder="e.g., Why does anxiety spike at night?"
                             value={formData.title}
                             onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                            className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 transition-all"
+                            className="w-full px-4 py-3.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/20 focus:outline-none focus:border-indigo-500/50 focus:bg-white/10 transition-all font-serif text-lg"
                         />
                     </div>
 
                     {/* Category & Source Row */}
-                    <div className="grid grid-cols-2 gap-4">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-300 mb-2">
-                                Category *
+                    <div className="grid md:grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                            <label className="text-xs font-bold uppercase tracking-widest text-white/40 ml-1">
+                                Category
                             </label>
-                            <select
-                                required
-                                value={formData.category}
-                                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 transition-all appearance-none cursor-pointer"
-                            >
-                                {categories.map((cat) => (
-                                    <option key={cat} value={cat} className="bg-[#0a0a0a]">
-                                        {cat}
-                                    </option>
-                                ))}
-                            </select>
+                            <div className="relative">
+                                <select
+                                    required
+                                    value={formData.category}
+                                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                                    className="w-full px-4 py-3.5 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:border-indigo-500/50 focus:bg-white/10 transition-all appearance-none cursor-pointer"
+                                >
+                                    {categories.map((cat) => (
+                                        <option key={cat} value={cat} className="bg-[#1a1a20]">
+                                            {cat}
+                                        </option>
+                                    ))}
+                                </select>
+                                <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-white/20">
+                                    ▼
+                                </div>
+                            </div>
                         </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-300 mb-2">
-                                Source *
+                        <div className="space-y-2">
+                            <label className="text-xs font-bold uppercase tracking-widest text-white/40 ml-1">
+                                Source
                             </label>
                             <input
                                 type="text"
@@ -198,86 +223,76 @@ export default function AdminUploadPage() {
                                 placeholder="Aara Health"
                                 value={formData.source}
                                 onChange={(e) => setFormData({ ...formData, source: e.target.value })}
-                                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 transition-all"
+                                className="w-full px-4 py-3.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/20 focus:outline-none focus:border-indigo-500/50 focus:bg-white/10 transition-all"
                             />
                         </div>
                     </div>
 
-                    {/* Divider */}
-                    <div className="border-t border-white/10 pt-6">
-                        <h2 className="text-lg font-bold text-indigo-400 mb-2">Content Sections</h2>
-                        <p className="text-sm text-gray-500">Fill in the detailed content for each section</p>
-                    </div>
+                    <div className="h-px bg-white/5 my-8" />
 
                     {/* Quick Answer */}
-                    <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-2">
-                            Quick Answer *
-                        </label>
-                        <p className="text-xs text-gray-500 mb-2">A brief, one-paragraph summary shown at the top</p>
+                    <div className="space-y-2">
+                        <div className="flex justify-between items-baseline">
+                            <label className="text-xs font-bold uppercase tracking-widest text-white/40 ml-1">
+                                Quick Answer
+                            </label>
+                            <span className="text-[10px] text-white/20">Brief summary (displayed at top)</span>
+                        </div>
                         <textarea
                             required
                             rows={3}
-                            placeholder="Regular meditation practice reduces cortisol levels and activates the parasympathetic nervous system, helping you feel calmer within minutes."
                             value={formData.description}
                             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                            className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 transition-all resize-none"
+                            className="w-full px-4 py-3.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/20 focus:outline-none focus:border-indigo-500/50 focus:bg-white/10 transition-all resize-none leading-relaxed"
                         />
                     </div>
 
                     {/* Understanding the Details */}
-                    <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-2">
-                            Understanding the Details *
-                        </label>
-                        <p className="text-xs text-gray-500 mb-2">Full explanation with multiple paragraphs (separate paragraphs with blank lines)</p>
+                    <div className="space-y-2">
+                        <div className="flex justify-between items-baseline">
+                            <label className="text-xs font-bold uppercase tracking-widest text-white/40 ml-1">
+                                Understanding the Details
+                            </label>
+                            <span className="text-[10px] text-white/20">Multi-paragraph deep dive</span>
+                        </div>
                         <textarea
                             required
                             rows={8}
-                            placeholder="The recent developments detailed in reports highlight a shifting paradigm...
-
-Research indicates a significant correlation between these factors...
-
-Experts recommend taking a proactive approach..."
                             value={formData.detailedAnswer}
                             onChange={(e) => setFormData({ ...formData, detailedAnswer: e.target.value })}
-                            className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 transition-all resize-none"
+                            className="w-full px-4 py-3.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/20 focus:outline-none focus:border-indigo-500/50 focus:bg-white/10 transition-all resize-none leading-relaxed"
                         />
                     </div>
 
                     {/* Key Takeaways */}
-                    <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-2">
-                            Key Takeaways *
-                        </label>
-                        <p className="text-xs text-gray-500 mb-2">3 bullet points (one per line, format: Title: Description)</p>
+                    <div className="space-y-2">
+                        <div className="flex justify-between items-baseline">
+                            <label className="text-xs font-bold uppercase tracking-widest text-white/40 ml-1">
+                                Key Takeaways
+                            </label>
+                            <span className="text-[10px] text-white/20">3 Format: Title: Description</span>
+                        </div>
                         <textarea
                             required
                             rows={4}
-                            placeholder="Immediate Relevance: This directly affects daily routines and mental well-being.
-Evidence-Based: Supported by recent peer-reviewed research and clinical studies.
-Actionable Insights: Practical steps you can implement today for better health outcomes."
+                            placeholder="Relevance: Why it matters...&#10;Science: The research says...&#10;Action: What to do..."
                             value={formData.keyTakeaways}
                             onChange={(e) => setFormData({ ...formData, keyTakeaways: e.target.value })}
-                            className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 transition-all resize-none"
+                            className="w-full px-4 py-3.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/20 focus:outline-none focus:border-indigo-500/50 focus:bg-white/10 transition-all resize-none leading-relaxed font-mono text-sm"
                         />
                     </div>
 
                     {/* Why This Matters */}
-                    <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-2">
-                            Why This Matters *
+                    <div className="space-y-2">
+                        <label className="text-xs font-bold uppercase tracking-widest text-white/40 ml-1">
+                            Why This Matters
                         </label>
-                        <p className="text-xs text-gray-500 mb-2">Closing section explaining importance (separate paragraphs with blank lines)</p>
                         <textarea
                             required
                             rows={5}
-                            placeholder="In today's complex health landscape, access to verified insights is critical...
-
-The integration of modern research with practical application demonstrates..."
                             value={formData.whyMatters}
                             onChange={(e) => setFormData({ ...formData, whyMatters: e.target.value })}
-                            className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 transition-all resize-none"
+                            className="w-full px-4 py-3.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/20 focus:outline-none focus:border-indigo-500/50 focus:bg-white/10 transition-all resize-none leading-relaxed"
                         />
                     </div>
 
@@ -285,31 +300,31 @@ The integration of modern research with practical application demonstrates..."
                     <motion.button
                         type="submit"
                         disabled={loading}
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        className="w-full py-4 bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white font-bold rounded-xl shadow-lg shadow-indigo-500/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-3"
+                        whileHover={{ scale: 1.01 }}
+                        whileTap={{ scale: 0.99 }}
+                        className="w-full py-4 bg-white text-black rounded-xl text-sm font-bold uppercase tracking-wider hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 shadow-lg shadow-white/5"
                     >
                         {loading ? (
                             <>
-                                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                <div className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin" />
                                 Publishing...
                             </>
                         ) : (
                             <>
-                                <Upload size={20} />
-                                Push Live
+                                Push to Discover
+                                <Upload size={16} />
                             </>
                         )}
                     </motion.button>
                 </motion.form>
 
                 {/* Footer */}
-                <div className="mt-12 text-center">
+                <div className="mt-12 text-center pb-8">
                     <Link
                         href="/discover"
-                        className="text-gray-500 hover:text-indigo-400 text-sm transition-colors"
+                        className="text-white/40 hover:text-white text-xs uppercase tracking-widest transition-colors"
                     >
-                        ← Back to Discover
+                        Back to Feed
                     </Link>
                 </div>
             </div>

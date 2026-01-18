@@ -2,9 +2,11 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { Home, MessageSquare, BookOpen, TrendingUp } from 'lucide-react'
+import { Home, MessageSquare, BookOpen, TrendingUp, User } from 'lucide-react'
+import { useAuth } from '@/hooks/useAuth'
 
 export default function Navbar() {
+    const { user } = useAuth()
     return (
         <nav className="flex justify-between md:justify-center items-center px-4 py-3 relative max-w-7xl mx-auto">
             {/* Left - Logo (Desktop) */}
@@ -85,13 +87,30 @@ export default function Navbar() {
                 </div>
             </div>
 
-            {/* Right - Join Button (Desktop) */}
+            {/* Right - Profile Icon (Desktop) */}
             <div className="absolute right-3 md:right-4 hidden md:flex items-center">
                 <Link
-                    href="/auth/login"
-                    className="bg-white text-black px-6 py-2.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] hover:bg-gray-100 transition-all active:scale-95 shadow-[0_20px_40px_rgba(255,255,255,0.1)]"
+                    href="/profile"
+                    className="group relative w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300"
                 >
-                    Join
+                    <div className="absolute inset-0 rounded-full border border-white/10 group-hover:border-white/30 transition-colors" />
+                    <div className="absolute inset-0 rounded-full bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity blur-md" />
+
+                    <div className="relative w-9 h-9 rounded-full overflow-hidden border border-black/20 shadow-sm group-active:scale-95 transition-transform">
+                        {user?.photoURL ? (
+                            <Image
+                                src={user.photoURL}
+                                alt="Profile"
+                                width={36}
+                                height={36}
+                                className="w-full h-full object-cover"
+                            />
+                        ) : (
+                            <div className="w-full h-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-xs">
+                                {user?.email?.[0].toUpperCase()}
+                            </div>
+                        )}
+                    </div>
                 </Link>
             </div>
         </nav>

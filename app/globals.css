@@ -2,76 +2,84 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Global resets and sensible defaults */
-html,
-body,
-#__next {
-  height: 100%;
+/* Hide scrollbar for Chrome, Safari and Opera */
+::-webkit-scrollbar {
+  display: none;
 }
 
-/* Smooth fonts rendering */
+/* Hide scrollbar for IE, Edge and Firefox */
 * {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-/* Selection color to match brand */
-::selection {
-  background-color: rgba(0, 174, 239, 0.3);
-}
-
-/* Utility helpers that are convenient app-wide */
-.container-responsive {
-  @apply container mx-auto px-4 sm:px-6 lg:px-8;
-}
-
-/* Headings default weight using the loaded fonts */
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  @apply font-semibold tracking-tight;
-}
-
-/* Default link styling consistent with brand */
-a {
-  @apply text-neon-blue hover:text-neon-purple transition-colors;
-}
-
-/* Hide scrollbar while keeping scroll functionality */
-.scrollbar-hide {
   -ms-overflow-style: none;
   /* IE and Edge */
   scrollbar-width: none;
   /* Firefox */
 }
 
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
-  /* Chrome, Safari and Opera */
-}
-
-/* Optimized fade-in animation for messages */
-@keyframes fade-in-up {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
+@layer base {
+  :root {
+    --background: #121212;
+    --foreground: #f0f0f0;
+    --accent: #00AEEF;
+    --accent-purple: #7A5FFF;
   }
 
-  to {
-    opacity: 1;
-    transform: translateY(0);
+  body {
+    @apply bg-aara-dark text-white selection:bg-aara-accent/30;
+    font-family: var(--font-inter), system-ui, sans-serif;
+    overflow-x: hidden;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-semibold tracking-tight;
   }
 }
 
-.animate-fade-in-up {
-  animation: fade-in-up 0.25s ease-out forwards;
+@layer components {
+  .liquid-container {
+    @apply relative overflow-hidden;
+    background: radial-gradient(circle at 50% 50%, rgba(0, 174, 239, 0.05) 0%, transparent 70%);
+  }
+
+  .glass-card {
+    @apply backdrop-blur-xl bg-white/5 border border-white/10 rounded-3xl;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  }
+
+  .grain-overlay {
+    @apply pointer-events-none fixed inset-0 z-[100] opacity-[0.03];
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  }
 }
 
-/* GPU acceleration hint for smoother mobile transitions */
-.gpu-accelerated {
-  transform: translateZ(0);
-  backface-visibility: hidden;
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .anti-grid-section {
+    @apply grid grid-cols-12 gap-fluid-1;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #121212;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2a2a2a;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #3a3a3a;
 }

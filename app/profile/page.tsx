@@ -209,30 +209,31 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white">
+    <div className="min-h-screen text-white font-sans selection:bg-indigo-500/30 overflow-x-hidden">
       <Navbar />
 
       {/* Background Ambience */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-indigo-500/5 rounded-full blur-[120px]" />
+        <div className="absolute -top-[20%] left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-indigo-500/5 rounded-full blur-[120px]" />
+        <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-blue-500/5 rounded-full blur-[100px]" />
       </div>
 
       <motion.div
         variants={containerVariants}
         initial="hidden"
         animate="visible"
-        className="relative z-10 max-w-xl mx-auto px-6 pb-32 pt-24 md:pt-32"
+        className="relative z-10 max-w-xl mx-auto px-6 pb-32 pt-28 md:pt-36"
       >
         {/* Profile Header */}
-        <motion.div variants={itemVariants} className="text-center mb-10">
+        <motion.div variants={itemVariants} className="text-center mb-12">
           <div className="relative inline-block mb-6 group">
-            <div className="w-28 h-28 rounded-full p-[2px] bg-gradient-to-br from-indigo-500 via-purple-500 to-blue-500 shadow-2xl shadow-indigo-500/20">
-              <div className="w-full h-full rounded-full bg-[#050505] p-1">
+            <div className="w-32 h-32 rounded-full p-[2px] bg-gradient-to-br from-indigo-500 via-purple-500 to-blue-500 shadow-[0_0_40px_rgba(99,102,241,0.2)]">
+              <div className="w-full h-full rounded-full bg-[#030305] p-1 relative overflow-hidden">
                 {user.photoURL ? (
-                  <Image src={user.photoURL} alt="Profile" width={112} height={112} className="rounded-full w-full h-full object-cover" />
+                  <Image src={user.photoURL} alt="Profile" width={128} height={128} className="rounded-full w-full h-full object-cover" />
                 ) : (
                   <div className="w-full h-full rounded-full bg-white/5 flex items-center justify-center">
-                    <span className="text-3xl font-black text-white/20">
+                    <span className="text-3xl font-serif text-white/20 font-medium">
                       {user.email?.[0].toUpperCase()}
                     </span>
                   </div>
@@ -241,39 +242,40 @@ export default function ProfilePage() {
             </div>
             <button
               onClick={() => setShowEditProfile(true)}
-              className="absolute bottom-1 right-1 w-8 h-8 rounded-full bg-white text-black flex items-center justify-center hover:scale-110 active:scale-95 transition-all shadow-lg"
+              className="absolute bottom-0 right-0 w-10 h-10 rounded-full bg-white text-black flex items-center justify-center hover:scale-110 active:scale-95 transition-all shadow-lg border-4 border-[#030305]"
             >
-              <Edit3 size={14} />
+              <Edit3 size={16} />
             </button>
           </div>
 
-          <h1 className="text-2xl md:text-3xl font-bold mb-2 tracking-tight">
+          <h1 className="text-3xl md:text-4xl font-serif font-medium mb-3 tracking-tight text-white">
             {user.displayName || 'Traveler'}
           </h1>
-          <div className="flex items-center justify-center gap-2 text-xs text-gray-500 font-medium">
-            <span className="px-2 py-0.5 rounded-md bg-white/5 border border-white/5">
+          <div className="flex items-center justify-center gap-3 text-xs text-white/50 font-bold uppercase tracking-widest">
+            <span className="px-3 py-1 rounded-full bg-white/5 border border-white/5">
               {userPlan === 'free' ? 'Free Plan' : 'AARA Plus'}
             </span>
-            <span>•</span>
+            <span className="w-1 h-1 rounded-full bg-white/20" />
             <span>Joined {formatMemberSince()}</span>
           </div>
         </motion.div>
 
         {/* Tab Switcher */}
-        <motion.div variants={itemVariants} className="flex p-1.5 bg-[#0e0e12] border border-white/5 rounded-2xl mb-8 relative">
+        <motion.div variants={itemVariants} className="flex p-1 bg-white/[0.03] border border-white/5 rounded-2xl mb-10 relative backdrop-blur-md">
           {(['overview', 'settings'] as const).map((tab) => {
             const isActive = activeTab === tab
             return (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`flex-1 py-3 rounded-xl text-xs font-bold uppercase tracking-wide transition-all relative z-10 ${isActive ? 'text-white' : 'text-gray-500 hover:text-gray-300'}`}
+                className={`flex-1 py-3 rounded-xl text-xs font-bold uppercase tracking-widest transition-all relative z-10 ${isActive ? 'text-black' : 'text-white/40 hover:text-white'}`}
               >
-                {tab}
+                <span className="relative z-10">{tab}</span>
                 {isActive && (
                   <motion.div
                     layoutId="activeTab"
-                    className="absolute inset-0 bg-white/10 rounded-xl border border-white/5 shadow-sm"
+                    className="absolute inset-0 bg-white rounded-xl shadow-lg"
+                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                   />
                 )}
               </button>
@@ -288,28 +290,27 @@ export default function ProfilePage() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.2 }}
+              transition={{ duration: 0.3 }}
             >
               {/* Stats Grid */}
-              <div className="grid grid-cols-2 gap-3 mb-8">
-                <div className="p-5 rounded-2xl bg-[#0e0e12] border border-white/5 flex flex-col items-center justify-center gap-2 text-center group hover:bg-white/5 transition-colors">
-                  <div className="w-10 h-10 rounded-full bg-indigo-500/10 text-indigo-400 flex items-center justify-center mb-1 group-hover:scale-110 transition-transform">
-                    <Heart size={20} />
+              <div className="grid grid-cols-2 gap-4 mb-8">
+                <div className="p-6 rounded-[24px] bg-[#030305]/40 backdrop-blur-xl border border-white/5 flex flex-col items-center justify-center gap-3 text-center group hover:bg-white/[0.02] transition-colors relative overflow-hidden">
+                  <div className="absolute inset-0 bg-indigo-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center mb-1 group-hover:scale-110 transition-transform duration-300">
+                    <Heart size={24} />
                   </div>
-                  <span className="text-2xl font-black">{moodCount}</span>
-                  <span className="text-[10px] uppercase tracking-widest text-gray-500">Check-ins</span>
+                  <span className="text-3xl font-serif font-medium text-white">{moodCount}</span>
+                  <span className="text-[10px] uppercase tracking-widest text-white/40 font-bold">Check-ins</span>
                 </div>
-                <div className="p-5 rounded-2xl bg-[#0e0e12] border border-white/5 flex flex-col items-center justify-center gap-2 text-center group hover:bg-white/5 transition-colors">
-                  <div className="w-10 h-10 rounded-full bg-blue-500/10 text-blue-400 flex items-center justify-center mb-1 group-hover:scale-110 transition-transform">
-                    <MessageSquare size={20} />
+                <div className="p-6 rounded-[24px] bg-[#030305]/40 backdrop-blur-xl border border-white/5 flex flex-col items-center justify-center gap-3 text-center group hover:bg-white/[0.02] transition-colors relative overflow-hidden">
+                  <div className="absolute inset-0 bg-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div className="w-12 h-12 rounded-2xl bg-blue-500/10 text-blue-400 flex items-center justify-center mb-1 group-hover:scale-110 transition-transform duration-300">
+                    <MessageSquare size={24} />
                   </div>
-                  <span className="text-2xl font-black">{chatCount}</span>
-                  <span className="text-[10px] uppercase tracking-widest text-gray-500">Sessions</span>
+                  <span className="text-3xl font-serif font-medium text-white">{chatCount}</span>
+                  <span className="text-[10px] uppercase tracking-widest text-white/40 font-bold">Sessions</span>
                 </div>
               </div>
-
-
-
             </motion.div>
           ) : (
             <motion.div
@@ -317,31 +318,44 @@ export default function ProfilePage() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.2 }}
+              transition={{ duration: 0.3 }}
+              className="space-y-8"
             >
-              <SectionHeader title="Account" />
-              <SettingRow icon={User} label="Personal Information" desc="Name, Email, Photo" onClick={() => setShowEditProfile(true)} />
-              <SettingRow icon={Bell} label="Notifications" desc="Preferences & Alerts" onClick={() => setShowNotifications(true)} />
+              <div>
+                <SectionHeader title="Account" />
+                <div className="space-y-2">
+                  <SettingRow icon={User} label="Personal Information" desc="Name, Email, Photo" onClick={() => setShowEditProfile(true)} />
+                  <SettingRow icon={Bell} label="Notifications" desc="Preferences & Alerts" onClick={() => setShowNotifications(true)} />
+                </div>
+              </div>
 
-              <SectionHeader title="Security" />
-              <SettingRow icon={Lock} label="Privacy & Data" desc="Control your footprint" onClick={() => setShowPrivacy(true)} />
+              <div>
+                <SectionHeader title="Security" />
+                <div className="space-y-2">
+                  <SettingRow icon={Lock} label="Privacy & Data" desc="Control your footprint" onClick={() => setShowPrivacy(true)} />
+                </div>
+              </div>
 
-              <SectionHeader title="Support" />
-              <SettingRow icon={MessageSquare} label="Send Feedback" desc="Help us improve" onClick={() => setShowFeedback(true)} />
-              <SettingRow icon={HelpCircle} label="Help & Support" desc="FAQs and Contact" href="#" />
-              <SettingRow icon={FileText} label="Terms & Policies" desc="Legal Information" href="#" />
+              <div>
+                <SectionHeader title="Support" />
+                <div className="space-y-2">
+                  <SettingRow icon={MessageSquare} label="Send Feedback" desc="Help us improve" onClick={() => setShowFeedback(true)} />
+                  <SettingRow icon={HelpCircle} label="Help & Support" desc="FAQs and Contact" href="#" />
+                  <SettingRow icon={FileText} label="Terms & Policies" desc="Legal Information" href="#" />
+                </div>
+              </div>
 
-              <div className="mt-8 pt-6 border-t border-white/5">
+              <div className="pt-6 border-t border-white/5">
                 <button
                   onClick={handleLogout}
-                  className="w-full py-4 text-center text-red-500 font-bold text-sm tracking-wide uppercase hover:bg-red-500/5 rounded-xl transition-colors"
+                  className="w-full py-4 text-center text-red-500 font-bold text-xs tracking-widest uppercase hover:bg-red-500/5 rounded-xl transition-colors border border-transparent hover:border-red-500/10"
                 >
                   Sign Out
                 </button>
               </div>
 
-              <p className="text-center text-[10px] text-gray-600 mt-6 uppercase tracking-widest opacity-50">
-                Aara App Alpha
+              <p className="text-center text-[10px] text-white/20 mt-8 uppercase tracking-widest">
+                Aara App Alpha v0.9
               </p>
             </motion.div>
           )}
@@ -354,26 +368,31 @@ export default function ProfilePage() {
         {showEditProfile && (
           <motion.div
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-6"
+            className="fixed inset-0 z-50 bg-[#030305]/80 backdrop-blur-md flex items-center justify-center p-6"
             onClick={() => setShowEditProfile(false)}
           >
             <motion.div
-              initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
+              initial={{ scale: 0.9, opacity: 0, y: 20 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.9, opacity: 0, y: 20 }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-sm bg-[#0e0e12] border border-white/10 p-6 rounded-3xl shadow-2xl"
+              className="w-full max-w-sm bg-[#08080c] border border-white/10 p-8 rounded-[32px] shadow-2xl"
             >
-              <h3 className="text-lg font-bold mb-6 text-center">Edit Profile</h3>
-              <input
-                value={displayName}
-                onChange={e => setDisplayName(e.target.value)}
-                placeholder="Display Name"
-                className="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-white placeholder:text-gray-500 mb-4 focus:outline-none focus:border-indigo-500/50"
-              />
-              <div className="flex gap-3">
-                <button onClick={() => setShowEditProfile(false)} className="flex-1 py-3 bg-white/5 rounded-xl text-sm font-bold text-gray-400">Cancel</button>
-                <button onClick={handleSaveProfile} className="flex-1 py-3 bg-indigo-500 rounded-xl text-sm font-bold text-white hover:bg-indigo-600">
-                  {saving ? 'Saving...' : 'Save'}
-                </button>
+              <h3 className="text-2xl font-serif font-medium mb-8 text-center text-white">Edit Profile</h3>
+              <div className="space-y-6">
+                <div>
+                  <label className="text-[10px] font-bold text-white/40 uppercase tracking-widest mb-3 block ml-1">Display Name</label>
+                  <input
+                    value={displayName}
+                    onChange={e => setDisplayName(e.target.value)}
+                    placeholder="Enter your name"
+                    className="w-full bg-white/[0.03] border border-white/10 rounded-xl p-4 text-white placeholder:text-white/20 focus:outline-none focus:border-indigo-500/50 focus:bg-white/[0.05] transition-all"
+                  />
+                </div>
+                <div className="flex gap-3 pt-4">
+                  <button onClick={() => setShowEditProfile(false)} className="flex-1 py-4 bg-white/5 hover:bg-white/10 rounded-xl text-xs font-bold text-white/60 tracking-wider uppercase transition-colors">Cancel</button>
+                  <button onClick={handleSaveProfile} className="flex-1 py-4 bg-white text-black rounded-xl text-xs font-bold tracking-wider uppercase hover:bg-gray-200 transition-colors shadow-lg">
+                    {saving ? 'Saving...' : 'Save Changes'}
+                  </button>
+                </div>
               </div>
             </motion.div>
           </motion.div>
@@ -385,37 +404,37 @@ export default function ProfilePage() {
         {showFeedback && (
           <motion.div
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-6"
+            className="fixed inset-0 z-50 bg-[#030305]/80 backdrop-blur-md flex items-center justify-center p-6"
             onClick={() => setShowFeedback(false)}
           >
             <motion.div
               initial={{ scale: 0.95, opacity: 0, y: 20 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.95, opacity: 0, y: 20 }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-md bg-[#0e0e12] border border-white/10 p-6 rounded-3xl shadow-2xl relative"
+              className="w-full max-w-md bg-[#08080c] border border-white/10 p-8 rounded-[32px] shadow-2xl relative"
             >
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 rounded-full bg-indigo-500/10 flex items-center justify-center text-indigo-400">
-                  <MessageSquare size={20} />
+              <div className="flex items-center gap-4 mb-8">
+                <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-400">
+                  <MessageSquare size={24} />
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-white">Send Feedback</h3>
-                  <p className="text-xs text-gray-500">Help us improve AARA</p>
+                  <h3 className="text-xl font-serif font-medium text-white">Send Feedback</h3>
+                  <p className="text-xs text-white/40 font-medium">Help us improve your experience</p>
                 </div>
               </div>
 
-              <div className="space-y-4">
+              <div className="space-y-6">
                 <div>
-                  <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 block">Type</label>
+                  <label className="text-[10px] font-bold text-white/40 uppercase tracking-widest mb-3 block ml-1">Type</label>
                   <div className="flex gap-2">
                     <button
                       onClick={() => setFeedbackType('general')}
-                      className={`flex-1 py-2.5 rounded-xl text-xs font-bold border ${feedbackType === 'general' ? 'bg-indigo-500 text-white border-transparent' : 'bg-white/5 text-gray-400 border-white/5 hover:bg-white/10'}`}
+                      className={`flex-1 py-3 rounded-xl text-xs font-bold uppercase tracking-wider border transition-all ${feedbackType === 'general' ? 'bg-white text-black border-transparent' : 'bg-white/5 text-white/40 border-white/5 hover:bg-white/10'}`}
                     >
                       General
                     </button>
                     <button
                       onClick={() => setFeedbackType('bug')}
-                      className={`flex-1 py-2.5 rounded-xl text-xs font-bold border ${feedbackType === 'bug' ? 'bg-red-500 text-white border-transparent' : 'bg-white/5 text-gray-400 border-white/5 hover:bg-white/10'}`}
+                      className={`flex-1 py-3 rounded-xl text-xs font-bold uppercase tracking-wider border transition-all ${feedbackType === 'bug' ? 'bg-red-500 text-white border-transparent' : 'bg-white/5 text-white/40 border-white/5 hover:bg-white/10'}`}
                     >
                       Bug Report
                     </button>
@@ -423,37 +442,37 @@ export default function ProfilePage() {
                 </div>
 
                 <div>
-                  <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 block">Message</label>
+                  <label className="text-[10px] font-bold text-white/40 uppercase tracking-widest mb-3 block ml-1">Message</label>
                   <textarea
                     value={feedbackMessage}
                     onChange={(e) => setFeedbackMessage(e.target.value)}
                     placeholder={feedbackType === 'bug' ? "Describe the issue..." : "Share your thoughts..."}
                     rows={5}
-                    className="w-full bg-[#050505] border border-white/10 rounded-xl p-4 text-sm text-white placeholder:text-gray-600 focus:outline-none focus:border-indigo-500/50 resize-none"
+                    className="w-full bg-white/[0.03] border border-white/10 rounded-xl p-4 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-indigo-500/50 focus:bg-white/[0.05] resize-none transition-all"
                   />
                 </div>
 
-                <div className="flex gap-3 pt-2">
+                <div className="flex gap-3 pt-4">
                   <button
                     onClick={() => setShowFeedback(false)}
-                    className="flex-1 py-3 bg-white/5 rounded-xl text-sm font-bold text-gray-400 hover:bg-white/10"
+                    className="flex-1 py-4 bg-white/5 rounded-xl text-xs font-bold text-white/40 uppercase tracking-wider hover:bg-white/10 transition-colors"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleSendFeedback}
                     disabled={sendingFeedback || !feedbackMessage.trim()}
-                    className="flex-1 py-3 bg-indigo-500 rounded-xl text-sm font-bold text-white hover:bg-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    className="flex-1 py-4 bg-white text-black rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg transition-all"
                   >
                     {sendingFeedback ? (
                       <>
-                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        <div className="w-3 h-3 border-2 border-black/30 border-t-black rounded-full animate-spin" />
                         <span>Sending...</span>
                       </>
                     ) : (
                       <>
-                        <Send size={16} />
-                        <span>Send Feedback</span>
+                        <Send size={14} />
+                        <span>Send</span>
                       </>
                     )}
                   </button>
@@ -469,32 +488,32 @@ export default function ProfilePage() {
         {showLogoutConfirm && (
           <motion.div
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-6"
+            className="fixed inset-0 z-50 bg-[#030305]/80 backdrop-blur-md flex items-center justify-center p-6"
             onClick={() => setShowLogoutConfirm(false)}
           >
             <motion.div
               initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-sm bg-[#0e0e12] border border-white/10 p-6 rounded-3xl shadow-2xl text-center"
+              className="w-full max-w-sm bg-[#08080c] border border-white/10 p-8 rounded-[32px] shadow-2xl text-center"
             >
-              <div className="w-16 h-16 rounded-full bg-red-500/10 flex items-center justify-center mx-auto mb-4 text-red-500">
+              <div className="w-16 h-16 rounded-full bg-red-500/10 flex items-center justify-center mx-auto mb-6 text-red-500">
                 <LogOut size={32} />
               </div>
-              <h3 className="text-xl font-bold mb-2">Sign Out?</h3>
-              <p className="text-gray-400 text-sm mb-8">
-                Are you sure you want to sign out? You&apos;ll need to sign in again to access your data.
+              <h3 className="text-2xl font-serif font-medium mb-3 text-white">Sign Out?</h3>
+              <p className="text-white/40 text-sm mb-8 leading-relaxed">
+                You'll need to sign in again to access your journey data.
               </p>
 
               <div className="flex gap-3">
                 <button
                   onClick={() => setShowLogoutConfirm(false)}
-                  className="flex-1 py-3 bg-white/5 rounded-xl text-sm font-bold text-gray-400 hover:bg-white/10"
+                  className="flex-1 py-4 bg-white/5 rounded-xl text-xs font-bold text-white/60 uppercase tracking-wider hover:bg-white/10 transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={confirmLogout}
-                  className="flex-1 py-3 bg-red-500 rounded-xl text-sm font-bold text-white hover:bg-red-600"
+                  className="flex-1 py-4 bg-red-500 rounded-xl text-xs font-bold text-white uppercase tracking-wider hover:bg-red-600 shadow-lg shadow-red-500/20 transition-colors"
                 >
                   Sign Out
                 </button>

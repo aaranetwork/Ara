@@ -35,6 +35,7 @@ export default function Dashboard({ user }: { user: any }) {
     const today = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })
     const hour = new Date().getHours()
     const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening'
+    const firstName = user.displayName?.split(' ')[0] || user.email?.split('@')[0] || 'there'
 
     const [checkInComplete, setCheckInComplete] = useState(false)
     const [loadingData, setLoadingData] = useState(true)
@@ -136,112 +137,107 @@ export default function Dashboard({ user }: { user: any }) {
         loadStats()
     }, [loadStats])
 
-    const firstName = user.displayName?.split(' ')[0] || user.email?.split('@')[0] || 'there'
-
     return (
-        <div className="min-h-screen bg-[#030305] text-white selection:bg-indigo-500/30">
+        <div className="min-h-screen bg-[#030305] text-[#F3F4F6] font-sans selection:bg-white/20">
             <Navbar />
 
             {/* Mobile Header */}
-            <div className="fixed top-0 left-0 right-0 z-[80] px-5 py-4 flex justify-between items-center md:hidden">
-                <div className="flex items-center gap-2.5 px-3.5 py-2 rounded-2xl bg-black/50 backdrop-blur-xl border border-white/5">
-                    <Image src="/aara-logo.png" alt="AARA" width={22} height={22} className="rounded-lg" />
-                    <span className="text-[9px] font-black tracking-[0.35em] text-white/50 uppercase">AARA</span>
+            <div className="fixed top-0 left-0 right-0 z-[80] px-6 py-4 flex justify-between items-center md:hidden bg-[#030305]/80 backdrop-blur-xl border-b border-white/5">
+                <div className="flex items-center gap-3">
+                    <Image src="/aara-logo.png" alt="AARA" width={24} height={24} className="rounded-lg opacity-80" priority />
+                    <span className="text-[10px] font-bold tracking-[0.2em] text-white/50 uppercase">AARA</span>
                 </div>
-                <Link href="/profile" className="w-10 h-10 rounded-2xl bg-gradient-to-br from-indigo-500/20 to-purple-500/20 flex items-center justify-center border border-white/10 backdrop-blur-xl text-sm font-bold">
-                    {user?.email?.[0].toUpperCase()}
+                <Link href="/profile" className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center border border-white/10 text-xs font-medium text-white/70 overflow-hidden relative">
+                    {user?.photoURL ? (
+                        <Image src={user.photoURL} alt="Profile" fill className="object-cover" priority />
+                    ) : (
+                        user?.email?.[0].toUpperCase()
+                    )}
                 </Link>
             </div>
 
-            <main className="relative z-10 pt-24 md:pt-8 pb-32 px-5 md:px-8 min-h-screen overflow-y-auto">
+            <main className="relative z-10 pt-28 md:pt-12 pb-32 px-6 min-h-screen">
                 <div className="max-w-6xl mx-auto">
 
                     {/* Hero Section */}
-                    <motion.section
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        className="mb-10"
-                    >
-                        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-                            <div>
-                                <motion.p
+                    <div className="mb-12 md:mb-16">
+                        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
+                            <div className="relative">
+                                {/* Ambient Glow */}
+                                <div className="absolute -left-20 -top-20 w-64 h-64 bg-indigo-500/10 rounded-full blur-[100px] pointer-events-none" />
+
+                                <motion.div
                                     initial={{ opacity: 0, y: 10 }}
                                     animate={{ opacity: 1, y: 0 }}
-                                    className="text-white/30 text-[10px] font-bold tracking-[0.25em] uppercase mb-2"
+                                    className="relative flex items-center gap-3 mb-4"
                                 >
-                                    {today}
-                                </motion.p>
-                                <motion.h1
-                                    initial={{ opacity: 0, y: 10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: 0.1 }}
-                                    className="text-3xl md:text-4xl font-medium"
-                                >
-                                    {greeting}, <span className="font-bold bg-gradient-to-r from-white via-indigo-200 to-white bg-clip-text text-transparent">{firstName}</span>
-                                </motion.h1>
+                                    <div className="h-px w-8 bg-white/20" />
+                                    <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-white/40">{today}</span>
+                                </motion.div>
+
+                                <div className="relative">
+                                    <h1 className="text-4xl md:text-6xl font-serif text-white/90 leading-tight">
+                                        {greeting}, <br />
+                                        <span className="text-white/50 italic">{firstName}</span>
+                                    </h1>
+                                </div>
                             </div>
+
                             <motion.div
                                 initial={{ opacity: 0, scale: 0.95 }}
                                 animate={{ opacity: 1, scale: 1 }}
                                 transition={{ delay: 0.2 }}
                             >
                                 <Link href="/chat">
-                                    <button className="group flex items-center gap-3 px-6 py-3.5 bg-white text-black rounded-2xl font-bold text-xs tracking-wider uppercase hover:shadow-[0_0_40px_rgba(255,255,255,0.15)] transition-all active:scale-[0.98]">
-                                        <div className="w-8 h-8 rounded-xl bg-black/10 flex items-center justify-center group-hover:bg-black/20 transition-colors">
-                                            <MessageSquare size={16} />
+                                    <button className="group relative px-8 py-4 bg-[#F3F4F6] text-black rounded-full font-medium text-xs tracking-widest uppercase hover:px-10 transition-all duration-500 flex items-center gap-3 overflow-hidden shadow-[0_0_30px_-5px_rgba(255,255,255,0.1)]">
+                                        <span className="relative z-10">Start Session</span>
+                                        <div className="relative z-10 w-6 h-6 rounded-full bg-black/5 flex items-center justify-center group-hover:bg-black/10 transition-colors">
+                                            <MessageSquare size={12} />
                                         </div>
-                                        Start Session
+                                        <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-md" />
                                     </button>
                                 </Link>
                             </motion.div>
                         </div>
-                    </motion.section>
-
-
+                    </div>
 
                     {/* Main Grid */}
-                    <div className="grid lg:grid-cols-5 gap-6">
+                    <div className="grid lg:grid-cols-12 gap-6 md:gap-8">
 
-                        {/* Left Column - Main Content */}
-                        <div className="lg:col-span-3 space-y-6">
+                        {/* Left Column - Main Content (8 cols) */}
+                        <div className="lg:col-span-8 flex flex-col gap-6">
 
-                            {/* Daily Check-in CTA (Only if not checked in) */}
-                            {!checkInComplete && !loadingData && (
+                            {/* Daily Check-in CTA */}
+                            {loadingData ? (
+                                <div className="w-full h-40 rounded-[2.2rem] bg-white/[0.02] border border-white/5 animate-pulse" />
+                            ) : !checkInComplete && (
                                 <motion.div
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ delay: 0.15 }}
                                 >
-                                    <Link href="/check-in" className="group relative overflow-hidden block">
-                                        {/* Animated Border/Glow Container */}
-                                        <div className="absolute -inset-0.5 bg-gradient-to-r from-indigo-500/30 via-purple-500/30 to-pink-500/30 rounded-[2.2rem] opacity-50 blur-sm group-hover:opacity-100 transition-opacity duration-500" />
+                                    <Link href="/check-in" className="group relative block w-full">
+                                        <div className="absolute -inset-0.5 bg-gradient-to-r from-rose-500/20 via-amber-500/20 to-indigo-500/20 rounded-[2.5rem] opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-700" />
+                                        <div className="relative p-5 md:p-8 rounded-[2.2rem] bg-[#0A0A0C] border border-white/5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 md:gap-6 overflow-hidden group-hover:border-white/10 transition-colors duration-500">
+                                            {/* Reflection */}
+                                            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-30" />
 
-                                        <div className="relative p-6 rounded-[2rem] bg-[#0c0c10] border border-white/5 flex items-center justify-between overflow-hidden group-hover:bg-[#111116] transition-colors duration-500">
-                                            {/* Subtle Background Mesh */}
-                                            <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-[80px] -mr-20 -mt-32 pointer-events-none opacity-50 group-hover:opacity-100 transition-opacity" />
-                                            <div className="absolute bottom-0 left-0 w-48 h-48 bg-purple-500/10 rounded-full blur-[60px] -ml-16 -mb-24 pointer-events-none opacity-30 group-hover:opacity-60 transition-opacity" />
-
-                                            <div className="relative flex items-center gap-5 z-10">
-                                                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500/10 to-purple-500/10 border border-white/5 flex items-center justify-center group-hover:scale-105 transition-transform duration-500 shadow-inner">
-                                                    <Sparkles size={26} className="text-indigo-400 fill-indigo-400/20" />
+                                            <div className="flex items-center gap-4 md:gap-6 z-10">
+                                                <div className="w-14 h-14 md:w-16 md:h-16 rounded-2xl border border-white/5 bg-white/[0.02] flex items-center justify-center backdrop-blur-md group-hover:scale-105 transition-transform duration-500 shadow-xl">
+                                                    <Sparkles size={24} className="text-white/70" />
                                                 </div>
-
                                                 <div>
-                                                    <h3 className="text-lg font-bold text-white mb-1.5 group-hover:text-indigo-100 transition-colors">Daily Check-in</h3>
-                                                    <div className="flex items-center gap-2">
-                                                        <span className="relative flex h-2 w-2">
-                                                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                                                            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                                                        </span>
-                                                        <p className="text-indigo-200/60 text-xs font-medium tracking-wide">Ready for you</p>
+                                                    <div className="flex items-center gap-2 mb-2">
+                                                        <span className="px-2 py-0.5 rounded-full bg-white/5 border border-white/5 text-[9px] font-bold uppercase tracking-widest text-white/40">Daily Ritual</span>
                                                     </div>
+                                                    <h3 className="text-xl md:text-2xl font-serif text-white/90 group-hover:text-white transition-colors">How are you feeling?</h3>
                                                 </div>
                                             </div>
 
-                                            <div className="z-10 flex items-center gap-3 bg-white/[0.03] pl-5 pr-2 py-2 rounded-full border border-white/5 group-hover:border-white/10 transition-colors">
-                                                <span className="text-[10px] font-bold uppercase tracking-widest text-white/40 group-hover:text-white/80 transition-colors">Start</span>
-                                                <div className="w-8 h-8 rounded-full bg-white text-black flex items-center justify-center group-hover:bg-indigo-400 group-hover:text-white transition-all shadow-[0_0_15px_rgba(255,255,255,0.1)]">
-                                                    <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
+                                            <div className="flex items-center gap-3 pl-5 pr-2 py-2 rounded-full border border-white/5 bg-white/[0.02] backdrop-blur-sm group-hover:bg-white/[0.05] transition-all w-full md:w-auto justify-between md:justify-start">
+                                                <span className="text-[10px] font-bold uppercase tracking-widest text-white/40 group-hover:text-white/80 transition-colors">Begin</span>
+                                                <div className="w-8 h-8 rounded-full bg-[#151518] flex items-center justify-center text-white border border-white/5 group-hover:bg-white group-hover:text-black transition-all shadow-lg">
+                                                    <ArrowRight size={14} />
                                                 </div>
                                             </div>
                                         </div>
@@ -249,55 +245,56 @@ export default function Dashboard({ user }: { user: any }) {
                                 </motion.div>
                             )}
 
-                            {/* Mood Overview Card */}
-                            <motion.div
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 0.2 }}
-                            >
-                                <Link href="/mood-flow" className="block p-6 rounded-3xl bg-gradient-to-br from-white/[0.04] to-white/[0.01] border border-white/5 backdrop-blur-sm hover:bg-white/[0.06] transition-all group">
-                                    <div className="flex items-center justify-between mb-6">
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center group-hover:scale-110 transition-transform">
-                                                <Brain size={18} className="text-indigo-400" />
-                                            </div>
-                                            <div>
-                                                <h2 className="text-sm font-bold text-white group-hover:text-indigo-300 transition-colors">Mood Insights</h2>
-                                                <p className="text-[11px] text-white/40">Last 7 days</p>
-                                            </div>
+                            {/* Mood Trends Card */}
+                            <div className="p-8 rounded-[2.2rem] bg-white/[0.02] border border-white/5 backdrop-blur-md relative overflow-hidden">
+                                <Link href="/mood-flow" className="flex items-center justify-between mb-8 group">
+                                    <div className="flex items-center gap-4">
+                                        <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 flex items-center justify-center border border-indigo-500/10">
+                                            <Brain size={20} className="text-indigo-400" />
                                         </div>
-                                        <div className="flex items-center gap-2">
-                                            <span className="text-2xl font-bold text-white">{moodData.overallAvg}</span>
-                                            {moodData.trend === 'up' && <TrendingUp size={16} className="text-emerald-400" />}
-                                            {moodData.trend === 'down' && <TrendingUp size={16} className="text-rose-400 rotate-180" />}
-                                            <ChevronRight size={16} className="text-white/20 group-hover:text-indigo-400 group-hover:translate-x-1 transition-all" />
+                                        <div>
+                                            <h2 className="text-lg font-serif text-white/90">Mental Flow</h2>
+                                            <p className="text-[11px] font-medium text-white/30 uppercase tracking-wider">Last 7 Days</p>
                                         </div>
                                     </div>
-
-                                    {/* Mini Chart */}
-                                    <div className="flex items-end gap-2 h-24">
-                                        {moodData.values.map((val, i) => (
-                                            <div key={i} className="flex-1 flex flex-col items-center gap-2">
-                                                <motion.div
-                                                    initial={{ height: 0 }}
-                                                    animate={{ height: val ? `${val * 10}%` : '8px' }}
-                                                    transition={{ delay: 0.3 + i * 0.05, type: "spring", stiffness: 100 }}
-                                                    className={`w-full rounded-lg ${val ? 'bg-gradient-to-t from-indigo-600 to-indigo-400 group-hover:from-indigo-500 group-hover:to-indigo-300' : 'bg-white/5'}`}
-                                                    style={{ minHeight: val ? '8px' : '8px' }}
-                                                />
-                                                <span className="text-[9px] font-bold text-white/30">{moodData.labels[i]}</span>
-                                            </div>
-                                        ))}
+                                    <div className="flex items-center gap-3 px-4 py-2 rounded-full bg-white/[0.02] border border-white/5">
+                                        <span className="text-xl font-serif text-white">{moodData.overallAvg}</span>
+                                        {moodData.trend === 'up' && <TrendingUp size={14} className="text-emerald-400" />}
+                                        {moodData.trend === 'down' && <TrendingUp size={14} className="text-rose-400 rotate-180" />}
                                     </div>
                                 </Link>
-                            </motion.div>
 
-                            {/* Featured Topics */}
-                            <motion.div
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 0.25 }}
-                            >
+                                <div className="h-40 flex items-end justify-between gap-2 md:gap-4 relative px-2">
+                                    {/* Grid Lines */}
+                                    <div className="absolute inset-0 flex flex-col justify-between pointer-events-none opacity-10">
+                                        <div className="w-full h-px border-t border-dashed border-white/20" />
+                                        <div className="w-full h-px border-t border-dashed border-white/20" />
+                                        <div className="w-full h-px border-t border-dashed border-white/20" />
+                                        <div className="w-full h-px border-t border-dashed border-white/20" />
+                                    </div>
+
+                                    {moodData.values.map((val, i) => (
+                                        <div key={i} className="h-full flex flex-col justify-end items-center gap-3 flex-1 group/bar z-10">
+                                            <div
+                                                className={`w-1.5 md:w-2 rounded-full transition-all duration-700 ease-out relative group-hover/bar:w-3 md:group-hover/bar:w-4 ${val > 0 ? 'bg-indigo-500/50 hover:bg-indigo-400' : 'bg-white/5'}`}
+                                                style={{ height: val > 0 ? `${(val / 10) * 100}%` : '4px' }}
+                                            >
+                                                {val > 0 && (
+                                                    <div className="absolute -top-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-[#1A1A20] rounded-lg border border-white/10 text-[9px] font-bold text-white opacity-0 group-hover/bar:opacity-100 transition-opacity whitespace-nowrap z-20">
+                                                        {val} / 10
+                                                    </div>
+                                                )}
+                                            </div>
+                                            <span className="text-[9px] font-bold text-white/20 uppercase tracking-wider group-hover/bar:text-white/50 transition-colors">
+                                                {moodData.labels[i]}
+                                            </span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Discover Section (Moved here) */}
+                            <div className="pt-4">
                                 <div className="flex items-center justify-between mb-4">
                                     <h2 className="text-sm font-bold text-white flex items-center gap-2">
                                         <Sparkles size={14} className="text-amber-400" />
@@ -309,104 +306,117 @@ export default function Dashboard({ user }: { user: any }) {
                                 </div>
 
                                 <div className="grid gap-3">
-                                    {discoverItems.map((item, index) => (
-                                        <motion.div
-                                            key={item.id}
-                                            initial={{ opacity: 0, x: -10 }}
-                                            animate={{ opacity: 1, x: 0 }}
-                                            transition={{ delay: 0.3 + index * 0.1 }}
-                                        >
-                                            <Link href={`/discover/${item.id}`} className="group flex items-center gap-4 p-4 rounded-2xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.05] hover:border-white/10 transition-all">
-                                                <div
-                                                    className="w-16 h-16 rounded-xl bg-cover bg-center shrink-0 border border-white/10"
-                                                    style={{
-                                                        backgroundImage: `url(${item.image})`,
-                                                        backgroundColor: item.color || '#1a1a2e'
-                                                    }}
-                                                />
+                                    {loadingData ? (
+                                        <>
+                                            {[1, 2, 3].map((i) => (
+                                                <div key={i} className="flex items-center gap-4 p-4 rounded-2xl bg-white/[0.02] border border-white/5 animate-pulse">
+                                                    <div className="w-12 h-12 rounded-xl bg-white/5" />
+                                                    <div className="flex-1 space-y-2">
+                                                        <div className="h-3 w-16 bg-white/5 rounded-full" />
+                                                        <div className="h-4 w-3/4 bg-white/5 rounded-full" />
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </>
+                                    ) : (
+                                        discoverItems.map((item, index) => (
+                                            <Link
+                                                key={item.id}
+                                                href={`/discover/${item.id}`}
+                                                className="group flex items-center gap-4 p-4 rounded-2xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.05] hover:border-white/10 transition-all"
+                                            >
+                                                <div className="relative w-12 h-12 rounded-xl border border-white/10 shrink-0 overflow-hidden">
+                                                    <Image
+                                                        src={item.image}
+                                                        alt={item.title}
+                                                        fill
+                                                        className="object-cover"
+                                                        sizes="48px"
+                                                    />
+                                                </div>
                                                 <div className="flex-1 min-w-0">
-                                                    <span className="text-[9px] font-bold uppercase tracking-wider text-indigo-400 mb-1 block">
-                                                        {item.category || 'Health'}
+                                                    <span className="text-[9px] font-bold uppercase tracking-wider text-indigo-400 mb-0.5 block">
+                                                        {item.category || 'Article'}
                                                     </span>
-                                                    <h3 className="text-sm font-medium text-white line-clamp-2 group-hover:text-indigo-200 transition-colors">
+                                                    <h3 className="text-xs font-medium text-white line-clamp-2 group-hover:text-indigo-200 transition-colors leading-relaxed">
                                                         {item.title}
                                                     </h3>
                                                 </div>
                                                 <ChevronRight size={16} className="text-white/20 group-hover:text-indigo-400 group-hover:translate-x-1 transition-all shrink-0" />
                                             </Link>
-                                        </motion.div>
-                                    ))}
+                                        ))
+                                    )}
                                 </div>
-                            </motion.div>
+                            </div>
+
                         </div>
 
-                        {/* Right Column - Sidebar */}
-                        <div className="lg:col-span-2 space-y-5">
+                        {/* Right Column - Sidebar (4 cols) */}
+                        <div className="lg:col-span-4 flex flex-col gap-6">
 
-                            {/* Daily Insight */}
-                            <motion.div
-                                initial={{ opacity: 0, x: 20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{ delay: 0.3 }}
-                                className="relative overflow-hidden p-6 rounded-3xl bg-gradient-to-br from-indigo-500/10 via-purple-500/5 to-transparent border border-indigo-500/10"
-                            >
-                                <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 rounded-full blur-3xl -mr-10 -mt-10" />
-                                <div className="relative">
-                                    <div className="flex items-center gap-2 mb-4">
-                                        <Sparkles size={14} className="text-indigo-400" />
-                                        <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-indigo-300/80">Daily Insight</span>
+                            {/* Insight Card - Dark Glass */}
+                            <div className="p-8 rounded-[2.2rem] bg-gradient-to-b from-white/[0.04] to-transparent border border-white/5 relative overflow-hidden group">
+                                <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 rounded-full blur-[60px] -mr-10 -mt-10" />
+
+                                <div className="relative z-10">
+                                    <div className="flex items-center gap-2 mb-6">
+                                        <div className="w-6 h-6 rounded-full border border-indigo-500/20 flex items-center justify-center">
+                                            <Sparkles size={10} className="text-indigo-400" />
+                                        </div>
+                                        <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-indigo-300/50">Wisdom</span>
                                     </div>
-                                    <p className="text-base font-serif italic text-white/90 leading-relaxed">
+                                    <p className="text-lg font-serif italic text-white/80 leading-relaxed mb-6">
                                         &quot;Naming an emotion is the first step to taming it. Try to be specific today.&quot;
                                     </p>
+                                    <div className="h-0.5 w-8 bg-indigo-500/20" />
                                 </div>
-                            </motion.div>
+                            </div>
 
-                            {/* Quick Links */}
-                            <motion.div
-                                initial={{ opacity: 0, x: 20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{ delay: 0.35 }}
-                                className="space-y-2"
-                            >
-                                <Link href="/report/therapist" className="group flex items-center gap-4 p-4 rounded-2xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.05] transition-all">
-                                    <div className="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center">
-                                        <TrendingUp size={18} className="text-purple-400" />
+                            {/* Quick Links Group */}
+                            <div className="space-y-3">
+                                <Link href="/journal" className="group flex items-center gap-5 p-5 rounded-[1.5rem] bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-all">
+                                    <div className="w-12 h-12 rounded-xl bg-emerald-500/5 border border-emerald-500/10 flex items-center justify-center group-hover:scale-105 transition-transform">
+                                        <BookOpen size={18} className="text-emerald-400/80" />
                                     </div>
                                     <div className="flex-1">
-                                        <h3 className="text-sm font-bold text-white">Clinical Insights</h3>
-                                        <p className="text-[11px] text-white/40">View your progress</p>
+                                        <h3 className="text-sm font-medium text-white/90">Journal</h3>
+                                        <p className="text-[10px] text-white/30 uppercase tracking-wider mt-0.5">Reflect</p>
                                     </div>
-                                    <ChevronRight size={16} className="text-white/20 group-hover:text-purple-400 transition-colors" />
+                                    <ChevronRight size={14} className="text-white/20 group-hover:text-emerald-400/80 group-hover:translate-x-1 transition-all" />
                                 </Link>
 
-                                <Link href="/therapists" className="group flex items-center gap-4 p-4 rounded-2xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.05] transition-all">
-                                    <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center">
-                                        <Users size={18} className="text-emerald-400" />
+                                <Link href="/therapists" className="group flex items-center gap-5 p-5 rounded-[1.5rem] bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-all">
+                                    <div className="w-12 h-12 rounded-xl bg-purple-500/5 border border-purple-500/10 flex items-center justify-center group-hover:scale-105 transition-transform">
+                                        <Users size={18} className="text-purple-400/80" />
                                     </div>
                                     <div className="flex-1">
-                                        <h3 className="text-sm font-bold text-white">Expert Network</h3>
-                                        <p className="text-[11px] text-white/40">Connect with help</p>
+                                        <h3 className="text-sm font-medium text-white/90">Therapists</h3>
+                                        <p className="text-[10px] text-white/30 uppercase tracking-wider mt-0.5">Connect</p>
                                     </div>
-                                    <ChevronRight size={16} className="text-white/20 group-hover:text-emerald-400 transition-colors" />
+                                    <ChevronRight size={14} className="text-white/20 group-hover:text-purple-400/80 group-hover:translate-x-1 transition-all" />
                                 </Link>
 
                                 <button
                                     onClick={() => setShowFeedback(true)}
-                                    className="w-full group flex items-center gap-4 p-4 rounded-2xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.05] transition-all text-left"
+                                    className="w-full group flex items-center gap-5 p-5 rounded-[1.5rem] bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-all text-left"
                                 >
-                                    <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center">
-                                        <MessageSquare size={18} className="text-amber-400" />
+                                    <div className="w-12 h-12 rounded-xl bg-amber-500/5 border border-amber-500/10 flex items-center justify-center group-hover:scale-105 transition-transform">
+                                        <MessageSquare size={18} className="text-amber-400/80" />
                                     </div>
                                     <div className="flex-1">
-                                        <h3 className="text-sm font-bold text-white">Send Feedback</h3>
-                                        <p className="text-[11px] text-white/40">Help us improve</p>
+                                        <h3 className="text-sm font-medium text-white/90">Feedback</h3>
+                                        <p className="text-[10px] text-white/30 uppercase tracking-wider mt-0.5">Improve AARA</p>
                                     </div>
-                                    <ChevronRight size={16} className="text-white/20 group-hover:text-amber-400 transition-colors" />
                                 </button>
-                            </motion.div>
+                            </div>
+
+
                         </div>
+
                     </div>
+
+
+
                 </div>
             </main>
 

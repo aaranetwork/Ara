@@ -1,9 +1,16 @@
 # *
 User-agent: *
 Allow: /
+Disallow: /api
+Disallow: /admin
+Disallow: /profile
+Disallow: /journal
+Disallow: /chat
+Disallow: /therapists/results
+Disallow: /welcome
 
 # Host
-Host: https://aara.site
+Host: https://aara.ai
 
 # Sitemaps
-Sitemap: https://aara.site/sitemap.xml
+Sitemap: https://aara.ai/sitemap.xml

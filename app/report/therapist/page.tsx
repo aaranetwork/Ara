@@ -1,9 +1,7 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useRouter } from 'next/navigation'
-import Image from 'next/image'
 import Link from 'next/link'
 import {
     Download,
@@ -15,15 +13,14 @@ import {
     Calendar,
     Activity,
     Brain,
-    Zap,
     Lock,
     ArrowLeft,
-    ChevronLeft
+    CheckCircle2
 } from 'lucide-react'
 
 import { useAuth } from '@/hooks/useAuth'
 import { db } from '@/lib/firebase/config'
-import { collection, query, orderBy, getDocs, Timestamp } from 'firebase/firestore'
+import { collection, query, orderBy, getDocs } from 'firebase/firestore'
 
 // --- Types ---
 type ReportData = {
@@ -31,7 +28,6 @@ type ReportData = {
     summary: string[]
     emotionalThemes: { theme: string; observation: string }[]
     behaviors: { signal: string; status: string }[]
-    contexts: { category: string; triggers: string[] }[]
     strengths: string[]
     therapistMetrics: {
         engagement: string
@@ -47,28 +43,16 @@ type ReportData = {
 }
 
 export default function AaraReportPage() {
-    const router = useRouter()
     const { user } = useAuth()
     const [loading, setLoading] = useState(true)
     const [isTherapistView, setIsTherapistView] = useState(false)
     const [isPrivacyMode, setIsPrivacyMode] = useState(false)
 
-    // Default Empty State
-    const [data, setData] = useState<ReportData>({
-        dateRange: "Loading...",
-        summary: [],
-        emotionalThemes: [],
-        behaviors: [],
-        contexts: [],
-        strengths: [],
-        therapistMetrics: { engagement: "-", timeCoverage: "-", riskSignals: "-" },
-        metrics: { avgMood: "-", totalEntries: 0, checkInRate: "-", anxietyLevel: "-" }
-    })
+    // Data State
+    const [data, setData] = useState<ReportData | null>(null)
+    const [uniqueDaysCount, setUniqueDaysCount] = useState(7)
 
-    // State for tracking active days
-    const [uniqueDaysCount, setUniqueDaysCount] = useState(0)
-
-    // --- Data Fetching & Analysis Engine ---
+    // --- Data Analysis ---
     useEffect(() => {
         async function fetchAndAnalyze() {
             if (!user || !db) return
@@ -82,9 +66,8 @@ export default function AaraReportPage() {
                     date: doc.data().createdAt.toDate()
                 }))
 
-                // 2. Fetch Journals (assuming 'journals' collection)
+                // 2. Fetch Journals
                 const journalsRef = collection(db, 'users', user.uid, 'journals')
-                // Note: If journals don't exist yet, this will just be empty, which is fine
                 let journals: any[] = []
                 try {
                     const journalSnapshot = await getDocs(query(journalsRef, orderBy('createdAt', 'desc')))
@@ -94,112 +77,77 @@ export default function AaraReportPage() {
                         date: doc.data().createdAt.toDate()
                     }))
                 } catch (e) {
-                    console.log("No journals found or error fetching", e)
+                    // Silent fail for empty journals
                 }
 
-                // 3. Analysis Logic (The "Brain")
+                // 3. Analysis Logic
                 const now = new Date()
                 const oneMonthAgo = new Date()
                 oneMonthAgo.setDate(now.getDate() - 30)
 
-                // Filter last 30 days -- careful with type safety on dates if Firestore timestamps behave oddly
                 const recentMoods = moods.filter(m => m.date >= oneMonthAgo)
                 const recentJournals = journals.filter(j => j.date >= oneMonthAgo)
 
-                // Calculate Active Days (Moods + Journals)
                 const allDates = [
                     ...recentMoods.map(m => m.date),
                     ...recentJournals.map(j => j.date)
                 ]
                 const uniqueDays = new Set(allDates.map(d => d.toDateString())).size
+                setUniqueDaysCount(uniqueDays)
 
-                // A. Metrics
+                // Only generate report if enough days
+                // Calculate metrics regardless for partial views
                 const avgMoodVal = recentMoods.length > 0
                     ? (recentMoods.reduce((acc, m) => acc + m.val, 0) / recentMoods.length)
                     : 0
-
                 const avgMood = avgMoodVal > 0 ? avgMoodVal.toFixed(1) : "-"
                 const totalEntries = recentJournals.length
-
-                // Check-in rate (approximate days active / 30)
                 const checkInRate = Math.round((uniqueDays / 30) * 100) + "%"
-
-                // Anxiety Proxy (Low mood count)
                 const lowMoods = recentMoods.filter(m => m.val <= 3).length
-                const anxietyLevel = lowMoods > 5 ? "Elevated" : lowMoods > 2 ? "Moderate" : "Low"
+                const anxietyLevel = lowMoods > 5 ? "Elevated" : lowMoods > 2 ? "Moderate" : "Typical"
 
-                // B. Date Range
-                const dateOptions: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric' }
-                const rangeStr = `${oneMonthAgo.toLocaleDateString('en-US', dateOptions)} – ${now.toLocaleDateString('en-US', dateOptions)}`
-
-                // C. Themes (Keyword Spotting)
-                const textBlob = recentJournals.map(j => j.text.toLowerCase()).join(" ")
-                const allTags = recentJournals.flatMap(j => j.tags)
-
-                const themes = []
-                if (textBlob.includes("work") || textBlob.includes("job") || textBlob.includes("deadline")) {
-                    themes.push({ theme: "Professional Focus", observation: "Unusual frequency of work-related keywords detected." })
-                }
-                if (textBlob.includes("sleep") || textBlob.includes("tired") || textBlob.includes("awake")) {
-                    themes.push({ theme: "Rest & Recovery", observation: "Sleep patterns mentioned frequently in recent entries." })
-                }
-                if (textBlob.includes("family") || textBlob.includes("friend") || textBlob.includes("social")) {
-                    themes.push({ theme: "Social Dynamics", observation: "Interpersonal relationships are a key focus area." })
-                }
-                if (themes.length === 0) {
-                    themes.push({ theme: "General Reflection", observation: "Diverse topics covered without a single dominant outlier." })
-                }
-
-                // D. Behaviors (Timing)
-                const behaviors = []
                 const morningEntries = recentJournals.filter(j => j.date.getHours() < 12).length
                 const nightEntries = recentJournals.filter(j => j.date.getHours() > 20).length
 
-                if (nightEntries > morningEntries) behaviors.push({ signal: "Night Owl Reflection", status: "Primary activity window: 8PM - 4AM" })
-                else behaviors.push({ signal: "Morning Clarity", status: "Primary activity window: 5AM - 12PM" })
+                // Themes
+                const textBlob = recentJournals.map(j => j.text.toLowerCase()).join(" ")
+                const themes = []
+                if (textBlob.includes("work") || textBlob.includes("job")) themes.push({ theme: "Professional Load", observation: "Frequent work-related stressors identified." })
+                if (textBlob.includes("sleep") || textBlob.includes("tired")) themes.push({ theme: "Rest Patterns", observation: "Sleep quality is a recurring topic." })
+                if (textBlob.includes("anxious") || textBlob.includes("worry")) themes.push({ theme: "Anxiety Triggers", observation: "Multiple mentions of forward-looking worry." })
+                if (themes.length === 0) themes.push({ theme: "Broad Reflection", observation: "Diverse topics with balanced emotional variance." })
 
-                behaviors.push({ signal: "Consistency", status: `Active ${uniqueDays} out of last 30 days` })
-
-                // E. Summary
-                const summary = [
-                    `User logged ${recentMoods.length} mood check-ins and ${recentJournals.length} journal entries in the last 30 days.`,
-                    `Average emotional baseline is ${avgMoodVal > 5 ? "positive" : "challenging"} (${avgMood}/10).`,
-                    `Most active analysis period is ${nightEntries > morningEntries ? "Late Evening" : "Morning"} .`,
-                    lowMoods > 3 ? "Recurrent periods of low mood detected; refer to specific journal dates." : "Emotional stability appears high with few outlier events."
-                ]
-
-                // F. Strengths
+                // Strengths
                 const strengths = []
-                if (uniqueDays > 10) strengths.push("Consistent Self-Reflection")
-                if (avgMoodVal > 6) strengths.push("High Emotional Baseline")
-                if (recentJournals.length > 5) strengths.push("Articulate Expression")
-                if (strengths.length === 0) strengths.push("Emerging Self-Awareness")
+                if (uniqueDays > 5) strengths.push("Consistent Awareness")
+                if (avgMoodVal > 6) strengths.push("Positive Baseline")
+                if (journals.length > 5) strengths.push("Expressive Depth")
+                if (strengths.length === 0) strengths.push("Emerging Growth") // Fallback
+
+                // Behaviors
+                const behaviors = []
+                if (nightEntries > morningEntries) behaviors.push({ signal: "Night Owl Reflection", status: "Active 8PM - 4AM" })
+                else behaviors.push({ signal: "Morning Clarity", status: "Active 5AM - 12PM" })
+                behaviors.push({ signal: "Consistency", status: `${uniqueDays}/30 Days Active` })
 
 
                 setData({
-                    dateRange: rangeStr,
-                    summary,
+                    dateRange: "Last 30 Days",
+                    summary: [
+                        `Logged ${recentMoods.length} check-ins and ${recentJournals.length} entries.`,
+                        `Emotional baseline is ${avgMoodVal > 5 ? "stable" : "fluctuating"} (${avgMood}/10).`,
+                        lowMoods > 3 ? "Recurrent periods of low mood detected." : "Emotional resilience appears high."
+                    ],
                     emotionalThemes: themes,
                     behaviors,
-                    contexts: [
-                        { category: "Activity", triggers: ["Journaling", "Mood Tracking"] },
-                        { category: "Temporal", triggers: [nightEntries > morningEntries ? "Nighttime" : "Morning"] }
-                    ],
                     strengths,
                     therapistMetrics: {
-                        engagement: uniqueDays > 15 ? "High" : uniqueDays > 5 ? "Moderate" : "Low", // logic based on unique days
+                        engagement: uniqueDays > 15 ? "High" : "Moderate",
                         timeCoverage: nightEntries > morningEntries ? "Evening Bias" : "Morning Bias",
-                        riskSignals: lowMoods > 5 ? "Elevated Low Moods" : "None Detected"
+                        riskSignals: lowMoods > 5 ? "Elevated Risk" : "None Detected"
                     },
-                    metrics: {
-                        avgMood,
-                        totalEntries,
-                        checkInRate,
-                        anxietyLevel
-                    }
+                    metrics: { avgMood, totalEntries, checkInRate, anxietyLevel }
                 })
-
-                setUniqueDaysCount(uniqueDays)
                 setLoading(false)
 
             } catch (error) {
@@ -211,304 +159,282 @@ export default function AaraReportPage() {
         fetchAndAnalyze()
     }, [user])
 
-    // --- Actions ---
-    const handlePrint = () => {
-        window.print()
-    }
-
+    const handlePrint = () => window.print()
     const handleShare = async () => {
         if (navigator.share) {
             try {
                 await navigator.share({
-                    title: 'AARA Reflection Report',
-                    text: `My AARA Report: ${data.metrics.avgMood} Average Mood`,
+                    title: 'AARA Report',
+                    text: `My AARA Clinical Report`,
                     url: window.location.href,
                 })
-            } catch (err) {
-                console.log('Share canceled')
-            }
-        } else {
-            alert("Sharing not supported on this browser (Try Mobile).")
+            } catch (err) { console.log('Share canceled') }
         }
     }
 
+    // --- Loading State ---
     if (loading) {
         return (
-            <div className="min-h-screen bg-[#09090b] flex items-center justify-center">
-                <div className="animate-pulse flex flex-col items-center gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-white/10" />
-                    <div className="h-4 w-32 bg-white/10 rounded" />
+            <div className="min-h-screen flex items-center justify-center">
+                <div className="flex flex-col items-center gap-4">
+                    <div className="w-12 h-12 rounded-full border-t-2 border-indigo-500 animate-spin" />
+                    <span className="text-white/40 text-xs font-medium uppercase tracking-widest animate-pulse">Analyzing...</span>
                 </div>
             </div>
         )
     }
 
-    // 6-Day Lock Screen
+    // --- Lock Screen (< 6 Days) ---
     if (uniqueDaysCount < 6) {
         return (
-            <div className="min-h-screen bg-[#09090b] text-zinc-100 font-sans flex flex-col items-center justify-center p-6 text-center">
-                <div className="max-w-md w-full space-y-8">
+            <div className="min-h-screen text-white font-sans flex flex-col items-center justify-center p-6 relative overflow-hidden">
+                {/* Background Ambience */}
+                <div className="absolute inset-0 pointer-events-none">
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-indigo-500/10 rounded-full blur-[120px]" />
+                </div>
 
-                    {/* Header with Back */}
-                    <div className="absolute top-6 left-6">
-                        <Link href="/" className="p-3 bg-white/5 hover:bg-white/10 rounded-full transition-colors flex items-center justify-center">
-                            <ArrowLeft size={20} className="text-zinc-400" />
+                <div className="max-w-md w-full relative z-10">
+                    <div className="absolute top-0 left-0">
+                        <Link href="/" className="p-3 bg-white/5 hover:bg-white/10 rounded-full transition-colors flex items-center justify-center border border-white/5">
+                            <ArrowLeft size={20} className="text-white/60" />
                         </Link>
                     </div>
 
-                    <div className="space-y-2">
-                        <div className="w-16 h-16 mx-auto rounded-2xl bg-zinc-900 border border-white/10 flex items-center justify-center mb-6 shadow-2xl shadow-indigo-500/10">
-                            <Activity className="text-indigo-500" size={32} />
+                    <div className="text-center mb-10 mt-12">
+                        <div className="w-20 h-20 mx-auto rounded-[24px] bg-gradient-to-br from-indigo-500/20 to-purple-500/20 border border-white/10 flex items-center justify-center mb-6 shadow-[0_0_40px_rgba(99,102,241,0.15)] group">
+                            <Lock className="text-indigo-400 group-hover:scale-110 transition-transform duration-500" size={32} />
                         </div>
-                        <h1 className="text-3xl font-serif tracking-tight">Pattern Analysis in Progress</h1>
-                        <p className="text-zinc-500 leading-relaxed">
-                            AARA needs sufficient data to identify meaningful clinical patterns.
+                        <h1 className="text-3xl font-serif font-medium tracking-tight mb-3">Pattern Analysis</h1>
+                        <p className="text-white/40 leading-relaxed text-sm">
+                            AARA needs more data points to identify clinically meaningful patterns in your emotional journey.
                         </p>
                     </div>
 
-                    {/* Progress Visualization */}
-                    <div className="bg-zinc-900/50 border border-white/5 rounded-2xl p-8">
-                        <div className="flex justify-between items-end mb-4">
+                    {/* Progress Card */}
+                    <div className="bg-[#0e0e12]/80 backdrop-blur-xl border border-white/10 rounded-[32px] p-8 shadow-2xl relative overflow-hidden">
+                        <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent pointer-events-none" />
+
+                        <div className="flex justify-between items-end mb-6 relative z-10">
                             <div>
-                                <p className="text-xs font-bold uppercase tracking-widest text-zinc-600 mb-1">Context Collected</p>
-                                <p className="text-4xl font-mono font-bold text-white">
-                                    {uniqueDaysCount}<span className="text-zinc-700">/6</span> <span className="text-lg text-zinc-600 font-sans font-normal">Days</span>
-                                </p>
+                                <p className="text-[10px] font-bold uppercase tracking-widest text-indigo-400 mb-2">Data Integrity</p>
+                                <div className="flex items-baseline gap-2">
+                                    <span className="text-5xl font-serif font-medium text-white">{uniqueDaysCount}<span className="text-white/20">/</span>6</span>
+                                    <span className="text-sm text-white/40 font-medium">Days Collected</span>
+                                </div>
                             </div>
-                            <div className="h-10 w-10 flex items-center justify-center rounded-full bg-indigo-500/10 text-indigo-500">
-                                <Zap size={18} className="animate-pulse" />
+                            <div className="h-10 w-10 flex items-center justify-center rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                                <Activity size={18} className="animate-pulse" />
                             </div>
                         </div>
 
-                        {/* Steps */}
-                        <div className="relative pt-4 pb-2">
-                            <div className="flex justify-between relative z-10">
-                                {[0, 1, 2, 3, 4, 5, 6].map((step) => {
-                                    const isCompleted = step <= uniqueDaysCount
-                                    const isTarget = step === 6
-                                    return (
-                                        <div key={step} className="flex flex-col items-center gap-2">
-                                            <div
-                                                className={`w-3 h-3 rounded-full transition-all duration-500 border-2 ${isCompleted ? 'bg-indigo-500 border-indigo-500 scale-110' :
-                                                    isTarget ? 'bg-zinc-800 border-zinc-700' : 'bg-transparent border-zinc-800'
-                                                    }`}
-                                            />
-                                            {isTarget && <span className="absolute -right-2 -bottom-6 text-[10px] font-bold text-zinc-500">Report</span>}
-                                        </div>
-                                    )
-                                })}
-                            </div>
-                            {/* Connecting Line */}
-                            <div className="absolute top-[21px] left-0 w-full h-0.5 bg-zinc-900 -z-0">
-                                <div
-                                    className="h-full bg-indigo-500/50 transition-all duration-1000 ease-out"
-                                    style={{ width: `${(uniqueDaysCount / 6) * 100}%` }}
-                                />
-                            </div>
+                        {/* Progress Bar */}
+                        <div className="relative h-2 bg-white/5 rounded-full overflow-hidden">
+                            <motion.div
+                                initial={{ width: 0 }}
+                                animate={{ width: `${(uniqueDaysCount / 6) * 100}%` }}
+                                transition={{ duration: 1.5, ease: "circOut" }}
+                                className="absolute top-0 left-0 h-full bg-indigo-500 shadow-[0_0_20px_rgba(99,102,241,0.5)]"
+                            />
+                        </div>
+                        <div className="flex justify-between mt-3 text-[10px] text-white/20 font-bold uppercase tracking-widest">
+                            <span>Started</span>
+                            <span>Target</span>
                         </div>
                     </div>
 
-                    <p className="text-xs text-zinc-600 max-w-xs mx-auto">
-                        Please continue journaling and checking in. Your full clinical report will unlock automatically on Day 6.
+                    <p className="text-xs text-white/30 text-center mt-8 max-w-xs mx-auto leading-relaxed">
+                        Your comprehensive clinical report will unlock automatically on Day 6.
                     </p>
-
                 </div>
             </div>
         )
     }
 
+    // --- Full Report UI ---
     return (
-        <div className="min-h-screen bg-[#09090b] text-zinc-100 font-sans selection:bg-zinc-700/30 pb-20 print:bg-white print:text-black">
+        <div className="min-h-screen text-white font-sans selection:bg-indigo-500/30 pb-24 print:bg-white print:text-black">
 
-            {/* Top Navigation Bar */}
-            <nav className="border-b border-white/5 bg-[#09090b]/80 backdrop-blur-xl fixed top-0 w-full z-50 print:hidden">
-                <div className="max-w-4xl mx-auto px-6 h-16 flex items-center justify-between">
+            {/* Background */}
+            <div className="fixed inset-0 overflow-hidden pointer-events-none print:hidden">
+                <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-indigo-500/5 rounded-full blur-[100px]" />
+                <div className="absolute bottom-[10%] left-[-10%] w-[500px] h-[500px] bg-blue-500/5 rounded-full blur-[100px]" />
+            </div>
+
+            {/* Navbar */}
+            <nav className="border-b border-white/5 bg-[#030305]/80 backdrop-blur-xl fixed top-0 w-full z-50 print:hidden transition-all duration-300">
+                <div className="max-w-5xl mx-auto px-6 h-20 flex items-center justify-between">
                     <div className="flex items-center gap-4">
-                        <Link href="/" className="p-2 hover:bg-white/5 rounded-full transition-colors">
-                            <ArrowLeft size={18} className="text-zinc-400" />
+                        <Link href="/" className="group p-2 hover:bg-white/5 rounded-full transition-colors flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center border border-white/10 group-hover:bg-white/10 transition-colors">
+                                <ArrowLeft size={16} className="text-white/60" />
+                            </div>
+                            <span className="text-sm font-medium text-white/40 group-hover:text-white transition-colors">Back</span>
                         </Link>
-                        <div className="h-6 w-[1px] bg-white/10" />
-                        <div className="flex items-center gap-3">
-                            <Image src="/aara-logo.png" alt="AARA" width={24} height={24} className="rounded-md" />
-                            <span className="text-sm font-medium text-zinc-400 tracking-wide uppercase">Reflection Report</span>
-                        </div>
                     </div>
-                    <div className="flex items-center gap-4">
-                        <div className="flex items-center gap-2 bg-zinc-900/50 p-1 rounded-lg border border-white/5">
-                            <button
-                                onClick={() => setIsTherapistView(false)}
-                                className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${!isTherapistView ? 'bg-zinc-800 text-white shadow-sm' : 'text-zinc-500 hover:text-zinc-300'}`}
-                            >
-                                User View
-                            </button>
-                            <button
-                                onClick={() => setIsTherapistView(true)}
-                                className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${isTherapistView ? 'bg-zinc-800 text-white shadow-sm' : 'text-zinc-500 hover:text-zinc-300'}`}
-                            >
-                                Therapist View
-                            </button>
-                        </div>
+                    {/* Toggle */}
+                    <div className="flex p-1 bg-white/[0.03] border border-white/5 rounded-xl backdrop-blur-md">
+                        <button
+                            onClick={() => setIsTherapistView(false)}
+                            className={`px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all ${!isTherapistView ? 'bg-white text-black shadow-lg' : 'text-white/40 hover:text-white'}`}
+                        >
+                            Personal
+                        </button>
+                        <button
+                            onClick={() => setIsTherapistView(true)}
+                            className={`px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-2 ${isTherapistView ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-500/20' : 'text-white/40 hover:text-white'}`}
+                        >
+                            <span className={!isTherapistView ? "opacity-50" : ""}>Clinical</span>
+                        </button>
                     </div>
                 </div>
             </nav>
 
-            <main className="max-w-3xl mx-auto px-6 pt-32 space-y-12">
+            <main className="max-w-4xl mx-auto px-6 pt-32 relative z-10 space-y-12">
 
-                {/* 1. Header Section */}
+                {/* Header */}
                 <header className="space-y-6 pb-8 border-b border-white/5 print:border-black/10">
-                    <div className="flex items-start justify-between">
-                        <div className="space-y-2">
-                            <div className="flex items-center gap-2 text-zinc-500 text-xs font-mono uppercase tracking-wider">
-                                <Calendar size={12} />
-                                <span>{data.dateRange}</span>
+                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                        <div className="space-y-4">
+                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-[10px] font-bold uppercase tracking-widest">
+                                <Calendar size={10} />
+                                <span>{data?.dateRange}</span>
                             </div>
-                            <h1 className="text-3xl md:text-4xl font-serif text-white tracking-tight print:text-black">
-                                Evaluation & Pattern Summary
+                            <h1 className="text-4xl md:text-5xl font-serif font-medium text-white tracking-tight leading-tight print:text-black">
+                                Clinical Analysis <br /> & Pattern Report
                             </h1>
-                            <p className="text-zinc-400 print:text-black/60">
-                                Generated for <span className="text-white font-semibold print:text-black">{user?.displayName || "AARA User"}</span>
-                            </p>
+                            <div className="flex items-center gap-2 text-sm text-white/40 print:text-black/60">
+                                <span>Prepared for</span>
+                                <span className="text-white font-medium print:text-black">{user?.displayName || "Traveler"}</span>
+                            </div>
                         </div>
-                        <div className="bg-zinc-900 border border-white/5 rounded-full p-2 print:hidden">
-                            <ShieldCheck className="text-zinc-600" size={20} />
-                        </div>
-                    </div>
 
-                    <div className="bg-zinc-900/30 border border-white/5 rounded-lg p-4 flex gap-3 print:bg-gray-100 print:border-gray-300">
-                        <Activity className="text-zinc-600 shrink-0 mt-0.5" size={16} />
-                        <p className="text-xs text-zinc-500 leading-relaxed font-medium max-w-xl print:text-black/70">
-                            <strong className="text-zinc-400 print:text-black">Non-Diagnostic Disclaimer:</strong> This report relies on self-reported data ({data.metrics.totalEntries} entries detected) and linguistic pattern analysis. It is designed to assist clinical inquiry, not to provide independent medical diagnosis or treatment advice.
-                        </p>
+                        <div className="bg-white/[0.02] border border-white/5 rounded-2xl p-4 max-w-sm backdrop-blur-md print:hidden">
+                            <div className="flex gap-3">
+                                <ShieldCheck className="text-indigo-400 shrink-0 mt-0.5" size={18} />
+                                <p className="text-xs text-white/50 leading-relaxed">
+                                    <strong className="text-white block mb-1">Confidential Report</strong>
+                                    This automated analysis is intended to support, not replace, professional clinical evaluation.
+                                </p>
+                            </div>
+                        </div>
                     </div>
                 </header>
 
-                {/* 2. Executive Summary */}
+                {/* Metrics Grid */}
                 <section>
-                    <SectionTitle icon={FileText} title="Executive Summary" />
-                    <div className="bg-zinc-900/20 border border-white/5 rounded-xl p-6 md:p-8 print:border-gray-300 print:bg-white">
-                        <ul className="space-y-4">
-                            {data.summary.map((point, i) => (
-                                <li key={i} className="flex gap-4">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-zinc-600 mt-2 shrink-0" />
-                                    <p className="text-sm md:text-base text-zinc-300 leading-relaxed print:text-black">{point}</p>
-                                </li>
-                            ))}
-                        </ul>
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                        <MetricTile label="Avg Mood" value={data?.metrics.avgMood || "-"} icon={Activity} color="indigo" />
+                        <MetricTile label="Total Entries" value={data?.metrics.totalEntries.toString() || "0"} icon={FileText} color="blue" />
+                        <MetricTile label="Consistency" value={data?.metrics.checkInRate || "0%"} icon={CheckCircle2} color="emerald" />
+                        <MetricTile label="Est. Anxiety" value={data?.metrics.anxietyLevel || "-"} icon={Brain} color="rose" />
                     </div>
                 </section>
 
-                {/* 3. Emotional Themes */}
-                <section className={`${isPrivacyMode ? 'blur-sm select-none' : ''} transition-all duration-500`}>
-                    <SectionTitle icon={Brain} title="Emotional Themes (Detected)" />
-                    <div className="grid md:grid-cols-2 gap-4">
-                        {data.emotionalThemes.map((theme, i) => (
-                            <div key={i} className="bg-zinc-900/20 border border-white/5 rounded-xl p-5 hover:bg-zinc-900/40 transition-colors print:border-gray-300">
-                                <h3 className="text-sm font-semibold text-zinc-200 mb-2 print:text-black">{theme.theme}</h3>
-                                <p className="text-xs text-zinc-500 leading-relaxed border-l-2 border-zinc-800 pl-3 print:text-black/70 print:border-gray-400">
-                                    {theme.observation}
-                                </p>
+                {/* Content Grid */}
+                <div className="grid lg:grid-cols-3 gap-8">
+                    {/* Left Col - Summary */}
+                    <div className="lg:col-span-2 space-y-8">
+                        {/* Executive Summary */}
+                        <section>
+                            <SectionHeader icon={FileText} title="Executive Summary" />
+                            <div className="bg-[#0e0e12]/50 border border-white/5 rounded-[24px] p-8 space-y-5 print:bg-white print:border-gray-200">
+                                {data?.summary.map((point, i) => (
+                                    <div key={i} className="flex gap-4">
+                                        <div className="w-1.5 h-1.5 rounded-full bg-indigo-400 mt-2 shrink-0" />
+                                        <p className="text-sm md:text-base text-white/80 leading-relaxed print:text-black">{point}</p>
+                                    </div>
+                                ))}
                             </div>
-                        ))}
-                    </div>
-                </section>
+                        </section>
 
-                {/* 4. Behavioral Tendencies */}
-                <section>
-                    <SectionTitle icon={Activity} title="Behavioral Signals" />
-                    <div className="space-y-3">
-                        {data.behaviors.map((item, i) => (
-                            <div key={i} className="flex items-center justify-between p-4 bg-zinc-900/20 border border-white/5 rounded-lg print:border-gray-300">
-                                <span className="text-sm font-medium text-zinc-300 print:text-black">{item.signal}</span>
-                                <span className="text-xs text-zinc-500 font-mono bg-zinc-900 px-2 py-1 rounded border border-white/5 print:bg-gray-100 print:text-black">
-                                    {item.status}
-                                </span>
+                        {/* Themes */}
+                        <section className={isPrivacyMode ? "blur-sm opacity-50 transition-all" : "transition-all"}>
+                            <SectionHeader icon={Brain} title="Detected Themes" />
+                            <div className="grid md:grid-cols-2 gap-4">
+                                {data?.emotionalThemes.map((theme, i) => (
+                                    <div key={i} className="group bg-white/[0.02] hover:bg-white/[0.04] border border-white/5 rounded-2xl p-6 transition-colors print:border-gray-200">
+                                        <h3 className="text-sm font-bold text-white mb-2 print:text-black">{theme.theme}</h3>
+                                        <p className="text-xs text-white/50 leading-relaxed print:text-black/70">{theme.observation}</p>
+                                    </div>
+                                ))}
                             </div>
-                        ))}
+                        </section>
                     </div>
-                </section>
 
-                {/* 5. Metrics Grid (New) */}
-                <section>
-                    <SectionTitle icon={Zap} title="Quantitative Metrics" />
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <MetricBox label="Avg Mood" value={data.metrics.avgMood} />
-                        <MetricBox label="Entries" value={data.metrics.totalEntries.toString()} />
-                        <MetricBox label="Consistency" value={data.metrics.checkInRate} />
-                        <MetricBox label="Est. Anxiety" value={data.metrics.anxietyLevel} />
+                    {/* Right Col - Stats & Strengths */}
+                    <div className="space-y-8">
+                        <section>
+                            <SectionHeader icon={Activity} title="Behavioral Signals" />
+                            <div className="space-y-3">
+                                {data?.behaviors.map((item, i) => (
+                                    <div key={i} className="p-4 bg-white/[0.02] border border-white/5 rounded-xl print:border-gray-200 flex flex-col gap-1">
+                                        <span className="text-sm font-medium text-white print:text-black">{item.signal}</span>
+                                        <span className="text-[10px] text-white/40 uppercase tracking-wider font-bold print:text-black/50">{item.status}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+
+                        <section>
+                            <SectionHeader icon={ShieldCheck} title="Strengths" />
+                            <div className="bg-gradient-to-br from-indigo-500/10 to-blue-500/10 border border-white/5 rounded-2xl p-6 print:border-gray-200 print:bg-white">
+                                <div className="flex flex-wrap gap-2">
+                                    {data?.strengths.map((str, i) => (
+                                        <span key={i} className="px-3 py-1.5 rounded-lg bg-white/5 border border-white/5 text-xs font-medium text-indigo-300 print:text-black print:border-gray-300">
+                                            {str}
+                                        </span>
+                                    ))}
+                                </div>
+                            </div>
+                        </section>
                     </div>
-                </section>
+                </div>
 
-                {/* 6. Strengths */}
-                <section>
-                    <SectionTitle icon={ShieldCheck} title="Strengths & Protective Factors" />
-                    <div className="bg-gradient-to-br from-zinc-900/40 to-zinc-900/10 border border-white/5 rounded-xl p-6 print:border-gray-300 print:from-white print:to-white">
-                        <div className="flex flex-wrap gap-3">
-                            {data.strengths.map((str, i) => (
-                                <span key={i} className="inline-flex items-center px-3 py-1.5 rounded-full bg-zinc-800/50 border border-white/10 text-xs text-zinc-300 font-medium print:bg-gray-200 print:text-black">
-                                    {str}
-                                </span>
-                            ))}
-                        </div>
-                    </div>
-                </section>
-
-                {/* 7. Therapist View (Toggle Content) */}
+                {/* Therapist Clinical View */}
                 <AnimatePresence>
                     {isTherapistView && (
                         <motion.section
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: 'auto' }}
-                            exit={{ opacity: 0, height: 0 }}
-                            className="overflow-hidden"
+                            initial={{ opacity: 0, height: 0, scale: 0.98 }}
+                            animate={{ opacity: 1, height: 'auto', scale: 1 }}
+                            exit={{ opacity: 0, height: 0, scale: 0.98 }}
+                            className="bg-[#050505] border border-white/10 rounded-[32px] overflow-hidden print:border-black"
                         >
-                            <div className="mt-8 pt-8 border-t border-dashed border-zinc-800 print:border-black">
-                                <div className="bg-indigo-950/20 border border-indigo-500/20 rounded-xl p-6 print:bg-white print:border-black">
-                                    <div className="flex items-center gap-2 mb-6 text-indigo-400 print:text-black">
-                                        <Lock size={16} />
-                                        <h3 className="text-sm font-bold uppercase tracking-widest">Clinical Metadata</h3>
-                                    </div>
-                                    <div className="grid grid-cols-3 gap-6">
-                                        <div>
-                                            <p className="text-[10px] uppercase text-zinc-500 font-semibold mb-1 print:text-black">Engagement</p>
-                                            <p className="text-sm text-zinc-200 print:text-black">{data.therapistMetrics.engagement}</p>
-                                        </div>
-                                        <div>
-                                            <p className="text-[10px] uppercase text-zinc-500 font-semibold mb-1 print:text-black">Coverage</p>
-                                            <p className="text-sm text-zinc-200 print:text-black">{data.therapistMetrics.timeCoverage}</p>
-                                        </div>
-                                        <div>
-                                            <p className="text-[10px] uppercase text-zinc-500 font-semibold mb-1 print:text-black">Risk Signals</p>
-                                            <p className="text-sm text-zinc-200 print:text-black">{data.therapistMetrics.riskSignals}</p>
-                                        </div>
-                                    </div>
-                                </div>
+                            <div className="p-1 items-center justify-center flex bg-white/[0.02] border-b border-white/5 h-12">
+                                <span className="text-[10px] uppercase tracking-widest font-bold text-white/30 flex items-center gap-2">
+                                    <Lock size={10} /> ClinicalMetrics (Private)
+                                </span>
+                            </div>
+                            <div className="p-8 grid md:grid-cols-3 gap-8">
+                                <ClinicalMetric label="Engagement Quality" value={data?.therapistMetrics.engagement} />
+                                <ClinicalMetric label="Time Coverage" value={data?.therapistMetrics.timeCoverage} />
+                                <ClinicalMetric label="Risk Signals" value={data?.therapistMetrics.riskSignals} warning={data?.therapistMetrics.riskSignals.includes("Elevated")} />
                             </div>
                         </motion.section>
                     )}
                 </AnimatePresence>
 
-                {/* 8. Actions */}
-                <div className="pt-8 pb-16 flex flex-col md:flex-row gap-4 items-center justify-between border-t border-white/5 mt-12 print:hidden">
+                {/* Footer Actions */}
+                <div className="pt-12 pb-20 flex flex-col md:flex-row items-center justify-between gap-6 border-t border-white/5 print:hidden">
                     <button
                         onClick={() => setIsPrivacyMode(!isPrivacyMode)}
-                        className="flex items-center gap-2 text-xs font-medium text-zinc-500 hover:text-zinc-300 transition-colors"
+                        className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-white/40 hover:text-white transition-colors"
                     >
                         {isPrivacyMode ? <Eye size={14} /> : <EyeOff size={14} />}
-                        {isPrivacyMode ? "Show Sensitive Data" : "Hide Sensitive Data (Presentation Mode)"}
+                        {isPrivacyMode ? "Show Sensitive Data" : "Hide Sensitive Data"}
                     </button>
 
                     <div className="flex items-center gap-3 w-full md:w-auto">
                         <button
                             onClick={handleShare}
-                            className="flex-1 md:flex-none flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-zinc-900 border border-white/10 text-sm font-medium hover:bg-zinc-800 transition-colors"
+                            className="flex-1 md:flex-none py-3 px-6 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 text-xs font-bold text-white uppercase tracking-wider transition-all"
                         >
-                            <Share2 size={16} /> Share
+                            Share
                         </button>
                         <button
                             onClick={handlePrint}
-                            className="flex-1 md:flex-none flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-zinc-100 text-black text-sm font-bold hover:bg-zinc-200 transition-colors shadow-lg"
+                            className="flex-1 md:flex-none py-3 px-6 rounded-xl bg-white text-black text-xs font-bold uppercase tracking-wider hover:bg-gray-200 transition-all shadow-[0_0_20px_rgba(255,255,255,0.1)] flex items-center justify-center gap-2"
                         >
-                            <Download size={16} /> Download PDF
+                            <Download size={14} /> Download PDF
                         </button>
                     </div>
                 </div>
@@ -518,22 +444,43 @@ export default function AaraReportPage() {
     )
 }
 
-function SectionTitle({ icon: Icon, title }: { icon: any, title: string }) {
+// --- Subcomponents ---
+
+function SectionHeader({ icon: Icon, title }: { icon: any, title: string }) {
     return (
         <div className="flex items-center gap-3 mb-6">
-            <div className="w-8 h-8 rounded-lg bg-zinc-900 border border-white/5 flex items-center justify-center text-zinc-500 print:border-gray-300 print:bg-white">
-                <Icon size={16} className="print:text-black" />
+            <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/5 flex items-center justify-center text-white/60 print:bg-gray-100 print:text-black">
+                <Icon size={16} />
             </div>
-            <h2 className="text-lg font-serif text-zinc-200 tracking-tight print:text-black">{title}</h2>
+            <h2 className="text-xl font-serif text-white tracking-tight print:text-black">{title}</h2>
         </div>
     )
 }
 
-function MetricBox({ label, value }: { label: string, value: string }) {
+function MetricTile({ label, value, icon: Icon, color }: { label: string, value: string, icon: any, color: string }) {
+    const colors: Record<string, string> = {
+        indigo: "text-indigo-400 bg-indigo-500/10",
+        blue: "text-blue-400 bg-blue-500/10",
+        emerald: "text-emerald-400 bg-emerald-500/10",
+        rose: "text-rose-400 bg-rose-500/10",
+    }
+
     return (
-        <div className="bg-zinc-900/20 border border-white/5 rounded-xl p-4 text-center print:border-gray-300 print:bg-white">
-            <p className="text-[10px] uppercase tracking-wider text-zinc-500 mb-1 print:text-black/60">{label}</p>
-            <p className="text-xl font-bold text-white print:text-black">{value}</p>
+        <div className="bg-[#0e0e12]/60 border border-white/5 rounded-2xl p-5 hover:bg-white/[0.02] transition-colors group print:border-gray-200 print:bg-white">
+            <div className={`w-10 h-10 rounded-xl ${colors[color]} flex items-center justify-center mb-3 group-hover:scale-110 transition-transform`}>
+                <Icon size={20} />
+            </div>
+            <p className="text-[10px] uppercase tracking-widest text-white/40 mb-1 font-bold print:text-black/60">{label}</p>
+            <p className="text-2xl font-serif font-medium text-white print:text-black">{value}</p>
+        </div>
+    )
+}
+
+function ClinicalMetric({ label, value, warning }: { label: string, value: string | undefined, warning?: boolean }) {
+    return (
+        <div className="space-y-2">
+            <p className="text-[10px] uppercase font-bold tracking-widest text-white/30 print:text-black/50">{label}</p>
+            <p className={`text-lg font-medium print:text-black ${warning ? 'text-red-400' : 'text-white'}`}>{value || "-"}</p>
         </div>
     )
 }

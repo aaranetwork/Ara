@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
@@ -14,6 +14,7 @@ import OneLineJournal from '@/components/journal/OneLineJournal'
 
 type JournalState = 'home' | 'categories' | 'writing' | 'calendar' | 'one-line'
 
+// Premium Journal Layout
 export default function JournalPage() {
     const router = useRouter()
     const [state, setState] = useState<JournalState>('home')
@@ -93,14 +94,25 @@ export default function JournalPage() {
         }
     }
 
+    const mainRef = useRef<HTMLElement>(null)
+
+    // Reset scroll on state change
+    useEffect(() => {
+        if (mainRef.current) {
+            mainRef.current.scrollTo({ top: 0, behavior: 'smooth' })
+        }
+    }, [state])
+
     // Show consistent loading screen until mounted (avoids hydration mismatch)
     if (!mounted || showSplash) {
         return (
-            <div className="min-h-screen bg-[#050505] flex items-center justify-center">
+            <div className="min-h-screen bg-[#030305] flex items-center justify-center">
                 <div className="flex flex-col items-center gap-6">
-                    <Image src="/aara-logo.png" alt="AARA" width={64} height={64} className="rounded-2xl" />
-                    <p className="text-white font-mono text-lg tracking-wide">
-                        {typedText}<span className="animate-pulse">|</span>
+                    <div className="w-16 h-16 rounded-2xl bg-white/[0.03] border border-white/5 flex items-center justify-center">
+                        <Image src="/aara-logo.png" alt="AARA" width={32} height={32} className="opacity-80" />
+                    </div>
+                    <p className="text-white/70 font-serif text-lg tracking-wide">
+                        {typedText}<span className="animate-pulse text-indigo-400">_</span>
                     </p>
                 </div>
             </div>
@@ -108,50 +120,56 @@ export default function JournalPage() {
     }
 
     return (
-        <div className="h-[100dvh] bg-[#050505] text-white selection:bg-white/10 overflow-hidden flex flex-col">
+        <div className="h-[100dvh] bg-[#030305] text-white selection:bg-white/10 overflow-hidden flex flex-col relative">
+
+            {/* Ambient Background - Subtle */}
+            <div className="fixed inset-0 pointer-events-none">
+                <div className="absolute top-[-20%] right-[20%] w-[500px] h-[500px] bg-indigo-500/5 blur-[120px] rounded-full" />
+                <div className="absolute bottom-[-20%] left-[20%] w-[500px] h-[500px] bg-sky-500/5 blur-[120px] rounded-full" />
+            </div>
+
             {/* Fixed Floating Header */}
-            <div className="fixed top-0 left-0 right-0 z-[90] px-4 py-5 md:p-6 pointer-events-none flex items-center justify-between">
+            <div className="fixed top-0 left-0 right-0 z-[90] px-4 py-6 pointer-events-none flex items-center justify-between">
                 {/* Back Button - Only in Writing State */}
-                {state === 'writing' ? (
+                {state !== 'home' ? (
                     <button
-                        onClick={() => setState(previousState)}
-                        className="pointer-events-auto flex items-center gap-2 px-3 py-2 hover:bg-white/5 rounded-full transition-colors group"
+                        onClick={() => setState('home')}
+                        className="pointer-events-auto flex items-center gap-2 px-4 py-2 hover:bg-white/5 rounded-xl transition-all group backdrop-blur-md bg-white/[0.03] border border-white/5"
                     >
-                        <span className="text-[10px] font-bold tracking-widest text-gray-500 group-hover:text-white uppercase transition-colors">← Back</span>
+                        <span className="text-[10px] font-bold tracking-widest text-white/50 group-hover:text-white uppercase transition-colors">Back</span>
                     </button>
                 ) : (
-                    <div className="w-16 md:w-20" />
+                    <div className="w-16" />
                 )}
 
                 {/* Branding Pill */}
-                <Link href="/" className="pointer-events-auto flex items-center gap-2 px-4 py-2 rounded-full bg-white/[0.03] border border-white/5 backdrop-blur-xl shadow-2xl hover:bg-white/5 transition-all active:scale-95 cursor-pointer">
-                    <Image src="/aara-logo.png" alt="AARA" width={20} height={20} className="rounded-lg border border-white/10" />
-                    <span className="text-[10px] font-black tracking-[0.3em] md:tracking-[0.4em] text-white/60 uppercase">JOURNAL</span>
+                <Link href="/" className="pointer-events-auto flex items-center gap-2 px-4 py-2 rounded-full bg-white/[0.03] border border-white/5 backdrop-blur-xl hover:bg-white/5 transition-all active:scale-95 cursor-pointer shadow-2xl">
+                    <Image src="/aara-logo.png" alt="AARA" width={18} height={18} className="rounded opacity-80" />
+                    <span className="text-[10px] font-bold tracking-[0.3em] text-white/40 uppercase">JOURNAL</span>
                 </Link>
 
                 {/* Exit Button */}
                 <button
                     onClick={handleExit}
-                    className="pointer-events-auto flex items-center gap-2 px-3 py-2 hover:bg-white/5 rounded-full transition-colors group"
+                    className="pointer-events-auto w-10 h-10 flex items-center justify-center hover:bg-white/5 rounded-full transition-colors group"
                 >
-                    <span className="text-[10px] font-bold tracking-widest text-gray-500 group-hover:text-white uppercase transition-colors">Exit</span>
-                    <X size={18} className="text-gray-500 group-hover:text-white transition-colors" />
+                    <X size={18} className="text-white/50 group-hover:text-white transition-colors" />
                 </button>
             </div>
 
             {/* Spacer for fixed header */}
-            <div className="h-20" />
+            <div className="h-24" />
 
             {/* Main Content Area */}
-            <main className="flex-1 relative overflow-y-auto scrollbar-hide py-12 px-4 md:px-8">
+            <main ref={mainRef} className="flex-1 relative overflow-y-auto scrollbar-hide px-4 md:px-8 pb-32 z-10">
                 <AnimatePresence mode="wait">
                     <motion.div
                         key={state}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}
-                        className="max-w-5xl mx-auto h-full"
+                        initial={{ opacity: 0, scale: 0.98 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.98 }}
+                        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                        className="max-w-4xl mx-auto h-full"
                     >
                         {renderContent()}
                     </motion.div>
@@ -160,22 +178,28 @@ export default function JournalPage() {
 
             {/* Bottom Navigation */}
             {state !== 'writing' && (
-                <nav className="border-t border-white/5 bg-[#050505]/80 backdrop-blur-xl pb-safe">
-                    <div className="max-w-5xl mx-auto flex items-center justify-around py-4">
+                <nav className="fixed bottom-0 left-0 right-0 border-t border-white/5 bg-[#030305]/80 backdrop-blur-2xl pb-safe z-50">
+                    <div className="max-w-md mx-auto flex items-center justify-evenly py-4">
                         {[
                             { id: 'categories', icon: LayoutGrid, label: 'Categories' },
-                            { id: 'home', icon: Plus, label: 'Today' },
-                            { id: 'calendar', icon: Calendar, label: 'Calendar' }
+                            { id: 'home', icon: Plus, label: 'New Entry' },
+                            { id: 'calendar', icon: Calendar, label: 'History' }
                         ].map((item) => {
                             const Icon = item.icon
-                            const isActive = state === item.id || (item.id === 'home' && state === 'categories')
+                            const isActive = state === item.id || (item.id === 'home' && state === 'home')
                             return (
                                 <button
                                     key={item.id}
                                     onClick={() => setState(item.id as JournalState)}
-                                    className={`flex flex-col items-center gap-1 group transition-all ${isActive ? 'text-white' : 'text-gray-600 hover:text-gray-400'}`}
+                                    className={`flex flex-col items-center gap-1.5 group transition-all relative px-6 ${isActive ? 'text-white' : 'text-white/30 hover:text-white/60'}`}
                                 >
-                                    <div className={`p-2 rounded-xl transition-all ${isActive ? 'bg-white/5' : ''}`}>
+                                    {isActive && (
+                                        <motion.div
+                                            layoutId="journal-nav"
+                                            className="absolute -top-4 w-8 h-1 bg-white rounded-full blur-[2px]"
+                                        />
+                                    )}
+                                    <div className={`p-2 rounded-2xl transition-all ${isActive ? 'bg-white/10' : ''}`}>
                                         <Icon size={20} />
                                     </div>
                                     <span className="text-[9px] font-bold uppercase tracking-widest">{item.label}</span>
