@@ -8,7 +8,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useState, useCallback, useEffect } from 'react'
 import {
     MessageSquare, TrendingUp, Users, ArrowRight, Sparkles, Compass,
-    Plus, ChevronRight, Play, Heart, Brain, Zap, BookOpen
+    Plus, ChevronRight, Play, Heart, Brain, Zap, BookOpen, CheckCircle
 } from 'lucide-react'
 import Navbar from '../layout/Navbar'
 import dynamic from 'next/dynamic'
@@ -16,11 +16,7 @@ import { db } from '@/lib/firebase/config'
 import { collection, query, orderBy, getDocs } from 'firebase/firestore'
 import FeedbackModal from '../FeedbackModal'
 
-// Dynamic Imports
-const MoodFlowCard = dynamic(() => import('../MoodFlowCard').then(mod => mod.MoodFlowCard), {
-    loading: () => <div className="h-32 bg-white/5 rounded-3xl animate-pulse" />,
-    ssr: false
-})
+
 
 interface DiscoverItem {
     id: string
@@ -144,12 +140,12 @@ export default function Dashboard({ user }: { user: any }) {
             {/* Mobile Header */}
             <div className="fixed top-0 left-0 right-0 z-[80] px-6 py-4 flex justify-between items-center md:hidden bg-[#030305] border-b border-white/5 shadow-lg">
                 <div className="flex items-center gap-3">
-                    <Image src="/aara-logo.png" alt="" width={24} height={24} className="rounded-lg opacity-80" priority />
+                    <Image src="/aara-logo.png" alt="" width={24} height={24} className="rounded-lg opacity-80" priority sizes="24px" />
                     <span className="text-[10px] font-bold tracking-[0.2em] text-white/50 uppercase">AARA</span>
                 </div>
                 <Link href="/profile" className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center border border-white/10 text-xs font-medium text-white/70 overflow-hidden relative">
                     {user?.photoURL ? (
-                        <Image src={user.photoURL} alt="Profile" fill className="object-cover" priority />
+                        <Image src={user.photoURL} alt="Profile" fill className="object-cover" priority sizes="32px" />
                     ) : (
                         user?.email?.[0].toUpperCase()
                     )}
@@ -210,7 +206,7 @@ export default function Dashboard({ user }: { user: any }) {
                             {/* Daily Check-in CTA */}
                             {loadingData ? (
                                 <div className="w-full h-40 rounded-[2.2rem] bg-white/[0.02] border border-white/5 animate-pulse" />
-                            ) : !checkInComplete && (
+                            ) : !checkInComplete ? (
                                 <motion.div
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
@@ -218,7 +214,7 @@ export default function Dashboard({ user }: { user: any }) {
                                 >
                                     <Link href="/check-in" className="group relative block w-full">
                                         <div className="absolute -inset-0.5 bg-gradient-to-r from-rose-500/20 via-amber-500/20 to-indigo-500/20 rounded-[2.5rem] opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-700" />
-                                        <div className="relative p-5 md:p-8 rounded-[2.2rem] bg-[#0A0A0C] border border-white/5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 md:gap-6 overflow-hidden group-hover:border-white/10 transition-colors duration-500">
+                                        <div className="relative p-5 md:p-8 rounded-[2.2rem] bg-[#0A0A0C] border border-white/5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 md:gap-6 overflow-hidden group-hover:border-white/10 transition-colors duration-500 min-h-[160px]">
                                             {/* Reflection */}
                                             <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-30" />
 
@@ -243,6 +239,20 @@ export default function Dashboard({ user }: { user: any }) {
                                         </div>
                                     </Link>
                                 </motion.div>
+                            ) : (
+                                <motion.div
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    className="w-full min-h-[160px] p-5 md:p-8 rounded-[2.2rem] bg-white/[0.02] border border-white/5 flex flex-col md:flex-row items-center justify-center md:justify-start gap-6 text-center md:text-left"
+                                >
+                                    <div className="w-16 h-16 rounded-full bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20">
+                                        <CheckCircle size={32} className="text-emerald-400" />
+                                    </div>
+                                    <div>
+                                        <h2 className="text-xl font-serif text-white/90 mb-1">You're all checked in!</h2>
+                                        <p className="text-white/50 text-sm">Great job keeping up with your daily ritual.</p>
+                                    </div>
+                                </motion.div>
                             )}
 
                             {/* Mood Trends Card */}
@@ -264,7 +274,7 @@ export default function Dashboard({ user }: { user: any }) {
                                     </div>
                                 </Link>
 
-                                <div className="h-40 flex items-end justify-between gap-2 md:gap-4 relative px-2">
+                                <div className="h-40 flex items-end justify-between gap-2 md:gap-4 relative px-2 will-change-transform">
                                     {/* Grid Lines */}
                                     <div className="absolute inset-0 flex flex-col justify-between pointer-events-none opacity-10">
                                         <div className="w-full h-px border-t border-dashed border-white/20" />

@@ -33,6 +33,7 @@ export const metadata: Metadata = {
     type: 'website',
     images: ['/og-image.png'],
   },
+  manifest: '/manifest.json',
 }
 
 export const viewport: Viewport = {

@@ -68,7 +68,7 @@ export default function LandingPage() {
             <nav className="fixed top-0 left-0 w-full z-50 px-6 py-8">
                 <div className="max-w-7xl mx-auto flex items-center justify-between">
                     <div className="flex items-center gap-3 opacity-80">
-                        <Image src="/aara-logo.png" alt="AARA" width={32} height={32} className="rounded-lg shadow-2xl" />
+                        <Image src="/aara-logo.png" alt="AARA" width={32} height={32} className="rounded-lg shadow-2xl" priority sizes="32px" />
                         <span className="font-serif text-lg tracking-tight">AARA</span>
                     </div>
                     {!user && (
@@ -80,9 +80,9 @@ export default function LandingPage() {
             </nav>
 
             <motion.div
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, ease: "easeOut" }}
+                transition={{ duration: 0.4, ease: "easeOut" }}
                 className="w-full max-w-2xl mx-auto text-center relative z-10 flex flex-col h-full justify-center pt-20"
             >
                 <div className="mb-8 inline-flex items-center justify-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 mx-auto text-[10px] font-bold uppercase tracking-widest">
