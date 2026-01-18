@@ -501,7 +501,7 @@ export default function ProfilePage() {
               </div>
               <h3 className="text-2xl font-serif font-medium mb-3 text-white">Sign Out?</h3>
               <p className="text-white/40 text-sm mb-8 leading-relaxed">
-                You'll need to sign in again to access your journey data.
+                You&apos;ll need to sign in again to access your journey data.
               </p>
 
               <div className="flex gap-3">

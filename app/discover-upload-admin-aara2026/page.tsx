@@ -168,7 +168,7 @@ export default function AdminUploadPage() {
                                 className="pt-2"
                             >
                                 <div className="rounded-xl overflow-hidden border border-white/10 h-48 relative">
-                                    <img src={formData.image} alt="Preview" className="w-full h-full object-cover" />
+                                    <Image src={formData.image} alt="Preview" fill className="object-cover" unoptimized />
                                 </div>
                             </motion.div>
                         )}

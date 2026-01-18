@@ -171,11 +171,12 @@ export default function DiscoverHistoryPage() {
                                     href={`/discover/${item.slug}`}
                                     className="flex gap-4 p-4 bg-white/[0.02] border border-white/5 rounded-2xl hover:bg-white/[0.05] hover:border-white/10 transition-all group"
                                 >
-                                    <div className="w-24 h-24 rounded-xl overflow-hidden shrink-0">
-                                        <img
+                                    <div className="relative w-24 h-24 rounded-xl overflow-hidden shrink-0">
+                                        <Image
                                             src={item.image}
                                             alt={item.title}
-                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                            fill
+                                            className="object-cover group-hover:scale-105 transition-transform duration-500"
                                         />
                                     </div>
                                     <div className="flex-1 min-w-0">

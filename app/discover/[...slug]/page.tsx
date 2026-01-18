@@ -153,7 +153,9 @@ export default function DiscoverDetail() {
                     transition={{ duration: 0.6 }}
                     className="mb-10 rounded-2xl overflow-hidden border border-white/10 shadow-2xl"
                 >
-                    <img src={item.image} alt={item.title} className="w-full h-[350px] md:h-[450px] object-cover" />
+                    <div className="relative w-full h-[350px] md:h-[450px]">
+                        <Image src={item.image} alt={item.title} fill className="object-cover" priority />
+                    </div>
                 </motion.div>
 
                 {/* Question Title */}
@@ -326,7 +328,7 @@ export default function DiscoverDetail() {
                             <Link key={relItem.id} href={`/discover/${relItem.slug}`} className="group block">
                                 <div className="bg-white/[0.02] border border-white/5 rounded-2xl overflow-hidden hover:border-white/20 transition-all duration-300">
                                     <div className="aspect-[16/9] relative overflow-hidden">
-                                        <img src={relItem.image} alt={relItem.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-80 group-hover:opacity-100" />
+                                        <Image src={relItem.image} alt={relItem.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500 opacity-80 group-hover:opacity-100" />
                                     </div>
                                     <div className="p-6">
                                         <span className="text-[10px] font-bold text-indigo-400 uppercase tracking-wider mb-2 block">{relItem.category || "Health"}</span>

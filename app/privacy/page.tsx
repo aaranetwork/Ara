@@ -51,7 +51,7 @@ export default function PrivacyPage() {
             <ul className="list-disc list-outside ml-4 space-y-2 marker:text-indigo-500/50">
               <li><strong className="text-white font-medium">Account Details:</strong> Basic identity info required for secure access.</li>
               <li><strong className="text-white font-medium">Journal & Chat Logs:</strong> Stored securely to provide history and analysis.</li>
-              <li><strong className="text-white font-medium">Analytics:</strong> Anonymized usage patterns to improve AARA's core algorithms.</li>
+              <li><strong className="text-white font-medium">Analytics:</strong> Anonymized usage patterns to improve AARA&apos;s core algorithms.</li>
             </ul>
           </Section>
 

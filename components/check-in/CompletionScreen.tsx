@@ -36,7 +36,7 @@ export function CompletionScreen() {
                     <h2 className="text-3xl md:text-4xl font-serif font-light text-white tracking-tight">Insight Captured</h2>
                     <p className="text-sm md:text-base text-white/40 leading-relaxed font-light font-sans max-w-xs mx-auto">
                         Your consciousness has been logged.<br />
-                        We're analyzing the patterns now.
+                        We&apos;re analyzing the patterns now.
                     </p>
                 </div>
             </motion.div>

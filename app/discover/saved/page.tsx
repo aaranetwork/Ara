@@ -168,11 +168,12 @@ export default function DiscoverSavedPage() {
                                 transition={{ delay: index * 0.05 }}
                             >
                                 <div className="flex gap-4 p-4 bg-white/[0.02] border border-white/5 rounded-2xl hover:bg-white/[0.05] hover:border-white/10 transition-all group">
-                                    <Link href={`/discover/${item.slug}`} className="w-24 h-24 rounded-xl overflow-hidden shrink-0">
-                                        <img
+                                    <Link href={`/discover/${item.slug}`} className="relative w-24 h-24 rounded-xl overflow-hidden shrink-0">
+                                        <Image
                                             src={item.image}
                                             alt={item.title}
-                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                            fill
+                                            className="object-cover group-hover:scale-105 transition-transform duration-500"
                                         />
                                     </Link>
                                     <div className="flex-1 min-w-0">

@@ -123,7 +123,7 @@ export default function TherapistResultsPage() {
                         Your Recommended <span className="italic text-indigo-300">Guides</span>
                     </h1>
                     <p className="text-white/40 text-lg max-w-2xl mx-auto leading-relaxed font-light">
-                        Based on your resonance, we've selected these practitioners who align with your current journey and objectives.
+                        Based on your resonance, we&apos;ve selected these practitioners who align with your current journey and objectives.
                     </p>
                 </motion.header>
 

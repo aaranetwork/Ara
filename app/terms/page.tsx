@@ -65,7 +65,7 @@ export default function TermsPage() {
           </Section>
 
           <Section title="Limitation of Liability">
-            AARA is provided on an "as is" and "as available" basis. We do not guarantee that the service will be uninterrupted or error-free.
+            AARA is provided on an &quot;as is&quot; and &quot;as available&quot; basis. We do not guarantee that the service will be uninterrupted or error-free.
             To the maximum extent permitted by law, AARA shall not be liable for any indirect, incidental, or consequential damages arising from your use of the service.
           </Section>
 
