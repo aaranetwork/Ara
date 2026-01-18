@@ -249,7 +249,7 @@ export default function Dashboard({ user }: { user: any }) {
                                         <CheckCircle size={32} className="text-emerald-400" />
                                     </div>
                                     <div>
-                                        <h2 className="text-xl font-serif text-white/90 mb-1">You're all checked in!</h2>
+                                        <h2 className="text-xl font-serif text-white/90 mb-1">You&apos;re all checked in!</h2>
                                         <p className="text-white/50 text-sm">Great job keeping up with your daily ritual.</p>
                                     </div>
                                 </motion.div>
