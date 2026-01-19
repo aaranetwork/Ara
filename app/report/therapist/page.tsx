@@ -447,14 +447,14 @@ export default function AaraReportPage() {
                             <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center shrink-0 border border-white/10 print:bg-gray-100 print:text-black">1</div>
                             <div>
                                 <h3 className="text-sm font-bold text-white mb-1 print:text-black">Export for your Therapist</h3>
-                                <p className="text-xs text-white/50 leading-relaxed print:text-black/70">Share this report to save time on "catching up" and focus on deep work.</p>
+                                <p className="text-xs text-white/50 leading-relaxed print:text-black/70">Share this report to save time on &quot;catching up&quot; and focus on deep work.</p>
                             </div>
                         </div>
                         <div className="flex gap-4 items-start">
                             <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center shrink-0 border border-white/10 print:bg-gray-100 print:text-black">2</div>
                             <div>
-                                <h3 className="text-sm font-bold text-white mb-1 print:text-black">Reflect on "{data?.emotionalThemes[0]?.theme || 'Balance'}"</h3>
-                                <p className="text-xs text-white/50 leading-relaxed print:text-black/70">Use the Journal to explore this theme further while it's fresh in your mind.</p>
+                                <h3 className="text-sm font-bold text-white mb-1 print:text-black">Reflect on &quot;{data?.emotionalThemes[0]?.theme || 'Balance'}&quot;</h3>
+                                <p className="text-xs text-white/50 leading-relaxed print:text-black/70">Use the Journal to explore this theme further while it&apos;s fresh in your mind.</p>
                             </div>
                         </div>
                     </div>

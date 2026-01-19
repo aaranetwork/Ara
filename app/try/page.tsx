@@ -252,11 +252,11 @@ export default function TryPage() {
                                 </div>
 
                                 <h3 className="text-2xl font-serif text-white/90 mb-6 leading-relaxed">
-                                    "Acknowledging that you feel <span className="text-white border-b border-white/20 pb-0.5">{mood}/10</span> is a powerful start."
+                                    &quot;Acknowledging that you feel <span className="text-white border-b border-white/20 pb-0.5">{mood}/10</span> is a powerful start.&quot;
                                 </h3>
 
                                 <p className="text-sm text-white/50 leading-relaxed mb-10 max-w-sm mx-auto">
-                                    You've taken the first step to clarify your thoughts. Create your private space to continue this reflection.
+                                    You&apos;ve taken the first step to clarify your thoughts. Create your private space to continue this reflection.
                                 </p>
 
                                 <div className="flex flex-col gap-4">

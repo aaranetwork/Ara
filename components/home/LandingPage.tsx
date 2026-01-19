@@ -335,7 +335,7 @@ export default function LandingPage() {
                                                 <Sparkles size={40} className="text-indigo-400" />
                                             </div>
                                             <p className="text-xs font-bold text-indigo-400 mb-2 uppercase tracking-widest">Daily Wisdom</p>
-                                            <p className="text-lg font-serif italic text-white/80 max-w-lg leading-relaxed">"Naming what you feel is the first step to understanding it."</p>
+                                            <p className="text-lg font-serif italic text-white/80 max-w-lg leading-relaxed">&quot;Naming what you feel is the first step to understanding it.&quot;</p>
                                         </div>
 
                                         <div className="grid grid-cols-2 gap-4 opacity-50">
@@ -376,11 +376,11 @@ export default function LandingPage() {
                                 <div className="aspect-square rounded-[2.8rem] bg-[#050505] relative overflow-hidden flex items-center justify-center">
                                     <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(79,70,229,0.1),transparent_70%)]" />
                                     <div className="text-center p-8">
-                                        <h4 className="text-xl font-serif text-white/80 mb-4">"I usually spend 20 minutes just explaining what's been."</h4>
+                                        <h4 className="text-xl font-serif text-white/80 mb-4">&quot;I usually spend 20 minutes just explaining what&apos;s been.&quot;</h4>
                                         <p className="text-xs text-white/30 italic mb-6">— Sarah, 29, Beta User</p>
                                         <div className="w-px h-16 bg-gradient-to-b from-transparent via-white/20 to-transparent mx-auto mb-4" />
                                         <p className="text-sm text-indigo-400 font-bold uppercase tracking-widest">With AARA</p>
-                                        <p className="text-white/40 mt-2 text-sm">"Here is exactly what I need to focus on today."</p>
+                                        <p className="text-white/40 mt-2 text-sm">&quot;Here is exactly what I need to focus on today.&quot;</p>
                                     </div>
                                 </div>
                             </div>

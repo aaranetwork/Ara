@@ -362,7 +362,7 @@ export default function Dashboard({ user }: { user: any }) {
                                         <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-indigo-300/50">insight</span>
                                     </div>
                                     <p className="text-lg font-serif italic text-white/80 leading-relaxed mb-6">
-                                        "You don't have to control your thoughts. You just have to stop letting them control you."
+                                        &quot;You don&apos;t have to control your thoughts. You just have to stop letting them control you.&quot;
                                     </p>
                                     <div className="h-0.5 w-8 bg-indigo-500/20" />
                                 </div>
