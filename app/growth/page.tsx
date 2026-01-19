@@ -205,7 +205,7 @@ export default function GrowthPage() {
                 {/* Stats Grid - Premium Glass */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
                     {[
-                        { label: 'Check-ins', value: stats.totalCheckins, icon: Calendar, color: 'text-blue-400', bg: 'bg-blue-500/10' },
+                        { label: 'Active Days', value: stats.totalCheckins, icon: Calendar, color: 'text-blue-400', bg: 'bg-blue-500/10' },
                         { label: 'Streak', value: `${stats.currentStreak} Days`, icon: Zap, color: 'text-amber-400', bg: 'bg-amber-500/10' },
                         { label: 'Avg Mood', value: stats.moodAverage, icon: Heart, color: 'text-rose-400', bg: 'bg-rose-500/10' },
                         { label: 'Goals', value: goals.length, icon: Target, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },

@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, Suspense } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
@@ -9,13 +9,15 @@ import { signUpWithEmail, signInWithGoogle } from '@/lib/firebase/auth'
 import { auth } from '@/lib/firebase/config'
 import { apiClient } from '@/lib/api-client'
 
-export default function SignupPage() {
+function SignupContent() {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const isSaveMode = searchParams.get('mode') === 'save'
 
   const handleEmailSignup = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -68,8 +70,15 @@ export default function SignupPage() {
               <Image src="/aara-logo.png" alt="AARA" width={48} height={48} className="relative rounded-2xl shadow-2xl" />
             </div>
           </Link>
-          <h1 className="text-4xl font-serif font-medium text-white mb-3 tracking-tight">Create Account</h1>
-          <p className="text-white/40 text-sm tracking-wide">Begin your journey towards inner clarity</p>
+          <h1 className="text-4xl font-serif font-medium text-white mb-3 tracking-tight">
+            {isSaveMode ? 'Save Your Progress' : 'Create Account'}
+          </h1>
+          <p className="text-white/40 text-sm tracking-wide">
+            {isSaveMode
+              ? 'Create an account to keep your insights safe and private.'
+              : 'Begin your journey towards inner clarity'
+            }
+          </p>
         </div>
 
         {/* Card */}
@@ -126,7 +135,9 @@ export default function SignupPage() {
               className="w-full py-4 bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-medium rounded-xl hover:shadow-[0_0_40px_-10px_rgba(79,70,229,0.4)] transition-all duration-500 disabled:opacity-50 disabled:cursor-not-allowed mt-2 group relative overflow-hidden"
             >
               <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out" />
-              <span className="relative">{loading ? 'Creating Account...' : 'Sign Up'}</span>
+              <span className="relative">
+                {loading ? 'Creating Account...' : isSaveMode ? 'Save & Continue' : 'Sign Up'}
+              </span>
             </button>
           </form>
 
@@ -165,5 +176,13 @@ export default function SignupPage() {
         </p>
       </motion.div>
     </div>
+  )
+}
+
+export default function SignupPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <SignupContent />
+    </Suspense>
   )
 }

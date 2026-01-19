@@ -10,6 +10,7 @@ import { SavedItemsProvider } from '@/contexts/SavedItemsContext'
 import { DiscussionProvider } from '@/contexts/DiscussionContext'
 import NextTopLoader from 'nextjs-toploader'
 import { SpeedInsights } from "@vercel/speed-insights/next"
+import ScrollToTop from '@/components/ScrollToTop'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -79,6 +80,7 @@ export default function RootLayout({
         {/* Global Grain Texture */}
         <div className="fixed inset-0 opacity-[0.03] bg-[url('https://grainy-gradients.vercel.app/noise.svg')] pointer-events-none mix-blend-overlay z-[9999]"></div>
 
+        <ScrollToTop />
         <NextTopLoader color="#FFFFFF" showSpinner={false} />
         <FeatureAccessProvider>
           <AuthProvider>

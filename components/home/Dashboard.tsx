@@ -206,7 +206,7 @@ export default function Dashboard({ user }: { user: any }) {
                             {/* Daily Check-in CTA */}
                             {loadingData ? (
                                 <div className="w-full h-40 rounded-[2.2rem] bg-white/[0.02] border border-white/5 animate-pulse" />
-                            ) : !checkInComplete ? (
+                            ) : !checkInComplete && (
                                 <motion.div
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
@@ -238,20 +238,6 @@ export default function Dashboard({ user }: { user: any }) {
                                             </div>
                                         </div>
                                     </Link>
-                                </motion.div>
-                            ) : (
-                                <motion.div
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    className="w-full min-h-[160px] p-5 md:p-8 rounded-[2.2rem] bg-white/[0.02] border border-white/5 flex flex-col md:flex-row items-center justify-center md:justify-start gap-6 text-center md:text-left"
-                                >
-                                    <div className="w-16 h-16 rounded-full bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20">
-                                        <CheckCircle size={32} className="text-emerald-400" />
-                                    </div>
-                                    <div>
-                                        <h2 className="text-xl font-serif text-white/90 mb-1">You&apos;re all checked in!</h2>
-                                        <p className="text-white/50 text-sm">Great job keeping up with your daily ritual.</p>
-                                    </div>
                                 </motion.div>
                             )}
 
@@ -308,10 +294,10 @@ export default function Dashboard({ user }: { user: any }) {
                                 <div className="flex items-center justify-between mb-4">
                                     <h2 className="text-sm font-bold text-white flex items-center gap-2">
                                         <Sparkles size={14} className="text-amber-400" />
-                                        For You
+                                        Recommended for your {hour < 12 ? 'Morning' : hour < 18 ? 'Afternoon' : 'Evening'}
                                     </h2>
                                     <Link href="/discover" className="text-[10px] font-bold uppercase tracking-wider text-indigo-400 hover:text-indigo-300 transition-colors flex items-center gap-1">
-                                        See All <ArrowRight size={12} />
+                                        See Library <ArrowRight size={12} />
                                     </Link>
                                 </div>
 
@@ -373,10 +359,10 @@ export default function Dashboard({ user }: { user: any }) {
                                         <div className="w-6 h-6 rounded-full border border-indigo-500/20 flex items-center justify-center">
                                             <Sparkles size={10} className="text-indigo-400" />
                                         </div>
-                                        <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-indigo-300/50">Wisdom</span>
+                                        <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-indigo-300/50">insight</span>
                                     </div>
                                     <p className="text-lg font-serif italic text-white/80 leading-relaxed mb-6">
-                                        &quot;Naming an emotion is the first step to taming it. Try to be specific today.&quot;
+                                        "You don't have to control your thoughts. You just have to stop letting them control you."
                                     </p>
                                     <div className="h-0.5 w-8 bg-indigo-500/20" />
                                 </div>

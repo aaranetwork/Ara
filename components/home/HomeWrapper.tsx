@@ -29,6 +29,11 @@ function LoadingScreen() {
 export default function HomeWrapper() {
     const { user, loading } = useAuth()
 
+    // Force scroll to top on mount
+    useEffect(() => {
+        window.scrollTo({ top: 0, behavior: 'instant' })
+    }, [])
+
     if (loading) {
         return <LoadingScreen />
     }

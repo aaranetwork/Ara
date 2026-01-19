@@ -325,7 +325,7 @@ export default function AaraReportPage() {
                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                         <MetricTile label="Avg Mood" value={data?.metrics.avgMood || "-"} icon={Activity} color="indigo" />
                         <MetricTile label="Total Entries" value={data?.metrics.totalEntries.toString() || "0"} icon={FileText} color="blue" />
-                        <MetricTile label="Consistency" value={data?.metrics.checkInRate || "0%"} icon={CheckCircle2} color="emerald" />
+                        <MetricTile label="Active Days" value={data?.metrics.checkInRate.replace('%', '/30') || "0/30"} icon={CheckCircle2} color="emerald" />
                         <MetricTile label="Est. Anxiety" value={data?.metrics.anxietyLevel || "-"} icon={Brain} color="rose" />
                     </div>
                 </section>
@@ -349,7 +349,8 @@ export default function AaraReportPage() {
 
                         {/* Themes */}
                         <section className={isPrivacyMode ? "blur-sm opacity-50 transition-all" : "transition-all"}>
-                            <SectionHeader icon={Brain} title="Detected Themes" />
+                            <SectionHeader icon={Brain} title="Reflected Themes" />
+                            <p className="text-xs text-white/40 mb-4 -mt-4">Recurring patterns identified in your journal entries.</p>
                             <div className="grid md:grid-cols-2 gap-4">
                                 {data?.emotionalThemes.map((theme, i) => (
                                     <div key={i} className="group bg-white/[0.02] hover:bg-white/[0.04] border border-white/5 rounded-2xl p-6 transition-colors print:border-gray-200">
@@ -439,6 +440,25 @@ export default function AaraReportPage() {
                     </div>
                 </div>
 
+                <section className="bg-gradient-to-r from-indigo-500/10 to-blue-500/10 border border-white/5 rounded-[24px] p-8 print:border-gray-200">
+                    <h2 className="text-xl font-serif text-white mb-4 print:text-black">Recommended Next Steps</h2>
+                    <div className="grid md:grid-cols-2 gap-4">
+                        <div className="flex gap-4 items-start">
+                            <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center shrink-0 border border-white/10 print:bg-gray-100 print:text-black">1</div>
+                            <div>
+                                <h3 className="text-sm font-bold text-white mb-1 print:text-black">Export for your Therapist</h3>
+                                <p className="text-xs text-white/50 leading-relaxed print:text-black/70">Share this report to save time on "catching up" and focus on deep work.</p>
+                            </div>
+                        </div>
+                        <div className="flex gap-4 items-start">
+                            <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center shrink-0 border border-white/10 print:bg-gray-100 print:text-black">2</div>
+                            <div>
+                                <h3 className="text-sm font-bold text-white mb-1 print:text-black">Reflect on "{data?.emotionalThemes[0]?.theme || 'Balance'}"</h3>
+                                <p className="text-xs text-white/50 leading-relaxed print:text-black/70">Use the Journal to explore this theme further while it's fresh in your mind.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
             </main>
         </div>
     )

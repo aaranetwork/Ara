@@ -605,7 +605,7 @@ export default function ChatPage() {
                                     transition={{ delay: 1, duration: 1 }}
                                     className="text-white/60 text-sm max-w-sm leading-relaxed"
                                 >
-                                    This is a safe space. Share what is weighing on your mind, and let us untangle it together.
+                                    I am an AI designed to help you process emotions through reflection. I will listen, ask clarifying questions, and help you find your own answers. I am not a therapist, but I am here to hold space for you.
                                 </motion.p>
                             </div>
                         )}
@@ -644,6 +644,21 @@ export default function ChatPage() {
 
                 {/* Input Area */}
                 <div className="p-4 md:pb-8">
+                    {/* Soft Prompts */}
+                    {messages.length === 0 && (
+                        <div className="max-w-2xl mx-auto flex flex-wrap gap-2 mb-4 justify-center">
+                            {["I'm feeling overwhelmed", "I had a weird dream", "Just want to vent", "Help me prepare for therapy"].map((prompt) => (
+                                <button
+                                    key={prompt}
+                                    onClick={() => setInput(prompt)}
+                                    className="px-4 py-2 rounded-full bg-white/5 border border-white/5 hover:bg-white/10 hover:border-white/10 text-xs text-white/60 hover:text-white transition-all"
+                                >
+                                    {prompt}
+                                </button>
+                            ))}
+                        </div>
+                    )}
+
                     <div className="max-w-2xl mx-auto relative group">
                         <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500/10 via-purple-500/10 to-indigo-500/10 rounded-[2rem] blur-xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-700" />
 
