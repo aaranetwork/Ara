@@ -71,7 +71,7 @@ export default function TryPage() {
             />
 
             {/* Grain Texture Overlay */}
-            <div className="absolute inset-0 opacity-[0.03] bg-[url('https://grainy-gradients.vercel.app/noise.svg')] pointer-events-none mix-blend-overlay"></div>
+            <div className="absolute inset-0 opacity-[0.03] bg-[url('/noise.svg')] pointer-events-none mix-blend-overlay"></div>
 
             {/* Subtle Top Nav */}
             <nav className="absolute top-0 left-0 w-full z-50 px-6 py-8 flex justify-between items-center opacity-0 animate-fade-in safe-area-top" style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }}>
@@ -110,10 +110,11 @@ export default function TryPage() {
                                 </motion.div>
                             </div>
 
+
                             {/* Question */}
                             <div className="mb-20 px-2">
                                 <TextBlurReveal
-                                    text="How heavy is your mental load right now?"
+                                    text="How is your mind feeling right now?"
                                     className="text-3xl md:text-5xl font-serif text-center font-light leading-[1.2] text-white/90"
                                     delay={0.2}
                                 />
@@ -251,9 +252,23 @@ export default function TryPage() {
                                     <Leaf size={20} className="text-white/80" />
                                 </div>
 
-                                <h3 className="text-2xl font-serif text-white/90 mb-6 leading-relaxed">
-                                    &quot;Acknowledging that you feel <span className="text-white border-b border-white/20 pb-0.5">{mood}/10</span> is a powerful start.&quot;
-                                </h3>
+                                <div className="mb-6">
+                                    {mood <= 3 && (
+                                        <h3 className="text-2xl font-serif text-white/90 leading-relaxed">
+                                            &quot;It takes courage to sit with heavy feelings.&quot;
+                                        </h3>
+                                    )}
+                                    {mood > 3 && mood <= 7 && (
+                                        <h3 className="text-2xl font-serif text-white/90 leading-relaxed">
+                                            &quot;A score of <span className="text-white border-b border-white/20 pb-0.5">{mood}/10</span> means things are in motion.&quot;
+                                        </h3>
+                                    )}
+                                    {mood > 7 && (
+                                        <h3 className="text-2xl font-serif text-white/90 leading-relaxed">
+                                            &quot;It&apos;s great to feel this lightness.&quot;
+                                        </h3>
+                                    )}
+                                </div>
 
                                 <p className="text-sm text-white/50 leading-relaxed mb-10 max-w-sm mx-auto">
                                     You&apos;ve taken the first step to clarify your thoughts. Create your private space to continue this reflection.

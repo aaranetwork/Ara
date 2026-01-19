@@ -34,10 +34,8 @@ export default function HomeWrapper() {
         window.scrollTo({ top: 0, behavior: 'instant' })
     }, [])
 
-    if (loading) {
-        return <LoadingScreen />
-    }
-
+    // Optimistic Render: Show Landing Page by default to improve LCP.
+    // If user is found later, we switch to Dashboard.
     if (user) {
         return <Dashboard user={user} />
     }

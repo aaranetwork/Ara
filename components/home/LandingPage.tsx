@@ -142,7 +142,7 @@ export default function LandingPage() {
             </nav>
 
             {/* HERO SECTION */}
-            <section className="w-full pt-44 pb-20 px-6 relative z-10 flex flex-col items-center text-center max-w-4xl mx-auto min-h-[80vh] justify-center">
+            <section className="w-full pt-32 md:pt-44 pb-20 px-6 relative z-10 flex flex-col items-center text-center max-w-4xl mx-auto min-h-[80vh] justify-center">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -158,11 +158,11 @@ export default function LandingPage() {
                         <span>aara</span>
                     </motion.div>
 
-                    <h1 className="text-5xl md:text-8xl font-medium mb-8 font-serif leading-[1.05] tracking-tight">
+                    <h1 className="text-4xl md:text-8xl font-medium mb-8 font-serif leading-[1.05] tracking-tight">
                         <motion.span
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.3, duration: 0.8 }}
+                            transition={{ delay: 0.1, duration: 0.6 }}
                             className="block"
                         >
                             Therapy sessions
@@ -170,7 +170,7 @@ export default function LandingPage() {
                         <motion.span
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.5, duration: 0.8 }}
+                            transition={{ delay: 0.2, duration: 0.6 }}
                             className="block text-white/40"
                         >
                             are short.
@@ -218,7 +218,7 @@ export default function LandingPage() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 0.6 }}
                 transition={{ delay: 1.8, duration: 1 }}
-                className="w-full overflow-hidden mb-32 mask-gradient-x pointer-events-none select-none"
+                className="w-full overflow-hidden mb-20 md:mb-32 mask-gradient-x pointer-events-none select-none"
             >
                 <div className="relative w-full">
                     <div className="flex w-max animate-marquee gap-4">
@@ -233,7 +233,7 @@ export default function LandingPage() {
             </motion.section>
 
             {/* HOW IT WORKS SECTION */}
-            <section id="how-it-works" className="w-full max-w-6xl mx-auto px-6 mb-32">
+            <section id="how-it-works" className="w-full max-w-6xl mx-auto px-6 mb-20 md:mb-32">
                 <RevealInfo>
                     <div className="text-center mb-16">
                         <h2 className="text-3xl font-serif mb-4">Your Mental Health Companion</h2>
@@ -244,7 +244,10 @@ export default function LandingPage() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
                     {HOW_IT_WORKS.map((step, i) => (
                         <RevealInfo key={i} delay={i * 0.15}>
-                            <div className="relative p-8 rounded-3xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-all group hover:-translate-y-2 duration-300">
+                            <motion.div
+                                whileTap={{ scale: 0.98 }}
+                                className="relative p-8 rounded-3xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-all group hover:-translate-y-2 duration-300"
+                            >
                                 <div className="absolute -top-6 left-8 text-6xl font-serif text-white/5 font-bold group-hover:text-white/10 transition-colors">
                                     {step.step}
                                 </div>
@@ -255,17 +258,17 @@ export default function LandingPage() {
                                 <p className="text-white/50 leading-relaxed text-sm">
                                     {step.desc}
                                 </p>
-                            </div>
+                            </motion.div>
                         </RevealInfo>
                     ))}
                 </div>
 
                 {/* PRODUCT SHOWCASE */}
                 <RevealInfo delay={0.2}>
-                    <div className="relative rounded-[3rem] bg-[#0e0e12] border border-white/10 overflow-hidden shadow-2xl mt-32 group">
+                    <div className="relative rounded-[2rem] md:rounded-[3rem] bg-[#0e0e12] border border-white/10 overflow-hidden shadow-2xl mt-32 group">
                         <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
 
-                        <div className="p-8 md:p-12 text-center relative z-10">
+                        <div className="p-6 md:p-12 text-center relative z-10">
                             <motion.div
                                 whileHover={{ scale: 1.05 }}
                                 className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 mb-6"
@@ -353,7 +356,7 @@ export default function LandingPage() {
             </section>
 
             {/* DIFFERENTIATION SECTION */}
-            <section className="w-full max-w-6xl mx-auto px-6 mb-32">
+            <section className="w-full max-w-6xl mx-auto px-6 mb-20 md:mb-32">
                 <div className="grid md:grid-cols-2 gap-16 items-center">
                     <RevealInfo>
                         <div>
@@ -390,7 +393,7 @@ export default function LandingPage() {
             </section>
 
             {/* COMPARISON */}
-            <section className="w-full max-w-6xl mx-auto px-6 mb-32">
+            <section className="w-full max-w-6xl mx-auto px-6 mb-20 md:mb-32">
                 <div className="grid md:grid-cols-2 gap-8">
                     <RevealInfo>
                         <div className="p-8 md:p-12 rounded-3xl bg-white/[0.02] border border-white/5 opacity-60 hover:opacity-100 transition-opacity">
@@ -441,7 +444,7 @@ export default function LandingPage() {
             </section>
 
             {/* TARGET AUDIENCE */}
-            <section className="w-full max-w-6xl mx-auto px-6 mb-32">
+            <section className="w-full max-w-6xl mx-auto px-6 mb-20 md:mb-32">
                 <RevealInfo>
                     <div className="text-center mb-16">
                         <h2 className="text-3xl font-serif mb-4">Who is AARA for?</h2>

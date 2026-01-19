@@ -13,8 +13,9 @@ import {
 import Navbar from '../layout/Navbar'
 import dynamic from 'next/dynamic'
 import { db } from '@/lib/firebase/config'
-import { collection, query, orderBy, getDocs } from 'firebase/firestore'
+import { collection, query, orderBy, getDocs, addDoc, serverTimestamp } from 'firebase/firestore'
 import FeedbackModal from '../FeedbackModal'
+import { toast } from 'sonner'
 
 
 
@@ -43,6 +44,8 @@ export default function Dashboard({ user }: { user: any }) {
         overallAvg: '-',
         trend: 'stable'
     })
+
+
 
     const loadStats = useCallback(async () => {
         if (!user?.uid) return
@@ -128,6 +131,43 @@ export default function Dashboard({ user }: { user: any }) {
             setLoadingData(false)
         }
     }, [user?.uid])
+
+    // Check for guest data from /try flow
+    useEffect(() => {
+        const syncGuestData = async () => {
+            if (!user?.uid) return
+
+            // Check session storage
+            const guestMood = sessionStorage.getItem('guest_mood')
+            const guestReflection = sessionStorage.getItem('guest_reflection')
+
+            if (guestMood && guestReflection && db) {
+                try {
+                    // Save to Firestore
+                    await addDoc(collection(db, 'users', user.uid, 'moods'), {
+                        value: parseInt(guestMood),
+                        reflection: guestReflection,
+                        createdAt: serverTimestamp(),
+                        source: 'onboarding'
+                    })
+
+                    // Clear storage
+                    sessionStorage.removeItem('guest_mood')
+                    sessionStorage.removeItem('guest_reflection')
+
+                    // Notify user
+                    toast.success('Your initial check-in has been saved')
+
+                    // Refresh data
+                    loadStats()
+                } catch (error) {
+                    console.error('Failed to sync guest data:', error)
+                }
+            }
+        }
+
+        syncGuestData()
+    }, [user, loadStats])
 
     useEffect(() => {
         loadStats()
