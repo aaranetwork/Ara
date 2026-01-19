@@ -411,33 +411,33 @@ export default function Dashboard({ user }: { user: any }) {
                             {/* Quick Links Group */}
                             <div className="space-y-3">
                                 <Link href="/journal" className="group flex items-center gap-5 p-5 rounded-[1.5rem] bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-all">
-                                    <div className="w-12 h-12 rounded-xl bg-emerald-500/5 border border-emerald-500/10 flex items-center justify-center group-hover:scale-105 transition-transform">
-                                        <BookOpen size={18} className="text-emerald-400/80" />
+                                    <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:scale-105 transition-transform">
+                                        <BookOpen size={18} className="text-white/70" />
                                     </div>
                                     <div className="flex-1">
                                         <h3 className="text-sm font-medium text-white/90">Journal</h3>
                                         <p className="text-[10px] text-zinc-400 uppercase tracking-wider mt-0.5">Reflect</p>
                                     </div>
-                                    <ChevronRight size={14} className="text-white/20 group-hover:text-emerald-400/80 group-hover:translate-x-1 transition-all" />
+                                    <ChevronRight size={14} className="text-white/20 group-hover:text-white/70 group-hover:translate-x-1 transition-all" />
                                 </Link>
 
                                 <Link href="/therapists" className="group flex items-center gap-5 p-5 rounded-[1.5rem] bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-all">
-                                    <div className="w-12 h-12 rounded-xl bg-purple-500/5 border border-purple-500/10 flex items-center justify-center group-hover:scale-105 transition-transform">
-                                        <Users size={18} className="text-purple-400/80" />
+                                    <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:scale-105 transition-transform">
+                                        <Users size={18} className="text-white/70" />
                                     </div>
                                     <div className="flex-1">
                                         <h3 className="text-sm font-medium text-white/90">Therapists</h3>
                                         <p className="text-[10px] text-zinc-400 uppercase tracking-wider mt-0.5">Connect</p>
                                     </div>
-                                    <ChevronRight size={14} className="text-white/20 group-hover:text-purple-400/80 group-hover:translate-x-1 transition-all" />
+                                    <ChevronRight size={14} className="text-white/20 group-hover:text-white/70 group-hover:translate-x-1 transition-all" />
                                 </Link>
 
                                 <button
                                     onClick={() => setShowFeedback(true)}
                                     className="w-full group flex items-center gap-5 p-5 rounded-[1.5rem] bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-all text-left"
                                 >
-                                    <div className="w-12 h-12 rounded-xl bg-amber-500/5 border border-amber-500/10 flex items-center justify-center group-hover:scale-105 transition-transform">
-                                        <MessageSquare size={18} className="text-amber-400/80" />
+                                    <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:scale-105 transition-transform">
+                                        <MessageSquare size={18} className="text-white/70" />
                                     </div>
                                     <div className="flex-1">
                                         <h3 className="text-sm font-medium text-white/90">Feedback</h3>

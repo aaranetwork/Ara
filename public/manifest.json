@@ -1,7 +1,7 @@
 {
-  "name": "AARA - AI Therapist",
+  "name": "AARA — Your Mental Health Companion",
   "short_name": "AARA",
-  "description": "Your AI Therapist — calm, caring, always here.",
+  "description": "Organize your thoughts. Show up to therapy ready.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0B0C10",

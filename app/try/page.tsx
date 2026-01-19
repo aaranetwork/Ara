@@ -29,7 +29,8 @@ export default function TryPage() {
     // Focus textarea on mount of stage
     useEffect(() => {
         if (stage === 'reflect') {
-            setTimeout(() => textareaRef.current?.focus(), 500)
+            // Increased delay to 700ms to ensure transition completes before keyboard slides up (which causes layout thrashing)
+            setTimeout(() => textareaRef.current?.focus(), 700)
         }
     }, [stage])
 
@@ -61,17 +62,19 @@ export default function TryPage() {
     return (
         <div className="min-h-screen bg-[#030305] text-[#F3F4F6] font-sans flex flex-col items-center justify-center relative overflow-hidden selection:bg-white/20 select-none">
 
-            {/* Dynamic Ambient Background - Matching /check-in */}
+            {/* Dynamic Ambient Background - Optimized: Removed mix-blend-overlay from noise */}
             <motion.div
                 key={currentTheme}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 1.5 }}
                 className={`absolute inset-0 bg-gradient-radial ${GRADIENTS[currentTheme]} opacity-60 pointer-events-none`}
+                style={{ willChange: 'opacity' }}
             />
 
-            {/* Grain Texture Overlay */}
-            <div className="absolute inset-0 opacity-[0.03] bg-[url('/noise.svg')] pointer-events-none mix-blend-overlay"></div>
+            {/* Grain Texture Overlay - Optimized: Removed mix-blend-overlay which is expensive on mobile */}
+            {/* Reduced opacity to match the visual effect without blending */}
+            <div className="absolute inset-0 opacity-[0.05] bg-[url('/noise.svg')] pointer-events-none"></div>
 
             {/* Subtle Top Nav */}
             <nav className="absolute top-0 left-0 w-full z-50 px-6 py-8 flex justify-between items-center opacity-0 animate-fade-in safe-area-top" style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }}>
@@ -96,6 +99,7 @@ export default function TryPage() {
                             exit={{ opacity: 0, scale: 0.98, y: -10 }}
                             transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
                             className="w-full flex flex-col items-center"
+                            style={{ willChange: 'opacity, transform' }}
                         >
                             {/* Step Identifier */}
                             <div className="flex justify-center mb-12">
@@ -158,6 +162,7 @@ export default function TryPage() {
                             exit={{ opacity: 0, scale: 0.98, y: -10 }}
                             transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
                             className="w-full flex flex-col items-center"
+                            style={{ willChange: 'opacity, transform' }}
                         >
                             {/* Step Identifier */}
                             <div className="flex justify-center mb-12">
@@ -225,6 +230,7 @@ export default function TryPage() {
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             className="flex flex-col items-center justify-center"
+                            style={{ willChange: 'opacity' }}
                         >
                             <div className="relative w-32 h-32 mb-8">
                                 <div className="absolute inset-0 bg-indigo-500/20 blur-[60px] rounded-full animate-pulse" />
@@ -243,6 +249,7 @@ export default function TryPage() {
                             animate={{ opacity: 1, scale: 1 }}
                             transition={{ type: "spring", stiffness: 200, damping: 25 }}
                             className="w-full max-w-lg"
+                            style={{ willChange: 'opacity, transform' }}
                         >
                             <div className="bg-[#0e0e12]/80 backdrop-blur-xl p-8 md:p-12 rounded-[2.5rem] border border-white/10 shadow-2xl relative overflow-hidden text-center">
                                 {/* Ambient Glow */}

@@ -21,18 +21,23 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: 'AARA — Your AI-Driven Consciousness Processor',
+    default: 'AARA — Your Mental Health Companion',
     template: '%s | AARA',
   },
-  description: 'AARA transforms chaotic thoughts into structured insights. Experience next-gen mental clarity with our AI signal processing algorithms.',
+  description: 'Organize your thoughts. Show up to therapy ready.',
   keywords: ['AI therapy', 'mental health', '2026 design', 'consciousness processor', 'AARA', 'emotional intelligence'],
   authors: [{ name: 'AARA Intelligence' }],
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://aara.site'),
   openGraph: {
-    title: 'AARA — Redefine Your Consciousness',
-    description: 'Transform your mindset with AARA. High-fidelity AI analysis for deep mental clarity.',
+    title: 'AARA — Your Mental Health Companion',
+    description: 'Organize your thoughts. Show up to therapy ready.',
     type: 'website',
     images: ['/og-image.png'],
+  },
+  icons: {
+    icon: '/aara-logo.png',
+    shortcut: '/aara-logo.png',
+    apple: '/aara-logo.png',
   },
   manifest: '/manifest.json',
 }
