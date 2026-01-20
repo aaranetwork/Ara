@@ -77,8 +77,8 @@ function FastEmotionPicker({ selected, onSelect }: { selected: string; onSelect:
                         key={emotion}
                         onClick={() => onSelect(emotion)}
                         className={`px-6 py-3 rounded-full text-sm font-medium transition-all duration-150 ${selected === emotion
-                                ? 'bg-indigo-500 text-white scale-105'
-                                : 'bg-white/5 text-white/70 hover:bg-white/10 border border-white/10'
+                            ? 'bg-indigo-500 text-white scale-105'
+                            : 'bg-white/5 text-white/70 hover:bg-white/10 border border-white/10'
                             }`}
                     >
                         {emotion}
@@ -96,7 +96,7 @@ function FastContextSelector({ selected, onToggle }: { selected: string[]; onTog
     return (
         <div className="w-full max-w-lg mx-auto px-4">
             <h2 className="text-2xl md:text-3xl font-serif text-center text-white/90 mb-4">
-                What's influencing that?
+                What&apos;s influencing that?
             </h2>
             <p className="text-sm text-white/40 text-center mb-8">(Optional - select all that apply)</p>
 
@@ -108,8 +108,8 @@ function FastContextSelector({ selected, onToggle }: { selected: string[]; onTog
                             key={factor}
                             onClick={() => onToggle(factor)}
                             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-150 ${isSelected
-                                    ? 'bg-indigo-500/20 border border-indigo-500/50'
-                                    : 'bg-white/5 border border-white/10 hover:bg-white/10'
+                                ? 'bg-indigo-500/20 border border-indigo-500/50'
+                                : 'bg-white/5 border border-white/10 hover:bg-white/10'
                                 }`}
                         >
                             <div className={`w-5 h-5 rounded border-2 flex items-center justify-center ${isSelected ? 'bg-indigo-500 border-indigo-500' : 'border-white/30'

@@ -58,10 +58,10 @@ export function CheckInConfirmation({ moodValue, userId, insights = [] }: CheckI
                     className="text-center mb-8"
                 >
                     <h2 className="text-2xl md:text-3xl font-serif text-white/90 mb-4 leading-relaxed">
-                        "{personalizedMessage}"
+                        &ldquo;{personalizedMessage}&rdquo;
                     </h2>
                     <p className="text-white/50 text-sm md:text-base">
-                        You've taken the first step to clarify your thoughts.
+                        You&apos;ve taken the first step to clarify your thoughts.
                     </p>
                 </motion.div>
 

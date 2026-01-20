@@ -46,7 +46,7 @@ export function EmotionPicker({ emotionWords, selectedEmotion, onSelect }: Emoti
                 transition={{ delay: 0.1 }}
                 className="text-xl md:text-3xl font-serif text-center font-medium leading-tight text-white/90 mb-12 px-4"
             >
-                Pick one word that describes<br />how you're feeling:
+                Pick one word that describes<br />how you&apos;re feeling:
             </motion.h2>
 
             {/* Emotion Pills */}
@@ -64,8 +64,8 @@ export function EmotionPicker({ emotionWords, selectedEmotion, onSelect }: Emoti
                         transition={{ delay: 0.3 + index * 0.05 }}
                         onClick={() => handlePillClick(word)}
                         className={`px-5 py-3 rounded-full font-medium text-sm transition-all duration-200 ${selectedEmotion === word && !showCustomInput
-                                ? 'bg-indigo-500 text-white border-2 border-indigo-500 scale-105'
-                                : 'bg-white/[0.03] text-white/80 border-2 border-white/10 hover:bg-white/[0.06] hover:border-white/20'
+                            ? 'bg-indigo-500 text-white border-2 border-indigo-500 scale-105'
+                            : 'bg-white/[0.03] text-white/80 border-2 border-white/10 hover:bg-white/[0.06] hover:border-white/20'
                             }`}
                     >
                         {word}

@@ -31,7 +31,7 @@ export function ContextSelector({ contextOptions, selectedFactors, onToggle, onS
                 transition={{ delay: 0.1 }}
                 className="text-xl md:text-3xl font-serif text-center font-medium leading-tight text-white/90 mb-4 px-4"
             >
-                What's influencing that?
+                What&apos;s influencing that?
             </motion.h2>
 
             <motion.p
@@ -60,14 +60,14 @@ export function ContextSelector({ contextOptions, selectedFactors, onToggle, onS
                             transition={{ delay: 0.4 + index * 0.05 }}
                             onClick={() => onToggle(option)}
                             className={`w-full flex items-center gap-4 px-5 py-4 rounded-xl transition-all duration-200 ${isSelected
-                                    ? 'bg-indigo-500/10 border-2 border-indigo-500/50'
-                                    : 'bg-white/[0.02] border-2 border-white/5 hover:bg-white/[0.04] hover:border-white/10'
+                                ? 'bg-indigo-500/10 border-2 border-indigo-500/50'
+                                : 'bg-white/[0.02] border-2 border-white/5 hover:bg-white/[0.04] hover:border-white/10'
                                 }`}
                         >
                             {/* Custom Checkbox */}
                             <div className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-all ${isSelected
-                                    ? 'bg-indigo-500 border-indigo-500'
-                                    : 'border-white/30'
+                                ? 'bg-indigo-500 border-indigo-500'
+                                : 'border-white/30'
                                 }`}>
                                 {isSelected && (
                                     <svg className="w-3 h-3 text-white" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" viewBox="0 0 24 24" stroke="currentColor">
