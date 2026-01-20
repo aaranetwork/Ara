@@ -8,7 +8,7 @@ import { useAuth } from '@/hooks/useAuth'
 import { db } from '@/lib/firebase/config'
 import { collection, addDoc, Timestamp, query, orderBy, getDocs } from 'firebase/firestore'
 
-// Simplified, fast mood slider
+// Ultra-fast mood slider - GPU accelerated for 60fps
 function FastMoodSlider({ value, onChange }: { value: number; onChange: (v: number) => void }) {
     return (
         <div className="w-full max-w-md mx-auto px-4">
@@ -19,43 +19,48 @@ function FastMoodSlider({ value, onChange }: { value: number; onChange: (v: numb
             </div>
 
             {/* Slider Container */}
-            <div className="relative py-6">
+            <div className="relative">
                 {/* Labels */}
-                <div className="absolute left-0 top-0 text-[10px] uppercase tracking-widest font-semibold text-white/40">
-                    Heavy
-                </div>
-                <div className="absolute right-0 top-0 text-[10px] uppercase tracking-widest font-semibold text-white/40">
-                    Light
+                <div className="flex justify-between mb-4">
+                    <span className="text-[10px] uppercase tracking-widest font-semibold text-white/40">Heavy</span>
+                    <span className="text-[10px] uppercase tracking-widest font-semibold text-white/40">Light</span>
                 </div>
 
-                {/* Track */}
-                <div className="relative mt-8 h-2 bg-white/5 rounded-full overflow-hidden">
-                    {/* Fill */}
-                    <div
-                        className="absolute left-0 top-0 h-full bg-white/20 transition-all duration-100 ease-out"
-                        style={{ width: `${((value - 1) / 9) * 100}%` }}
-                    />
+                {/* Track Container */}
+                <div className="relative h-12 flex items-center">
+                    {/* Track */}
+                    <div className="relative w-full h-2 bg-white/5 rounded-full">
+                        {/* Fill - GPU accelerated with scaleX */}
+                        <div
+                            className="absolute left-0 top-0 h-full bg-white/20 rounded-full pointer-events-none will-change-transform origin-left"
+                            style={{ transform: `scaleX(${((value - 1) / 9)})` }}
+                        />
+                    </div>
 
                     {/* Thumb */}
                     <div
-                        className="absolute top-1/2 w-6 h-6 bg-white rounded-full shadow-lg -translate-y-1/2 transition-all duration-100 ease-out flex items-center justify-center border border-white/10"
-                        style={{ left: `calc(${((value - 1) / 9) * 100}% - 12px)` }}
+                        className="absolute w-6 h-6 bg-white rounded-full shadow-lg flex items-center justify-center border border-white/10 pointer-events-none will-change-transform"
+                        style={{
+                            left: '-12px',
+                            top: '50%',
+                            transform: `translate(${((value - 1) * 100 / 9)}%, -50%)`
+                        }}
                     >
                         <div className="w-1.5 h-1.5 bg-black rounded-full" />
                     </div>
-                </div>
 
-                {/* Input */}
-                <input
-                    type="range"
-                    min="1"
-                    max="10"
-                    step="1"
-                    value={value}
-                    onChange={(e) => onChange(Number(e.target.value))}
-                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                    style={{ WebkitTapHighlightColor: 'transparent' }}
-                />
+                    {/* Invisible Input Overlay */}
+                    <input
+                        type="range"
+                        min="1"
+                        max="10"
+                        step="1"
+                        value={value}
+                        onChange={(e) => onChange(Number(e.target.value))}
+                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10 m-0 p-0"
+                        style={{ WebkitTapHighlightColor: 'transparent', touchAction: 'none' }}
+                    />
+                </div>
             </div>
         </div>
     )
