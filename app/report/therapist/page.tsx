@@ -20,7 +20,8 @@ import {
 
 import { useAuth } from '@/hooks/useAuth'
 import { db } from '@/lib/firebase/config'
-import { collection, query, orderBy, getDocs } from 'firebase/firestore'
+import { collection, query, orderBy, getDocs, addDoc, serverTimestamp } from 'firebase/firestore'
+import { toast } from 'sonner'
 
 // --- Types ---
 type ReportData = {
@@ -159,16 +160,41 @@ export default function AaraReportPage() {
         fetchAndAnalyze()
     }, [user])
 
+    const [isSharing, setIsSharing] = useState(false)
+
     const handlePrint = () => window.print()
     const handleShare = async () => {
-        if (navigator.share) {
-            try {
+        if (!data || !user || !db) return
+        setIsSharing(true)
+
+        try {
+            // 1. Create a snapshot in Firestore
+            const docRef = await addDoc(collection(db, 'shared_reports'), {
+                userId: user.uid,
+                data: data, // The calculated report data
+                createdAt: serverTimestamp(),
+                expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // Optional: 7 day expiry
+            })
+
+            // 2. Generate Link
+            const shareUrl = `${window.location.origin}/share/report/${docRef.id}`
+
+            // 3. Share or Copy
+            if (navigator.share) {
                 await navigator.share({
-                    title: 'AARA Report',
-                    text: `My AARA Clinical Report`,
-                    url: window.location.href,
+                    title: 'AARA Clinical Report',
+                    text: `Here is my clinical pattern report from AARA.`,
+                    url: shareUrl,
                 })
-            } catch (err) { console.log('Share canceled') }
+            } else {
+                await navigator.clipboard.writeText(shareUrl)
+                toast.success('Report link copied to clipboard')
+            }
+        } catch (error) {
+            console.error('Error sharing report:', error)
+            toast.error('Failed to generate share link')
+        } finally {
+            setIsSharing(false)
         }
     }
 
@@ -427,9 +453,10 @@ export default function AaraReportPage() {
                     <div className="flex items-center gap-3 w-full md:w-auto">
                         <button
                             onClick={handleShare}
-                            className="flex-1 md:flex-none py-3 px-6 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 text-xs font-bold text-white uppercase tracking-wider transition-all"
+                            disabled={isSharing}
+                            className="flex-1 md:flex-none py-3 px-6 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 text-xs font-bold text-white uppercase tracking-wider transition-all disabled:opacity-50"
                         >
-                            Share
+                            {isSharing ? 'Generating...' : 'Share Report'}
                         </button>
                         <button
                             onClick={handlePrint}

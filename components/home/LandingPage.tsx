@@ -282,7 +282,7 @@ export default function LandingPage() {
 
                         <div className="relative max-w-5xl mx-auto -mb-20 px-4 md:px-0 transition-transform duration-700 group-hover:-translate-y-4">
                             <div className="relative bg-[#030305] rounded-t-[2rem] border-x border-t border-white/10 shadow-2xl overflow-hidden aspect-[16/10] md:aspect-[16/9]">
-                                <div className="h-12 border-b border-white/5 flex items-center px-6 justify-between bg-[#030305]/50 backdrop-blur-md sticky top-0 z-20">
+                                <div className="h-12 border-b border-white/5 flex items-center px-6 justify-between bg-[#030305]/50 backdrop-blur-sm md:backdrop-blur-md sticky top-0 z-20">
                                     <span className="text-[10px] font-bold tracking-widest text-white/40">AARA INTELLIGENCE</span>
                                     <div className="flex gap-3">
                                         <div className="w-2 h-2 rounded-full bg-red-500/20" />
@@ -375,7 +375,7 @@ export default function LandingPage() {
                             className="relative"
                         >
                             <div className="absolute inset-0 bg-gradient-to-tr from-indigo-500/10 to-purple-500/10 rounded-[3rem] blur-2xl animate-pulse" />
-                            <div className="relative p-1 border border-white/10 rounded-[3rem] bg-[#0e0e12]/50 backdrop-blur-xl">
+                            <div className="relative p-1 border border-white/10 rounded-[3rem] bg-[#0e0e12]/50 backdrop-blur-md md:backdrop-blur-xl">
                                 <div className="aspect-square rounded-[2.8rem] bg-[#050505] relative overflow-hidden flex items-center justify-center">
                                     <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(79,70,229,0.1),transparent_70%)]" />
                                     <div className="text-center p-8">
@@ -527,7 +527,7 @@ export default function LandingPage() {
             <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10">
                 <motion.div
                     style={{ y: backgroundY }}
-                    className="absolute top-[20%] left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-indigo-500/5 rounded-full blur-[120px] opacity-50"
+                    className="absolute top-[20%] left-1/2 -translate-x-1/2 w-[400px] h-[400px] md:w-[800px] md:h-[800px] bg-indigo-500/5 rounded-full blur-[60px] md:blur-[120px] opacity-50"
                 />
                 <div className="absolute bottom-0 left-0 w-full h-[500px] bg-gradient-to-t from-[#0e0e12] to-transparent" />
             </div>

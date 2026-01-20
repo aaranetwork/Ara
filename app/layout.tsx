@@ -82,8 +82,8 @@ export default function RootLayout({
         />
       </head>
       <body className="antialiased bg-[#030305] text-[#F3F4F6] selection:bg-white/20 font-sans overflow-x-hidden">
-        {/* Global Grain Texture */}
-        <div className="fixed inset-0 opacity-[0.03] bg-[url('/noise.svg')] pointer-events-none mix-blend-overlay z-[9999]"></div>
+        {/* Global Grain Texture - Reduced opacity on mobile for performance */}
+        <div className="fixed inset-0 opacity-[0.015] md:opacity-[0.03] bg-[url('/noise.svg')] pointer-events-none mix-blend-overlay z-[9999]"></div>
 
         <ScrollToTop />
         <NextTopLoader color="#FFFFFF" showSpinner={false} />

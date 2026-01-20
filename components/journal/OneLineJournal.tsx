@@ -3,7 +3,8 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Check, Loader2, ArrowRight } from 'lucide-react'
-import { saveJournalEntry } from '@/app/actions/journal'
+import { collection, doc, setDoc, serverTimestamp } from 'firebase/firestore'
+import { db } from '@/lib/firebase/config'
 import { useAuth } from '@/hooks/useAuth'
 
 interface OneLineJournalProps {
@@ -17,27 +18,23 @@ export default function OneLineJournal({ onExit }: OneLineJournalProps) {
     const [isSuccess, setIsSuccess] = useState(false)
 
     const handleSave = async () => {
-        if (!content || !user) return
+        if (!content || !user || !db) return
         setIsSaving(true)
 
         try {
-            const token = await user.getIdToken()
-            const result = await saveJournalEntry(token, {
+            const docRef = doc(collection(db, 'users', user.uid, 'journal'))
+            await setDoc(docRef, {
                 content,
                 category: 'general',
                 isOneLine: true,
-                title: 'One Line Entry'
+                title: 'One Line Entry',
+                createdAt: serverTimestamp(),
+                updatedAt: serverTimestamp()
             })
 
-            if (result.success) {
-                setIsSaving(false)
-                setIsSuccess(true)
-                setTimeout(() => onExit(), 1500)
-            } else {
-                console.error('Failed to save:', result.error)
-                setIsSaving(false)
-                alert(`Failed to save entry: ${result.error}`)
-            }
+            setIsSaving(false)
+            setIsSuccess(true)
+            setTimeout(() => onExit(), 1500)
         } catch (error: any) {
             console.error('Error saving:', error)
             setIsSaving(false)

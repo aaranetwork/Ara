@@ -129,10 +129,10 @@ export default function MoodFlowPage() {
         <div className="min-h-screen text-white selection:bg-indigo-500/30 overflow-x-hidden">
 
 
-            {/* Background Ambience */}
+            {/* Background Ambience - Reduced for mobile */}
             <div className="fixed inset-0 overflow-hidden pointer-events-none">
-                <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-purple-500/5 rounded-full blur-[120px]" />
-                <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-blue-500/5 rounded-full blur-[120px]" />
+                <div className="absolute top-0 right-0 w-[400px] h-[400px] md:w-[600px] md:h-[600px] bg-purple-500/5 rounded-full blur-[60px] md:blur-[120px]" />
+                <div className="absolute bottom-0 left-0 w-[400px] h-[400px] md:w-[600px] md:h-[600px] bg-blue-500/5 rounded-full blur-[60px] md:blur-[120px]" />
             </div>
 
             {/* Header with Back Button (Responsive) */}
@@ -144,7 +144,7 @@ export default function MoodFlowPage() {
                 <Link
                     href="/"
                     aria-label="Home"
-                    className="pointer-events-auto md:hidden flex items-center gap-2 px-4 py-2 rounded-full bg-white/[0.03] border border-white/5 backdrop-blur-xl shadow-2xl hover:bg-white/5 transition-all active:scale-95 cursor-pointer absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-0"
+                    className="pointer-events-auto md:hidden flex items-center gap-2 px-4 py-2 rounded-full bg-white/[0.03] border border-white/5 backdrop-blur-md md:backdrop-blur-xl shadow-2xl hover:bg-white/5 transition-all active:scale-95 cursor-pointer absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-0"
                 >
                     <Image
                         alt=""
@@ -168,7 +168,7 @@ export default function MoodFlowPage() {
                     transition={{ duration: 0.6 }}
                     className="text-center mb-12"
                 >
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/5 mb-6 backdrop-blur-md">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/5 mb-6 backdrop-blur-sm md:backdrop-blur-md">
                         <Activity size={12} className="text-indigo-300" />
                         <span className="text-[10px] font-bold uppercase tracking-widest text-white/60">Flow Analysis</span>
                     </div>
@@ -188,7 +188,7 @@ export default function MoodFlowPage() {
                         transition={{ delay: 0.1 }}
                         className="relative overflow-hidden rounded-[32px] p-1 bg-gradient-to-br from-white/10 to-transparent"
                     >
-                        <div className="h-full bg-[#030305]/80 backdrop-blur-2xl rounded-[28px] p-8 border border-white/5 relative overflow-hidden flex flex-col justify-between">
+                        <div className="h-full bg-[#030305]/80 backdrop-blur-md md:backdrop-blur-2xl rounded-[28px] p-8 border border-white/5 relative overflow-hidden flex flex-col justify-between">
                             <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 blur-[80px] rounded-full pointer-events-none" />
 
                             <div className="relative z-10 mb-8">
@@ -225,7 +225,7 @@ export default function MoodFlowPage() {
                         transition={{ delay: 0.2 }}
                         className="relative overflow-hidden rounded-[32px] p-1 bg-gradient-to-bl from-white/10 to-transparent"
                     >
-                        <div className="h-full bg-[#030305]/80 backdrop-blur-2xl rounded-[28px] p-8 border border-white/5 relative flex flex-col">
+                        <div className="h-full bg-[#030305]/80 backdrop-blur-md md:backdrop-blur-2xl rounded-[28px] p-8 border border-white/5 relative flex flex-col">
                             <div className="flex items-center gap-3 mb-8">
                                 <div className="p-2 bg-white/5 rounded-full">
                                     <Calendar size={16} className="text-white/60" />
@@ -273,7 +273,7 @@ export default function MoodFlowPage() {
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: 0.3 + (i * 0.1) }}
-                                className="bg-white/[0.02] border border-white/5 rounded-[24px] p-5 flex flex-col items-center justify-center backdrop-blur-md group hover:bg-white/[0.04] transition-all"
+                                className="bg-white/[0.02] border border-white/5 rounded-[24px] p-5 flex flex-col items-center justify-center backdrop-blur-sm md:backdrop-blur-md group hover:bg-white/[0.04] transition-all"
                             >
                                 <config.icon size={20} className={`${config.color} mb-3 opacity-70 group-hover:opacity-100 transition-opacity`} strokeWidth={1.5} />
                                 <span className="text-2xl font-serif text-white mb-1">{avg || '-'}</span>

@@ -4,7 +4,8 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Check, Loader2 } from 'lucide-react'
 import { CATEGORIES } from './CategorySelection'
-import { saveJournalEntry } from '@/app/actions/journal'
+import { db } from '@/lib/firebase/config'
+import { collection, doc, setDoc, serverTimestamp } from 'firebase/firestore'
 import { useAuth } from '@/hooks/useAuth'
 
 interface WritingViewProps {
@@ -26,35 +27,67 @@ export default function WritingView({ category, onExit, onSaveStateChange }: Wri
     const selectedCat = CATEGORIES.find(c => c.id === category)
 
     const handleSave = useCallback(async () => {
-        if (!user) return false
+        if (!user || !db) return false
 
         try {
-            const token = await user.getIdToken()
-            const result = await saveJournalEntry(token, {
-                id: entryId || undefined,
-                title,
+            const collectionRef = collection(db, 'users', user.uid, 'journal')
+            const docRef = entryId ? doc(collectionRef, entryId) : doc(collectionRef)
+
+            const data = {
+                title: title || '',
                 content,
                 category: category || 'general',
-                isOneLine: false
-            })
-
-            if (result.success && result.id) {
-                setEntryId(result.id)
-                lastSavedData.current = { title, content }
-                setSaveStatus('saved')
-                onSaveStateChange(false)
-                setTimeout(() => setSaveStatus('idle'), 2000)
-                return true
-            } else {
-                setSaveStatus('error')
-                return false
+                isOneLine: false,
+                updatedAt: serverTimestamp(),
+                // Only set createdAt if creating new
+                ...(entryId ? {} : { createdAt: serverTimestamp() })
             }
-        } catch (error) {
+
+            await setDoc(docRef, data, { merge: true })
+            const newId = docRef.id
+
+            setEntryId(newId)
+            lastSavedData.current = { title, content }
+            setSaveStatus('saved')
+            onSaveStateChange(false)
+            localStorage.removeItem('journal_draft') // Clear draft on success
+            setTimeout(() => setSaveStatus('idle'), 2000)
+            return true
+
+        } catch (error: any) {
             console.error('Autosave failed:', error)
             setSaveStatus('error')
             return false
         }
     }, [user, entryId, title, content, category, onSaveStateChange])
+
+    // Load draft on mount
+    useEffect(() => {
+        const savedDraft = localStorage.getItem('journal_draft')
+        if (savedDraft && !entryId) {
+            try {
+                const { title: savedTitle, content: savedContent, timestamp } = JSON.parse(savedDraft)
+                // Only restore if less than 24 hours old
+                if (Date.now() - timestamp < 24 * 60 * 60 * 1000) {
+                    setTitle(savedTitle)
+                    setContent(savedContent)
+                }
+            } catch (e) {
+                console.error('Failed to parse draft', e)
+            }
+        }
+    }, [entryId])
+
+    // Save draft to local storage
+    useEffect(() => {
+        if (title || content) {
+            localStorage.setItem('journal_draft', JSON.stringify({
+                title,
+                content,
+                timestamp: Date.now()
+            }))
+        }
+    }, [title, content])
 
     // Autosave trigger
     useEffect(() => {

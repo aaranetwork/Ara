@@ -20,7 +20,6 @@ import { auth } from '@/lib/firebase/config'
 const navLinks = [
   { href: '/', label: 'Home', icon: Home },
   { href: '/chat', label: 'Chat', icon: MessageSquare },
-  { href: '/discover', label: 'Discover', icon: Compass },
 ]
 
 export default function Sidebar() {

@@ -122,10 +122,10 @@ export default function JournalPage() {
     return (
         <div className="h-[100dvh] bg-[#030305] text-white selection:bg-white/10 overflow-hidden flex flex-col relative">
 
-            {/* Ambient Background - Subtle */}
-            <div className="fixed inset-0 pointer-events-none">
-                <div className="absolute top-[-20%] right-[20%] w-[500px] h-[500px] bg-indigo-500/5 blur-[120px] rounded-full" />
-                <div className="absolute bottom-[-20%] left-[20%] w-[500px] h-[500px] bg-sky-500/5 blur-[120px] rounded-full" />
+            {/* Ambient Background - Subtle - GPU Accelerated */}
+            <div className="fixed inset-0 pointer-events-none overflow-hidden">
+                <div className="absolute top-[-20%] right-[20%] w-[500px] h-[500px] bg-indigo-500/5 blur-[120px] rounded-full transform-gpu will-change-transform" />
+                <div className="absolute bottom-[-20%] left-[20%] w-[500px] h-[500px] bg-sky-500/5 blur-[120px] rounded-full transform-gpu will-change-transform" />
             </div>
 
             {/* Fixed Floating Header */}
@@ -176,7 +176,7 @@ export default function JournalPage() {
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 0.98 }}
                         transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                        className="max-w-4xl mx-auto h-full"
+                        className="max-w-4xl mx-auto min-h-full"
                     >
                         {renderContent()}
                     </motion.div>
@@ -185,7 +185,7 @@ export default function JournalPage() {
 
             {/* Bottom Navigation */}
             {state !== 'writing' && (
-                <nav className="fixed bottom-0 left-0 right-0 border-t border-white/5 bg-[#030305]/80 backdrop-blur-2xl pb-safe z-50">
+                <nav className="fixed bottom-0 left-0 right-0 border-t border-white/5 bg-[#030305]/90 backdrop-blur-md pb-safe z-50">
                     <div className="max-w-md mx-auto flex items-center justify-evenly py-4">
                         {[
                             { id: 'categories', icon: LayoutGrid, label: 'Categories' },

@@ -16,11 +16,10 @@ export default function ChatBubble({ children, isUser = false, avatar, className
         </div>
       )}
       <div
-        className={`rounded-2xl px-3 py-2 sm:px-4 sm:py-3 max-w-[85%] sm:max-w-[75%] lg:max-w-[70%] text-sm sm:text-base ${
-          isUser
-            ? 'bg-dark-bg-light/60 backdrop-blur-md text-white'
-            : 'bg-gradient-to-br from-neon-blue/20 to-neon-purple/20 backdrop-blur-md text-white border border-neon-blue/30'
-        }`}
+        className={`rounded-2xl px-3 py-2 sm:px-4 sm:py-3 max-w-[85%] sm:max-w-[75%] lg:max-w-[70%] text-sm sm:text-base ${isUser
+            ? 'bg-dark-bg-light/60 backdrop-blur-sm md:backdrop-blur-md text-white'
+            : 'bg-gradient-to-br from-neon-blue/20 to-neon-purple/20 backdrop-blur-sm md:backdrop-blur-md text-white border border-neon-blue/30'
+          }`}
       >
         {children}
       </div>

@@ -8,7 +8,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useState, useCallback, useEffect } from 'react'
 import {
     MessageSquare, TrendingUp, Users, ArrowRight, Sparkles, Compass,
-    Plus, ChevronRight, Play, Heart, Brain, Zap, BookOpen, CheckCircle
+    Plus, ChevronRight, Play, Heart, Brain, Zap, BookOpen, CheckCircle, FileText
 } from 'lucide-react'
 import Navbar from '../layout/Navbar'
 import dynamic from 'next/dynamic'
@@ -47,87 +47,145 @@ export default function Dashboard({ user }: { user: any }) {
 
 
 
+    const [stats, setStats] = useState({
+        streak: 0,
+        totalJournals: 0,
+        activeGoals: 0
+    })
+
     const loadStats = useCallback(async () => {
-        if (!user?.uid) return
+        if (!user?.uid || !db) return
         setLoadingData(true)
 
-        // Load discover items
         try {
-            const res = await fetch('/api/discover')
-            const data = await res.json()
-            setDiscoverItems(data.slice(0, 3))
-        } catch (e) {
-            console.error('Failed to load discover items', e)
-        }
-
-        // Load mood data
-        if (db) {
+            // 1. Load Moods
+            let moods: any[] = []
             try {
                 const moodRef = collection(db, 'users', user.uid, 'moods')
-                const q = query(moodRef, orderBy('createdAt', 'desc'))
-                const snapshot = await getDocs(q)
+                const snapshot = await getDocs(moodRef)
 
-                const moods = snapshot.docs.map(doc => {
+                moods = snapshot.docs.map(doc => {
                     const data = doc.data()
-                    return {
-                        value: data.average || data.value || 0,
-                        createdAt: data.createdAt?.toDate() || new Date()
-                    }
-                })
+                    let createdAt: Date
+                    if (data.createdAt?.toDate) createdAt = data.createdAt.toDate()
+                    else if (data.createdAt instanceof Date) createdAt = data.createdAt
+                    else if (typeof data.createdAt === 'string' || typeof data.createdAt === 'number') createdAt = new Date(data.createdAt)
+                    else createdAt = new Date()
 
-                const validMoods = moods.filter(m => m.value > 0)
-                const overallAvg = validMoods.length > 0
-                    ? (validMoods.reduce((sum, m) => sum + m.value, 0) / validMoods.length).toFixed(1)
-                    : '-'
-
-                // Check check-in status
-                const todayDate = new Date()
-                const hasCheckedInToday = moods.some(m =>
-                    m.createdAt.getDate() === todayDate.getDate() &&
-                    m.createdAt.getMonth() === todayDate.getMonth() &&
-                    m.createdAt.getFullYear() === todayDate.getFullYear()
-                )
-                setCheckInComplete(hasCheckedInToday)
-
-                // Process last 7 days
-                const labels: string[] = []
-                const values: number[] = []
-                const daysOfWeek = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']
-
-                for (let i = 6; i >= 0; i--) {
-                    const d = new Date()
-                    d.setDate(d.getDate() - i)
-                    d.setHours(0, 0, 0, 0)
-                    const nextD = new Date(d)
-                    nextD.setDate(nextD.getDate() + 1)
-                    labels.push(daysOfWeek[d.getDay()])
-                    const dayMoods = moods.filter(m => m.createdAt >= d && m.createdAt < nextD)
-                    if (dayMoods.length > 0) {
-                        const avg = dayMoods.reduce((sum, m) => sum + m.value, 0) / dayMoods.length
-                        values.push(Math.round(avg * 10) / 10)
-                    } else {
-                        values.push(0)
-                    }
-                }
-
-                // Calculate trend
-                const recentValues = values.slice(-3).filter(v => v > 0)
-                const olderValues = values.slice(0, 3).filter(v => v > 0)
-                let trend = 'stable'
-                if (recentValues.length && olderValues.length) {
-                    const recentAvg = recentValues.reduce((a, b) => a + b, 0) / recentValues.length
-                    const olderAvg = olderValues.reduce((a, b) => a + b, 0) / olderValues.length
-                    if (recentAvg > olderAvg + 0.5) trend = 'up'
-                    else if (recentAvg < olderAvg - 0.5) trend = 'down'
-                }
-
-                setMoodData({ labels, values, overallAvg, trend })
+                    return { value: data.average || data.value || 0, createdAt }
+                }).sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
             } catch (e) {
-                console.error('Failed to load mood data', e)
-            } finally {
-                setLoadingData(false)
+                console.error('Failed to load moods', e)
             }
-        } else {
+
+            // 2. Load Journals
+            let journals: any[] = []
+            try {
+                const journalRef = collection(db, 'users', user.uid, 'journal')
+                const journalSnapshot = await getDocs(journalRef)
+                journals = journalSnapshot.docs.map(doc => {
+                    const data = doc.data()
+                    let createdAt: Date
+                    if (data.createdAt?.toDate) createdAt = data.createdAt.toDate()
+                    else if (data.createdAt instanceof Date) createdAt = data.createdAt
+                    else createdAt = new Date()
+                    return { id: doc.id, createdAt }
+                })
+            } catch (e) {
+                console.error('Failed to load journals', e)
+            }
+
+            // 3. Load Goals
+            let activeGoalsCount = 0
+            try {
+                const goalsRef = collection(db, 'users', user.uid, 'goals')
+                const goalsSnapshot = await getDocs(goalsRef)
+                activeGoalsCount = goalsSnapshot.size
+            } catch (e) {
+                console.error('Failed to load goals', e)
+            }
+
+            const validMoods = moods.filter(m => m.value > 0)
+            const overallAvg = validMoods.length > 0
+                ? (validMoods.reduce((sum, m) => sum + m.value, 0) / validMoods.length).toFixed(1)
+                : '-'
+
+            // Check check-in status
+            const todayDate = new Date()
+            const hasCheckedInToday = moods.some(m =>
+                m.createdAt.getDate() === todayDate.getDate() &&
+                m.createdAt.getMonth() === todayDate.getMonth() &&
+                m.createdAt.getFullYear() === todayDate.getFullYear()
+            )
+            setCheckInComplete(hasCheckedInToday)
+
+            // Calculate Streak (combined Mood & Journal)
+            const uniqueDates = new Set([
+                ...moods.map(m => m.createdAt.toDateString()),
+                ...journals.map(j => j.createdAt.toDateString())
+            ])
+            const sortedDates = Array.from(uniqueDates).sort((a, b) => new Date(b).getTime() - new Date(a).getTime())
+
+            let streak = 0
+            if (sortedDates.length > 0) {
+                const todayStr = new Date().toDateString()
+                const yesterdayStr = new Date(Date.now() - 86400000).toDateString()
+
+                if (sortedDates.includes(todayStr) || sortedDates.includes(yesterdayStr)) {
+                    streak = 1
+                    let currentD = new Date(sortedDates[0])
+                    for (let i = 1; i < sortedDates.length; i++) {
+                        const prevD = new Date(sortedDates[i])
+                        const diff = Math.abs(currentD.getTime() - prevD.getTime())
+                        if (Math.ceil(diff / (1000 * 60 * 60 * 24)) === 1) {
+                            streak++
+                            currentD = prevD
+                        } else break
+                    }
+                }
+            }
+
+            // Process last 7 days chart
+            const labels: string[] = []
+            const values: number[] = []
+            const daysOfWeek = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']
+
+            for (let i = 6; i >= 0; i--) {
+                const d = new Date()
+                d.setDate(d.getDate() - i)
+                d.setHours(0, 0, 0, 0)
+                const nextD = new Date(d)
+                nextD.setDate(nextD.getDate() + 1)
+                labels.push(daysOfWeek[d.getDay()])
+                const dayMoods = moods.filter(m => m.createdAt >= d && m.createdAt < nextD)
+                if (dayMoods.length > 0) {
+                    const avg = dayMoods.reduce((sum, m) => sum + m.value, 0) / dayMoods.length
+                    values.push(Math.round(avg * 10) / 10)
+                } else {
+                    values.push(0)
+                }
+            }
+
+            // Calculate trend
+            const recentValues = values.slice(-3).filter(v => v > 0)
+            const olderValues = values.slice(0, 3).filter(v => v > 0)
+            let trend = 'stable'
+            if (recentValues.length && olderValues.length) {
+                const recentAvg = recentValues.reduce((a, b) => a + b, 0) / recentValues.length
+                const olderAvg = olderValues.reduce((a, b) => a + b, 0) / olderValues.length
+                if (recentAvg > olderAvg + 0.5) trend = 'up'
+                else if (recentAvg < olderAvg - 0.5) trend = 'down'
+            }
+
+            setMoodData({ labels, values, overallAvg, trend })
+            setStats({
+                streak,
+                totalJournals: journals.length,
+                activeGoals: activeGoalsCount
+            })
+        } catch (e) {
+            console.error('Failed to load mood data', e)
+        } finally {
             setLoadingData(false)
         }
     }, [user?.uid])
@@ -193,14 +251,14 @@ export default function Dashboard({ user }: { user: any }) {
             </div>
 
             <main className="relative z-10 pt-28 md:pt-12 pb-32 px-6 min-h-screen">
-                <div className="max-w-6xl mx-auto">
+                <div className="max-w-7xl mx-auto">
 
                     {/* Hero Section */}
-                    <div className="mb-12 md:mb-16">
+                    <div className="mb-8 md:mb-16">
                         <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
                             <div className="relative">
-                                {/* Ambient Glow */}
-                                <div className="absolute -left-20 -top-20 w-64 h-64 bg-indigo-500/10 rounded-full blur-[100px] pointer-events-none" />
+                                {/* Ambient Glow - Smaller and less blur on mobile */}
+                                <div className="absolute -left-20 -top-20 w-48 h-48 md:w-64 md:h-64 bg-indigo-500/10 rounded-full blur-[60px] md:blur-[100px] pointer-events-none" />
 
                                 <motion.div
                                     initial={{ opacity: 0, y: 10 }}
@@ -281,8 +339,8 @@ export default function Dashboard({ user }: { user: any }) {
                                 </motion.div>
                             )}
 
-                            {/* Mood Trends Card */}
-                            <div className="p-8 rounded-[2.2rem] bg-white/[0.02] border border-white/5 backdrop-blur-md relative overflow-hidden">
+                            {/* Mood Trends Card - Reduced blur on mobile */}
+                            <div className="p-8 rounded-[2.2rem] bg-white/[0.02] border border-white/5 backdrop-blur-sm md:backdrop-blur-md relative overflow-hidden">
                                 <Link href="/mood-flow" className="flex items-center justify-between mb-8 group">
                                     <div className="flex items-center gap-4">
                                         <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 flex items-center justify-center border border-indigo-500/10">
@@ -329,69 +387,56 @@ export default function Dashboard({ user }: { user: any }) {
                                 </div>
                             </div>
 
-                            {/* Discover Section (Moved here) */}
-                            <div className="pt-4">
-                                <div className="flex items-center justify-between mb-4">
-                                    <h2 className="text-sm font-bold text-white flex items-center gap-2">
-                                        <Sparkles size={14} className="text-amber-400" />
-                                        Recommended for your {hour < 12 ? 'Morning' : hour < 18 ? 'Afternoon' : 'Evening'}
-                                    </h2>
-                                    <Link href="/discover" className="text-[10px] font-bold uppercase tracking-wider text-indigo-400 hover:text-indigo-300 transition-colors flex items-center gap-1">
-                                        See Library <ArrowRight size={12} />
+                            {/* Growth Highlights Card */}
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.3, duration: 0.4 }}
+                                className="p-8 rounded-[2.2rem] bg-white/[0.02] border border-white/5 backdrop-blur-sm md:backdrop-blur-md relative overflow-hidden group"
+                            >
+                                <div className="absolute top-0 right-0 w-32 h-32 bg-rose-500/5 rounded-full blur-[60px] -mr-10 -mt-10 group-hover:bg-rose-500/10 transition-colors duration-700" />
+
+                                <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 relative z-10">
+                                    <div className="flex items-center gap-5">
+                                        <div className="w-14 h-14 rounded-[1.2rem] bg-rose-500/10 flex items-center justify-center border border-rose-500/10">
+                                            <TrendingUp size={24} className="text-rose-400" />
+                                        </div>
+                                        <div>
+                                            <h2 className="text-xl font-serif text-white/90">Growth Journey</h2>
+                                            <p className="text-[11px] font-medium text-white/40 uppercase tracking-[0.2em] mt-1">Consistency & Goals</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="grid grid-cols-3 gap-6 md:gap-8 flex-1 md:flex-none">
+                                        <div className="text-center md:text-left">
+                                            <span className="text-2xl font-serif text-white block mb-0.5">{stats.streak}</span>
+                                            <span className="text-[9px] font-bold uppercase tracking-widest text-white/30">Streak</span>
+                                        </div>
+                                        <div className="text-center md:text-left">
+                                            <span className="text-2xl font-serif text-white block mb-0.5">{stats.totalJournals}</span>
+                                            <span className="text-[9px] font-bold uppercase tracking-widest text-white/30">Reflections</span>
+                                        </div>
+                                        <div className="text-center md:text-left">
+                                            <span className="text-2xl font-serif text-white block mb-0.5">{stats.activeGoals}</span>
+                                            <span className="text-[9px] font-bold uppercase tracking-widest text-white/30">Goals</span>
+                                        </div>
+                                    </div>
+
+                                    <Link href="/growth">
+                                        <button className="h-12 px-6 rounded-full bg-white/5 border border-white/5 hover:bg-white/10 hover:border-white/10 transition-all flex items-center gap-3 text-[10px] font-bold uppercase tracking-widest text-white/70 hover:text-white">
+                                            <span>Continue</span>
+                                            <ArrowRight size={14} />
+                                        </button>
                                     </Link>
                                 </div>
-
-                                <div className="grid gap-3">
-                                    {loadingData ? (
-                                        <>
-                                            {[1, 2, 3].map((i) => (
-                                                <div key={i} className="flex items-center gap-4 p-4 rounded-2xl bg-white/[0.02] border border-white/5 animate-pulse">
-                                                    <div className="w-12 h-12 rounded-xl bg-white/5" />
-                                                    <div className="flex-1 space-y-2">
-                                                        <div className="h-3 w-16 bg-white/5 rounded-full" />
-                                                        <div className="h-4 w-3/4 bg-white/5 rounded-full" />
-                                                    </div>
-                                                </div>
-                                            ))}
-                                        </>
-                                    ) : (
-                                        discoverItems.map((item, index) => (
-                                            <Link
-                                                key={item.id}
-                                                href={`/discover/${item.id}`}
-                                                className="group flex items-center gap-4 p-4 rounded-2xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.05] hover:border-white/10 transition-all"
-                                            >
-                                                <div className="relative w-12 h-12 rounded-xl border border-white/10 shrink-0 overflow-hidden">
-                                                    <Image
-                                                        src={item.image}
-                                                        alt={item.title}
-                                                        fill
-                                                        className="object-cover"
-                                                        sizes="48px"
-                                                    />
-                                                </div>
-                                                <div className="flex-1 min-w-0">
-                                                    <span className="text-[9px] font-bold uppercase tracking-wider text-indigo-400 mb-0.5 block">
-                                                        {item.category || 'Article'}
-                                                    </span>
-                                                    <h3 className="text-xs font-medium text-white line-clamp-2 group-hover:text-indigo-200 transition-colors leading-relaxed">
-                                                        {item.title}
-                                                    </h3>
-                                                </div>
-                                                <ChevronRight size={16} className="text-white/20 group-hover:text-indigo-400 group-hover:translate-x-1 transition-all shrink-0" />
-                                            </Link>
-                                        ))
-                                    )}
-                                </div>
-                            </div>
-
+                            </motion.div>
                         </div>
 
                         {/* Right Column - Sidebar (4 cols) */}
                         <div className="lg:col-span-4 flex flex-col gap-6">
 
-                            {/* Insight Card - Dark Glass */}
-                            <div className="p-8 rounded-[2.2rem] bg-gradient-to-b from-white/[0.04] to-transparent border border-white/5 relative overflow-hidden group">
+                            {/* Insight Card - Dark Glass (Desktop only) */}
+                            <div className="hidden lg:block p-8 rounded-[2.2rem] bg-gradient-to-b from-white/[0.04] to-transparent border border-white/5 backdrop-blur-md relative overflow-hidden group">
                                 <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 rounded-full blur-[60px] -mr-10 -mt-10" />
 
                                 <div className="relative z-10">
@@ -409,44 +454,72 @@ export default function Dashboard({ user }: { user: any }) {
                             </div>
 
                             {/* Quick Links Group */}
-                            <div className="space-y-3">
-                                <Link href="/journal" className="group flex items-center gap-5 p-5 rounded-[1.5rem] bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-all">
-                                    <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:scale-105 transition-transform">
+                            {/* Quick Links Group - Grid */}
+                            <div className="grid grid-cols-2 gap-3 md:gap-4">
+                                <Link href="/journal" className="group flex flex-col justify-between p-4 md:p-6 rounded-[1.8rem] md:rounded-[2rem] bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-all min-h-[120px] md:min-h-[140px] relative overflow-hidden">
+                                    <div className="absolute top-0 right-0 w-24 h-24 bg-rose-500/5 rounded-full blur-[40px] -mr-8 -mt-8 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                    <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg mb-3 md:mb-4">
                                         <BookOpen size={18} className="text-white/70" />
                                     </div>
-                                    <div className="flex-1">
-                                        <h3 className="text-sm font-medium text-white/90">Journal</h3>
-                                        <p className="text-[10px] text-zinc-400 uppercase tracking-wider mt-0.5">Reflect</p>
+                                    <div>
+                                        <h3 className="text-sm md:text-base font-serif font-medium text-white/90">Journal</h3>
+                                        <p className="text-[9px] md:text-[10px] text-zinc-500 uppercase tracking-wider mt-0.5 md:mt-1">Reflect Daily</p>
                                     </div>
-                                    <ChevronRight size={14} className="text-white/20 group-hover:text-white/70 group-hover:translate-x-1 transition-all" />
                                 </Link>
 
-                                <Link href="/therapists" className="group flex items-center gap-5 p-5 rounded-[1.5rem] bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-all">
-                                    <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:scale-105 transition-transform">
+                                <Link href="/therapists" className="group flex flex-col justify-between p-4 md:p-6 rounded-[1.8rem] md:rounded-[2rem] bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-all min-h-[120px] md:min-h-[140px] relative overflow-hidden">
+                                    <div className="absolute top-0 right-0 w-24 h-24 bg-teal-500/5 rounded-full blur-[40px] -mr-8 -mt-8 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                    <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg mb-3 md:mb-4">
                                         <Users size={18} className="text-white/70" />
                                     </div>
-                                    <div className="flex-1">
-                                        <h3 className="text-sm font-medium text-white/90">Therapists</h3>
-                                        <p className="text-[10px] text-zinc-400 uppercase tracking-wider mt-0.5">Connect</p>
+                                    <div>
+                                        <h3 className="text-sm md:text-base font-serif font-medium text-white/90">Therapists</h3>
+                                        <p className="text-[9px] md:text-[10px] text-zinc-500 uppercase tracking-wider mt-0.5 md:mt-1">Get Support</p>
                                     </div>
-                                    <ChevronRight size={14} className="text-white/20 group-hover:text-white/70 group-hover:translate-x-1 transition-all" />
+                                </Link>
+
+                                <Link href="/report/therapist" className="group flex flex-col justify-between p-4 md:p-6 rounded-[1.8rem] md:rounded-[2rem] bg-white/[0.02] border border-white/5 backdrop-blur-sm md:backdrop-blur-md hover:bg-white/[0.04] transition-all min-h-[120px] md:min-h-[140px] relative overflow-hidden">
+                                    <div className="absolute top-0 right-0 w-24 h-24 bg-amber-500/5 rounded-full blur-[40px] -mr-8 -mt-8 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                    <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg mb-3 md:mb-4">
+                                        <FileText size={18} className="text-white/70" />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-sm md:text-base font-serif font-medium text-white/90">Expert Report</h3>
+                                        <p className="text-[9px] md:text-[10px] text-zinc-500 uppercase tracking-wider mt-0.5 md:mt-1">Deep Analysis</p>
+                                    </div>
                                 </Link>
 
                                 <button
                                     onClick={() => setShowFeedback(true)}
-                                    className="w-full group flex items-center gap-5 p-5 rounded-[1.5rem] bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-all text-left"
+                                    className="group flex flex-col justify-between p-4 md:p-6 rounded-[1.8rem] md:rounded-[2rem] bg-white/[0.02] border border-white/5 backdrop-blur-sm md:backdrop-blur-md hover:bg-white/[0.04] transition-all min-h-[120px] md:min-h-[140px] relative overflow-hidden text-left"
                                 >
-                                    <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:scale-105 transition-transform">
+                                    <div className="absolute top-0 right-0 w-24 h-24 bg-blue-500/5 rounded-full blur-[40px] -mr-8 -mt-8 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                    <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg mb-3 md:mb-4">
                                         <MessageSquare size={18} className="text-white/70" />
                                     </div>
-                                    <div className="flex-1">
-                                        <h3 className="text-sm font-medium text-white/90">Feedback</h3>
-                                        <p className="text-[10px] text-zinc-400 uppercase tracking-wider mt-0.5">Improve AARA</p>
+                                    <div>
+                                        <h3 className="text-sm md:text-base font-serif font-medium text-white/90">Feedback</h3>
+                                        <p className="text-[9px] md:text-[10px] text-zinc-500 uppercase tracking-wider mt-0.5 md:mt-1">Improve AARA</p>
                                     </div>
                                 </button>
                             </div>
 
-
+                            {/* Insight Card (Mobile Priority - After Links) */}
+                            <div className="lg:hidden p-8 rounded-[2.2rem] bg-gradient-to-b from-white/[0.04] to-transparent border border-white/5 backdrop-blur-sm relative overflow-hidden group">
+                                <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 rounded-full blur-[60px] -mr-10 -mt-10" />
+                                <div className="relative z-10">
+                                    <div className="flex items-center gap-2 mb-6">
+                                        <div className="w-6 h-6 rounded-full border border-indigo-500/20 flex items-center justify-center">
+                                            <Sparkles size={10} className="text-indigo-400" />
+                                        </div>
+                                        <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-indigo-300/50">insight</span>
+                                    </div>
+                                    <p className="text-lg font-serif italic text-white/80 leading-relaxed mb-6">
+                                        &quot;You don&apos;t have to control your thoughts. You just have to stop letting them control you.&quot;
+                                    </p>
+                                    <div className="h-0.5 w-8 bg-indigo-500/20" />
+                                </div>
+                            </div>
                         </div>
 
                     </div>

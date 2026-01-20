@@ -42,7 +42,7 @@ export async function saveJournalEntry(idToken: string, entry: {
         return { success: true, id: entryId }
     } catch (error: any) {
         console.error('Error saving journal entry:', error)
-        return { error: error.message }
+        return { error: error.message || 'Unknown server error' }
     }
 }
 

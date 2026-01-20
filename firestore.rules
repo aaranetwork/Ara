@@ -1,64 +1,62 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Users collection: clients can read their own profile; writes are server-side via Admin SDK
+
+    // =========================
+    // Users collection
+    // =========================
     match /users/{userId} {
       allow read: if request.auth != null && request.auth.uid == userId;
-      allow write: if false; // All writes via server/Admin SDK only
+      allow write: if false; // Only server/Admin SDK writes to root user doc
+
+      // Moods (Check-ins)
+      match /moods/{moodId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+
+      // Journal entries
+      match /journal/{entryId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+
+      // Goals
+      match /goals/{goalId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+
+      // Bookings
+      match /bookings/{bookingId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
     }
 
-    // Chats collection: users can read/write their own chat sessions
-    match /chats/{chatId} {
-      // Allow create if user matches the userId in the new document
-      allow create: if request.auth != null && request.auth.uid == request.resource.data.userId;
-      // Allow read/update if user matches the userId in the existing document
-      allow read, update: if request.auth != null && request.auth.uid == resource.data.userId;
-      // Allow delete if user matches
-      allow delete: if request.auth != null && request.auth.uid == resource.data.userId;
+    // =========================
+    // Shared Reports
+    // =========================
+    match /shared_reports/{reportId} {
+      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+      allow read: if true;
     }
 
-    // Journal collection: users can read/write their own journal entries
-    match /journal/{userId}/entries/{entryId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
-    }
-
-    // Games collection: users can read/write their own game scores
-    match /games/{userId}/scores/{scoreId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
-    }
-
-    // Bookings collection: users can read/write their own bookings
-    match /bookings/{userId}/sessions/{sessionId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
-    }
-
-    // Therapists collection: anyone authenticated can read
+    // =========================
+    // Therapists (Public Read)
+    // =========================
     match /therapists/{therapistId} {
       allow read: if request.auth != null;
-      allow write: if false; // Server/Admin SDK only
     }
 
-        // MCP session context: clients cannot read raw context, only server saves/reads
-        match /mcpSessions/{userId} {
-          allow read, write: if false; // Server/Admin SDK only
-        }
+    // =========================
+    // Articles (Public Read)
+    // =========================
+    match /articles/{articleId} {
+      allow read: if true;
+    }
 
-        // Articles collection: anyone can read (public content), writes are server-side only
-        match /articles/{articleId} {
-          allow read: if true; // Public read access for articles
-          allow write: if false; // Server/Admin SDK only
-        }
-
-        // Moods collection: users can read/write their own mood data
-        match /moods/{userId} {
-          allow read, write: if request.auth != null && request.auth.uid == userId;
-        }
-
-        // Default deny
-        match /{document=**} {
-          allow read, write: if false;
-        }
+    // =========================
+    // Global Deny
+    // =========================
+    match /{document=**} {
+      allow read, write: if false;
+    }
   }
 }
-
-

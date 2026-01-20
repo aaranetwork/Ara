@@ -509,10 +509,10 @@ export default function ChatPage() {
     return (
         <div className="h-[100dvh] flex flex-col relative overflow-hidden">
 
-            {/* Ambient Background - Subtle */}
+            {/* Ambient Background - Reduced for mobile */}
             <div className="fixed inset-0 pointer-events-none">
-                <div className="absolute top-[-20%] left-[20%] w-[500px] h-[500px] bg-indigo-500/5 blur-[120px] rounded-full" />
-                <div className="absolute bottom-[-20%] right-[20%] w-[500px] h-[500px] bg-purple-500/5 blur-[120px] rounded-full" />
+                <div className="absolute top-[-20%] left-[20%] w-[300px] h-[300px] md:w-[500px] md:h-[500px] bg-indigo-500/5 blur-[60px] md:blur-[120px] rounded-full" />
+                <div className="absolute bottom-[-20%] right-[20%] w-[300px] h-[300px] md:w-[500px] md:h-[500px] bg-purple-500/5 blur-[60px] md:blur-[120px] rounded-full" />
             </div>
 
             {/* Header */}
@@ -520,12 +520,12 @@ export default function ChatPage() {
                 <button
                     onClick={() => setShowHistory(true)}
                     aria-label="Open Chat History"
-                    className="pointer-events-auto p-3 rounded-xl bg-white/[0.03] backdrop-blur-xl border border-white/5 text-white/50 hover:text-white hover:bg-white/10 transition-all active:scale-95 group will-change-transform"
+                    className="pointer-events-auto p-3 rounded-xl bg-white/[0.03] backdrop-blur-md md:backdrop-blur-xl border border-white/5 text-white/50 hover:text-white hover:bg-white/10 transition-all active:scale-95 group will-change-transform"
                 >
                     <Menu size={20} className="group-hover:scale-110 transition-transform" />
                 </button>
 
-                <Link href="/" className="pointer-events-auto flex items-center gap-2 px-4 py-2 rounded-full bg-white/[0.03] border border-white/5 backdrop-blur-xl hover:bg-white/5 transition-all active:scale-95 cursor-pointer">
+                <Link href="/" className="pointer-events-auto flex items-center gap-2 px-4 py-2 rounded-full bg-white/[0.03] border border-white/5 backdrop-blur-md md:backdrop-blur-xl hover:bg-white/5 transition-all active:scale-95 cursor-pointer">
                     <span className="text-[10px] font-bold tracking-[0.3em] text-white/60 uppercase">AARA / CHAT</span>
                 </Link>
 
@@ -547,7 +547,7 @@ export default function ChatPage() {
             />
 
             <div
-                className={`fixed left-0 top-0 bottom-0 w-[85%] max-w-[320px] bg-black/40 backdrop-blur-2xl border-r border-white/5 z-[160] flex flex-col shadow-2xl transition-transform duration-300 ease-[0.16,1,0.3,1] ${showHistory ? 'translate-x-0' : '-translate-x-full'}`}
+                className={`fixed left-0 top-0 bottom-0 w-[85%] max-w-[320px] bg-black/40 backdrop-blur-lg md:backdrop-blur-2xl border-r border-white/5 z-[160] flex flex-col shadow-2xl transition-transform duration-300 ease-[0.16,1,0.3,1] ${showHistory ? 'translate-x-0' : '-translate-x-full'}`}
             >
                 <div className="p-6 flex items-center justify-between border-b border-white/5">
                     <span className="text-xs font-bold tracking-widest text-white/40 uppercase">Sessions</span>
@@ -662,7 +662,7 @@ export default function ChatPage() {
                     <div className="max-w-2xl mx-auto relative group">
                         <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500/10 via-purple-500/10 to-indigo-500/10 rounded-[2rem] blur-xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-700" />
 
-                        <div className="relative flex items-center bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-[2rem] pl-6 pr-2 py-2 focus-within:border-white/20 focus-within:bg-white/[0.05] transition-all duration-300">
+                        <div className="relative flex items-center bg-white/[0.03] backdrop-blur-md md:backdrop-blur-xl border border-white/10 rounded-[2rem] pl-6 pr-2 py-2 focus-within:border-white/20 focus-within:bg-white/[0.05] transition-all duration-300">
                             <input
                                 ref={inputRef}
                                 className="flex-1 bg-transparent border-none outline-none text-white placeholder-white/20 text-[15px] py-2"

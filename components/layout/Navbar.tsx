@@ -51,7 +51,7 @@ export default function Navbar() {
 
             {/* Mobile Navigation - Apple / iOS Style with Curve */}
             <div className="fixed bottom-0 left-0 right-0 z-[100] md:hidden">
-                <div className="w-full bg-[#121212]/90 backdrop-blur-2xl border-t border-white/5 pb-safe-area rounded-t-[24px] shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
+                <div className="w-full bg-[#121212]/90 backdrop-blur-lg border-t border-white/5 pb-safe-area rounded-t-[24px] shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
                     <div className="flex items-center justify-around h-[64px] px-4">
                         {navItems.map(({ href, label, icon: Icon }) => {
                             const isActive = pathname === href

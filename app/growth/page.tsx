@@ -170,10 +170,10 @@ export default function GrowthPage() {
         <div className="min-h-screen text-white selection:bg-indigo-500/30 overflow-x-hidden">
 
 
-            {/* Background Ambience */}
+            {/* Background Ambience - Reduced for mobile */}
             <div className="fixed inset-0 overflow-hidden pointer-events-none">
-                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-500/5 rounded-full blur-[100px]" />
-                <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-indigo-500/5 rounded-full blur-[100px]" />
+                <div className="absolute top-0 right-0 w-[300px] h-[300px] md:w-[500px] md:h-[500px] bg-blue-500/5 rounded-full blur-[60px] md:blur-[100px]" />
+                <div className="absolute bottom-0 left-0 w-[300px] h-[300px] md:w-[500px] md:h-[500px] bg-indigo-500/5 rounded-full blur-[60px] md:blur-[100px]" />
             </div>
 
             {/* Back Button */}
@@ -190,7 +190,7 @@ export default function GrowthPage() {
                     transition={{ duration: 0.6 }}
                     className="text-center mb-16"
                 >
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/5 mb-6 backdrop-blur-md">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/5 mb-6 backdrop-blur-sm md:backdrop-blur-md">
                         <Sparkles size={12} className="text-indigo-300" />
                         <span className="text-[10px] font-bold uppercase tracking-widest text-white/60">Your Journey</span>
                     </div>
@@ -215,7 +215,7 @@ export default function GrowthPage() {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.1 + (i * 0.1) }}
-                            className="p-6 rounded-[24px] bg-white/[0.02] border border-white/5 flex flex-col items-center justify-center text-center group hover:bg-white/[0.04] transition-all duration-300 hover:border-white/10 backdrop-blur-md"
+                            className="p-6 rounded-[24px] bg-white/[0.02] border border-white/5 flex flex-col items-center justify-center text-center group hover:bg-white/[0.04] transition-all duration-300 hover:border-white/10 backdrop-blur-sm md:backdrop-blur-md"
                         >
                             <div className={`w-12 h-12 rounded-2xl ${stat.bg} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}>
                                 <stat.icon size={22} className={stat.color} strokeWidth={1.5} />
@@ -232,7 +232,7 @@ export default function GrowthPage() {
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: 0.4 }}
-                        className="p-8 rounded-[32px] bg-white/[0.02] border border-white/5 backdrop-blur-xl"
+                        className="p-8 rounded-[32px] bg-white/[0.02] border border-white/5 backdrop-blur-md md:backdrop-blur-xl"
                     >
                         <div className="flex items-center justify-between mb-8">
                             <h3 className="text-lg font-serif text-white">Active Goals</h3>
@@ -277,7 +277,7 @@ export default function GrowthPage() {
                         initial={{ opacity: 0, x: 20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: 0.5 }}
-                        className="p-8 rounded-[32px] bg-white/[0.02] border border-white/5 backdrop-blur-xl"
+                        className="p-8 rounded-[32px] bg-white/[0.02] border border-white/5 backdrop-blur-md md:backdrop-blur-xl"
                     >
                         <div className="flex items-center gap-3 mb-8">
                             <div className="w-8 h-8 rounded-full bg-yellow-500/10 flex items-center justify-center">
