@@ -7,7 +7,6 @@ import { ArrowRight, Leaf, Heart, ChevronRight, Send } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { TextBlurReveal } from '@/components/ui/TextBlurReveal'
-import { PremiumSlider } from '@/components/check-in/PremiumSlider'
 
 // Reusing gradients from check-in for consistency
 const GRADIENTS: Record<string, string> = {
@@ -124,14 +123,53 @@ export default function TryPage() {
                                 />
                             </div>
 
-                            {/* Premium Slider */}
-                            <div className="mb-16 w-full">
-                                <PremiumSlider
-                                    value={mood}
-                                    setValue={setMood}
-                                    minLabel="Heavy"
-                                    maxLabel="Light"
-                                />
+                            {/* Slider */}
+                            <div className="mb-16 w-full max-w-md mx-auto px-4">
+                                {/* Number Display */}
+                                <div className="flex items-center justify-center gap-3 mb-12">
+                                    <span className="text-7xl font-serif text-white tabular-nums">{mood}</span>
+                                    <span className="text-3xl text-white/30 font-light">/10</span>
+                                </div>
+
+                                {/* Slider Container */}
+                                <div className="relative py-6">
+                                    {/* Labels */}
+                                    <div className="absolute left-0 top-0 text-[10px] uppercase tracking-widest font-semibold text-white/40">
+                                        Heavy
+                                    </div>
+                                    <div className="absolute right-0 top-0 text-[10px] uppercase tracking-widest font-semibold text-white/40">
+                                        Light
+                                    </div>
+
+                                    {/* Track */}
+                                    <div className="relative mt-8 h-2 bg-white/5 rounded-full overflow-hidden">
+                                        {/* Fill */}
+                                        <div
+                                            className="absolute left-0 top-0 h-full bg-white/20 transition-all duration-100 ease-out"
+                                            style={{ width: `${((mood - 1) / 9) * 100}%` }}
+                                        />
+
+                                        {/* Thumb */}
+                                        <div
+                                            className="absolute top-1/2 w-6 h-6 bg-white rounded-full shadow-lg -translate-y-1/2 transition-all duration-100 ease-out flex items-center justify-center border border-white/10"
+                                            style={{ left: `calc(${((mood - 1) / 9) * 100}% - 12px)` }}
+                                        >
+                                            <div className="w-1.5 h-1.5 bg-black rounded-full" />
+                                        </div>
+                                    </div>
+
+                                    {/* Input */}
+                                    <input
+                                        type="range"
+                                        min="1"
+                                        max="10"
+                                        step="1"
+                                        value={mood}
+                                        onChange={(e) => setMood(Number(e.target.value))}
+                                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                        style={{ WebkitTapHighlightColor: 'transparent' }}
+                                    />
+                                </div>
                             </div>
 
                             {/* Continue Button */}

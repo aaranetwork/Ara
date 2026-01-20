@@ -3,187 +3,174 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronLeft } from 'lucide-react'
+import { ChevronLeft, ArrowRight } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
 import { db } from '@/lib/firebase/config'
-import { collection, addDoc, Timestamp } from 'firebase/firestore'
+import { collection, addDoc, Timestamp, query, orderBy, getDocs } from 'firebase/firestore'
 
-import { MoodSlider } from '@/components/check-in/MoodSlider'
-import { EmotionPicker } from '@/components/check-in/EmotionPicker'
-import { ContextSelector } from '@/components/check-in/ContextSelector'
-import { CheckInConfirmation } from '@/components/check-in/CheckInConfirmation'
-import { getDailyMoodPrompt, getDailyEmotionWords, getDailyContextOptions, trackShownPrompt, trackShownEmotionWords } from '@/components/check-in/utils/rotationLogic'
-import { generateInsights, Insight } from '@/components/check-in/utils/insightGenerator'
+// Simplified, fast mood slider
+function FastMoodSlider({ value, onChange }: { value: number; onChange: (v: number) => void }) {
+    return (
+        <div className="w-full max-w-md mx-auto px-4">
+            {/* Number Display */}
+            <div className="flex items-center justify-center gap-3 mb-12">
+                <span className="text-7xl font-serif text-white tabular-nums">{value}</span>
+                <span className="text-3xl text-white/30 font-light">/10</span>
+            </div>
 
-type Step = 'mood' | 'emotion' | 'context' | 'complete'
+            {/* Slider Container */}
+            <div className="relative py-6">
+                {/* Labels */}
+                <div className="absolute left-0 top-0 text-[10px] uppercase tracking-widest font-semibold text-white/40">
+                    Heavy
+                </div>
+                <div className="absolute right-0 top-0 text-[10px] uppercase tracking-widest font-semibold text-white/40">
+                    Light
+                </div>
+
+                {/* Track */}
+                <div className="relative mt-8 h-2 bg-white/5 rounded-full overflow-hidden">
+                    {/* Fill */}
+                    <div
+                        className="absolute left-0 top-0 h-full bg-white/20 transition-all duration-100 ease-out"
+                        style={{ width: `${((value - 1) / 9) * 100}%` }}
+                    />
+
+                    {/* Thumb */}
+                    <div
+                        className="absolute top-1/2 w-6 h-6 bg-white rounded-full shadow-lg -translate-y-1/2 transition-all duration-100 ease-out flex items-center justify-center border border-white/10"
+                        style={{ left: `calc(${((value - 1) / 9) * 100}% - 12px)` }}
+                    >
+                        <div className="w-1.5 h-1.5 bg-black rounded-full" />
+                    </div>
+                </div>
+
+                {/* Input */}
+                <input
+                    type="range"
+                    min="1"
+                    max="10"
+                    step="1"
+                    value={value}
+                    onChange={(e) => onChange(Number(e.target.value))}
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                    style={{ WebkitTapHighlightColor: 'transparent' }}
+                />
+            </div>
+        </div>
+    )
+}
+
+// Simplified emotion picker
+function FastEmotionPicker({ selected, onSelect }: { selected: string; onSelect: (e: string) => void }) {
+    const emotions = ['Calm', 'Anxious', 'Tired', 'Hopeful', 'Stressed', 'Grateful', 'Overwhelmed', 'Content']
+
+    return (
+        <div className="w-full max-w-lg mx-auto px-4">
+            <h2 className="text-2xl md:text-3xl font-serif text-center text-white/90 mb-12">
+                One word that describes your feeling:
+            </h2>
+
+            <div className="flex flex-wrap justify-center gap-3">
+                {emotions.map((emotion) => (
+                    <button
+                        key={emotion}
+                        onClick={() => onSelect(emotion)}
+                        className={`px-6 py-3 rounded-full text-sm font-medium transition-all duration-150 ${selected === emotion
+                                ? 'bg-indigo-500 text-white scale-105'
+                                : 'bg-white/5 text-white/70 hover:bg-white/10 border border-white/10'
+                            }`}
+                    >
+                        {emotion}
+                    </button>
+                ))}
+            </div>
+        </div>
+    )
+}
+
+// Simplified context selector
+function FastContextSelector({ selected, onToggle }: { selected: string[]; onToggle: (f: string) => void }) {
+    const factors = ['Work stress', 'Sleep issues', 'Relationship tension', 'Financial worry', 'Health concerns', 'Nothing specific']
+
+    return (
+        <div className="w-full max-w-lg mx-auto px-4">
+            <h2 className="text-2xl md:text-3xl font-serif text-center text-white/90 mb-4">
+                What's influencing that?
+            </h2>
+            <p className="text-sm text-white/40 text-center mb-8">(Optional - select all that apply)</p>
+
+            <div className="space-y-2">
+                {factors.map((factor) => {
+                    const isSelected = selected.includes(factor)
+                    return (
+                        <button
+                            key={factor}
+                            onClick={() => onToggle(factor)}
+                            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-150 ${isSelected
+                                    ? 'bg-indigo-500/20 border border-indigo-500/50'
+                                    : 'bg-white/5 border border-white/10 hover:bg-white/10'
+                                }`}
+                        >
+                            <div className={`w-5 h-5 rounded border-2 flex items-center justify-center ${isSelected ? 'bg-indigo-500 border-indigo-500' : 'border-white/30'
+                                }`}>
+                                {isSelected && (
+                                    <svg className="w-3 h-3 text-white" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path d="M5 13l4 4L19 7"></path>
+                                    </svg>
+                                )}
+                            </div>
+                            <span className="text-sm text-white/80">{factor}</span>
+                        </button>
+                    )
+                })}
+            </div>
+        </div>
+    )
+}
 
 export default function CheckInPage() {
     const { user, loading: authLoading } = useAuth()
     const router = useRouter()
 
-    // Flow state
-    const [currentStep, setCurrentStep] = useState<Step>('mood')
-    const [startTime] = useState(Date.now())
-
-    // Data collection
+    const [step, setStep] = useState(1)
     const [moodValue, setMoodValue] = useState(5)
-    const [moodPrompt, setMoodPrompt] = useState('')
-    const [emotionWord, setEmotionWord] = useState('')
-    const [emotionCustom, setEmotionCustom] = useState(false)
-    const [emotionWordsShown, setEmotionWordsShown] = useState<string[]>([])
-    const [contextFactors, setContextFactors] = useState<string[]>([])
-    const [skippedContext, setSkippedContext] = useState(false)
+    const [emotion, setEmotion] = useState('')
+    const [context, setContext] = useState<string[]>([])
+    const [saving, setSaving] = useState(false)
 
-    // UI state
-    const [isSubmitting, setIsSubmitting] = useState(false)
-    const [insights, setInsights] = useState<Insight[]>([])
-
-    // Auth protection
     useEffect(() => {
-        if (!authLoading && !user) {
-            router.push('/auth/login')
-        }
+        if (!authLoading && !user) router.push('/auth/login')
     }, [user, authLoading, router])
 
-    // Initialize rotation data
-    useEffect(() => {
-        const prompt = getDailyMoodPrompt()
-        const emotions = getDailyEmotionWords()
-
-        setMoodPrompt(prompt)
-        setEmotionWordsShown(emotions)
-
-        trackShownPrompt(prompt)
-        trackShownEmotionWords(emotions)
-    }, [])
-
-    // Save to localStorage for recovery
-    useEffect(() => {
-        if (typeof window !== 'undefined' && currentStep !== 'complete') {
-            const progress = {
-                step: currentStep,
-                moodValue,
-                emotionWord,
-                emotionCustom,
-                contextFactors,
-                timestamp: Date.now()
-            }
-            localStorage.setItem('checkInProgress', JSON.stringify(progress))
-        }
-    }, [currentStep, moodValue, emotionWord, emotionCustom, contextFactors])
-
-    // Load from localStorage on mount
-    useEffect(() => {
-        if (typeof window !== 'undefined') {
-            const saved = localStorage.getItem('checkInProgress')
-            if (saved) {
-                try {
-                    const progress = JSON.parse(saved)
-                    // Only restore if less than 1 hour old
-                    if (Date.now() - progress.timestamp < 3600000) {
-                        setCurrentStep(progress.step)
-                        setMoodValue(progress.moodValue)
-                        setEmotionWord(progress.emotionWord)
-                        setEmotionCustom(progress.emotionCustom)
-                        setContextFactors(progress.contextFactors)
-                    }
-                } catch (e) {
-                    // Ignore errors
-                }
-            }
-        }
-    }, [])
-
-    const handleMoodContinue = () => {
-        setCurrentStep('emotion')
-    }
-
-    const handleEmotionSelect = (emotion: string, isCustom: boolean) => {
-        setEmotionWord(emotion)
-        setEmotionCustom(isCustom)
-    }
-
-    const handleEmotionContinue = () => {
-        if (!emotionWord) return
-        setCurrentStep('context')
-    }
-
     const handleContextToggle = (factor: string) => {
-        setContextFactors(prev => {
-            if (prev.includes(factor)) {
-                return prev.filter(f => f !== factor)
-            } else {
-                // Max 3 selections
-                if (prev.length >= 3) return prev
-                return [...prev, factor]
-            }
-        })
+        setContext(prev =>
+            prev.includes(factor)
+                ? prev.filter(f => f !== factor)
+                : prev.length < 3 ? [...prev, factor] : prev
+        )
     }
 
-    const handleContextSkip = () => {
-        setSkippedContext(true)
-        submitCheckIn(true)
-    }
-
-    const handleContextContinue = () => {
-        setSkippedContext(false)
-        submitCheckIn(false)
-    }
-
-    const submitCheckIn = async (skipped: boolean) => {
-        if (!user || !db || isSubmitting) return
-
-        setIsSubmitting(true)
+    const handleSave = async () => {
+        if (!user || !db || saving) return
+        setSaving(true)
 
         try {
-            const timeToComplete = Math.floor((Date.now() - startTime) / 1000) // seconds
-
-            // Save to Firestore
             await addDoc(collection(db, 'users', user.uid, 'moods'), {
                 moodValue,
-                moodPrompt,
-                emotionWord,
-                emotionCustom,
-                emotionWordsShown,
-                contextFactors: skipped ? [] : contextFactors,
-                skippedContext: skipped,
-                timeToComplete,
-                value: moodValue, // For compatibility with old system
-                average: moodValue, // For compatibility with old system
+                emotionWord: emotion,
+                contextFactors: context,
+                value: moodValue,
+                average: moodValue,
                 createdAt: Timestamp.now()
             })
 
-            // Generate insights
-            const userInsights = await generateInsights(user.uid)
-            setInsights(userInsights)
-
-            // Clear localStorage
-            if (typeof window !== 'undefined') {
-                localStorage.removeItem('checkInProgress')
-            }
-
-            // Move to completion
-            setCurrentStep('complete')
-
+            // Show brief confirmation then redirect
+            setTimeout(() => router.push('/'), 1500)
         } catch (error) {
-            console.error('Error saving check-in:', error)
-            alert('Failed to save check-in. Please try again.')
-            setIsSubmitting(false)
-        }
-    }
-
-    const handleBack = () => {
-        if (currentStep === 'emotion') setCurrentStep('mood')
-        else if (currentStep === 'context') setCurrentStep('emotion')
-        else router.back()
-    }
-
-    const getProgressWidth = () => {
-        switch (currentStep) {
-            case 'mood': return '33%'
-            case 'emotion': return '66%'
-            case 'context': return '100%'
-            default: return '0%'
+            console.error('Save error:', error)
+            alert('Failed to save. Please try again.')
+            setSaving(false)
         }
     }
 
@@ -191,143 +178,127 @@ export default function CheckInPage() {
         return <div className="min-h-screen bg-[#030305]" />
     }
 
-    if (currentStep === 'complete') {
-        return <CheckInConfirmation moodValue={moodValue} userId={user.uid} insights={insights} />
-    }
-
-    const contextOptions = getDailyContextOptions()
-
     return (
-        <div className="min-h-screen bg-[#030305] text-white font-sans overflow-hidden relative selection:bg-white/20">
-            {/* Background gradient */}
+        <div className="min-h-screen bg-[#030305] text-white relative overflow-hidden">
+            {/* Background */}
             <div className="fixed inset-0 pointer-events-none">
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[400px] md:w-[600px] h-[400px] md:h-[600px] bg-indigo-500/5 blur-[80px] md:blur-[120px] rounded-full" />
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-indigo-500/5 blur-[100px] rounded-full" />
             </div>
 
-            {/* Navigation */}
-            <nav className="relative z-50 flex items-center justify-between px-6 md:px-8 py-6 md:py-8">
-                <button
-                    onClick={handleBack}
-                    disabled={isSubmitting}
-                    className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-white/5 transition-all text-white/40 hover:text-white disabled:opacity-30"
-                >
-                    <ChevronLeft size={20} />
-                </button>
+            {/* Content */}
+            <div className="relative z-10">
+                {/* Header */}
+                <nav className="flex items-center justify-between px-6 py-6">
+                    <button
+                        onClick={() => step > 1 ? setStep(step - 1) : router.back()}
+                        className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-white/5 transition-colors"
+                    >
+                        <ChevronLeft size={20} className="text-white/60" />
+                    </button>
 
-                {/* Progress bar */}
-                <div className="flex-1 max-w-xs mx-auto">
-                    <div className="h-1 bg-white/5 rounded-full overflow-hidden">
-                        <motion.div
-                            className="h-full bg-indigo-500"
-                            initial={{ width: '0%' }}
-                            animate={{ width: getProgressWidth() }}
-                            transition={{ duration: 0.3 }}
-                        />
+                    <div className="flex gap-1.5">
+                        {[1, 2, 3].map((s) => (
+                            <div
+                                key={s}
+                                className={`h-1 rounded-full transition-all duration-300 ${s === step ? 'w-8 bg-white' : s < step ? 'w-2 bg-white/40' : 'w-1.5 bg-white/10'
+                                    }`}
+                            />
+                        ))}
                     </div>
+
+                    <div className="w-10" />
+                </nav>
+
+                {/* Main Content */}
+                <div className="flex items-center justify-center min-h-[calc(100vh-200px)] px-6">
+                    <AnimatePresence mode="wait">
+                        {step === 1 && (
+                            <motion.div
+                                key="step1"
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -20 }}
+                                className="w-full"
+                            >
+                                <div className="text-center mb-8">
+                                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 mb-6">
+                                        <span className="text-xl">🌸</span>
+                                        <span className="text-[10px] font-bold uppercase tracking-wider text-white/60">Check-In</span>
+                                    </div>
+                                    <h1 className="text-3xl md:text-4xl font-serif text-white/90 mb-16">
+                                        How are you feeling today?
+                                    </h1>
+                                </div>
+                                <FastMoodSlider value={moodValue} onChange={setMoodValue} />
+                            </motion.div>
+                        )}
+
+                        {step === 2 && (
+                            <motion.div
+                                key="step2"
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -20 }}
+                                className="w-full"
+                            >
+                                <div className="text-center mb-8">
+                                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 mb-6">
+                                        <span className="text-xl">🌸</span>
+                                        <span className="text-[10px] font-bold uppercase tracking-wider text-white/60">Reflection</span>
+                                    </div>
+                                </div>
+                                <FastEmotionPicker selected={emotion} onSelect={setEmotion} />
+                            </motion.div>
+                        )}
+
+                        {step === 3 && (
+                            <motion.div
+                                key="step3"
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -20 }}
+                                className="w-full"
+                            >
+                                <div className="text-center mb-8">
+                                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 mb-6">
+                                        <span className="text-xl">🌸</span>
+                                        <span className="text-[10px] font-bold uppercase tracking-wider text-white/60">Context</span>
+                                    </div>
+                                </div>
+                                <FastContextSelector selected={context} onToggle={handleContextToggle} />
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
                 </div>
 
-                <div className="w-10" /> {/* Spacer */}
-            </nav>
+                {/* Footer CTA */}
+                <div className="fixed bottom-8 left-0 right-0 flex justify-center px-6">
+                    <button
+                        onClick={() => {
+                            if (step === 1 && moodValue) setStep(2)
+                            else if (step === 2 && emotion) setStep(3)
+                            else if (step === 3) handleSave()
+                        }}
+                        disabled={
+                            (step === 1 && !moodValue) ||
+                            (step === 2 && !emotion) ||
+                            saving
+                        }
+                        className="px-10 py-4 bg-white text-black rounded-full font-medium text-sm uppercase tracking-wider hover:scale-105 transition-transform shadow-lg disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center gap-3"
+                    >
+                        {saving ? 'Saving...' : step === 3 ? 'Complete' : 'Continue'}
+                        {!saving && <ArrowRight size={16} />}
+                    </button>
 
-            {/* Main content */}
-            <div className="relative z-10 flex items-center justify-center min-h-[calc(100vh-120px)] px-6 pb-8">
-                <AnimatePresence mode="wait">
-                    {currentStep === 'mood' && (
-                        <motion.div
-                            key="mood"
-                            initial={{ opacity: 0, x: 20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            exit={{ opacity: 0, x: -20 }}
-                            transition={{ duration: 0.3 }}
-                            className="w-full"
+                    {step === 3 && !saving && (
+                        <button
+                            onClick={handleSave}
+                            className="absolute left-6 px-6 py-4 text-white/50 hover:text-white/80 transition-colors text-sm"
                         >
-                            <MoodSlider
-                                value={moodValue}
-                                onChange={setMoodValue}
-                                prompt={moodPrompt}
-                            />
-
-                            <motion.div
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                transition={{ delay: 0.5 }}
-                                className="flex justify-center mt-12"
-                            >
-                                <button
-                                    onClick={handleMoodContinue}
-                                    className="px-10 py-4 bg-white text-black rounded-full font-medium text-sm uppercase tracking-wider hover:scale-105 transition-transform shadow-lg"
-                                >
-                                    Continue →
-                                </button>
-                            </motion.div>
-                        </motion.div>
+                            Skip →
+                        </button>
                     )}
-
-                    {currentStep === 'emotion' && (
-                        <motion.div
-                            key="emotion"
-                            initial={{ opacity: 0, x: 20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            exit={{ opacity: 0, x: -20 }}
-                            transition={{ duration: 0.3 }}
-                            className="w-full"
-                        >
-                            <EmotionPicker
-                                emotionWords={emotionWordsShown}
-                                selectedEmotion={emotionWord}
-                                onSelect={handleEmotionSelect}
-                            />
-
-                            <motion.div
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                transition={{ delay: 0.5 }}
-                                className="flex justify-center mt-12"
-                            >
-                                <button
-                                    onClick={handleEmotionContinue}
-                                    disabled={!emotionWord}
-                                    className="px-10 py-4 bg-white text-black rounded-full font-medium text-sm uppercase tracking-wider hover:scale-105 transition-transform shadow-lg disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:scale-100"
-                                >
-                                    Continue →
-                                </button>
-                            </motion.div>
-                        </motion.div>
-                    )}
-
-                    {currentStep === 'context' && (
-                        <motion.div
-                            key="context"
-                            initial={{ opacity: 0, x: 20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            exit={{ opacity: 0, x: -20 }}
-                            transition={{ duration: 0.3 }}
-                            className="w-full"
-                        >
-                            <ContextSelector
-                                contextOptions={contextOptions}
-                                selectedFactors={contextFactors}
-                                onToggle={handleContextToggle}
-                                onSkip={handleContextSkip}
-                            />
-
-                            <motion.div
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                transition={{ delay: 0.5 }}
-                                className="flex justify-center mt-8"
-                            >
-                                <button
-                                    onClick={handleContextContinue}
-                                    disabled={isSubmitting}
-                                    className="px-10 py-4 bg-indigo-500 text-white rounded-full font-medium text-sm uppercase tracking-wider hover:bg-indigo-600 transition-all shadow-lg shadow-indigo-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
-                                >
-                                    {isSubmitting ? 'Saving...' : 'Save & Continue →'}
-                                </button>
-                            </motion.div>
-                        </motion.div>
-                    )}
-                </AnimatePresence>
+                </div>
             </div>
         </div>
     )
