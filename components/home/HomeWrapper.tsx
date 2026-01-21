@@ -34,8 +34,13 @@ export default function HomeWrapper() {
         window.scrollTo({ top: 0, behavior: 'instant' })
     }, [])
 
-    // Optimistic Render: Show Landing Page by default to improve LCP.
-    // If user is found later, we switch to Dashboard.
+    // Show loading screen while determining auth state
+    // This prevents the flash of landing page for authenticated users
+    if (loading) {
+        return <LoadingScreen />
+    }
+
+    // Once auth is determined, show appropriate page
     if (user) {
         return <Dashboard user={user} />
     }

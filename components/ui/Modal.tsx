@@ -32,24 +32,26 @@ export default function Modal({ isOpen, onClose, children, title, showCloseButto
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
+            className="fixed inset-0 bg-black/80 backdrop-blur-md z-40"
             onClick={onClose}
           />
           <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            initial={{ opacity: 0, scale: 0.96, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            exit={{ opacity: 0, scale: 0.96, y: 20 }}
+            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="glass-card max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="bg-[#0a0a0f]/95 backdrop-blur-2xl border border-white/10 rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-[0_0_50px_rgba(0,0,0,0.5)]">
               {title && (
-                <div className="flex items-center justify-between p-6 border-b border-white/10">
-                  <h2 className="text-2xl font-semibold">{title}</h2>
+                <div className="flex items-center justify-between p-6 sm:p-8 border-b border-white/5">
+                  <h2 className="text-2xl sm:text-3xl font-serif font-light text-white">{title}</h2>
                   {showCloseButton && (
                     <button
                       onClick={onClose}
-                      className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+                      className="p-2.5 hover:bg-white/10 rounded-xl transition-all active:scale-95 text-white/60 hover:text-white"
+                      aria-label="Close modal"
                     >
                       <X className="w-5 h-5" />
                     </button>
@@ -59,12 +61,13 @@ export default function Modal({ isOpen, onClose, children, title, showCloseButto
               {!title && showCloseButton && (
                 <button
                   onClick={onClose}
-                  className="absolute top-4 right-4 p-2 hover:bg-white/10 rounded-lg transition-colors z-10"
+                  className="absolute top-6 right-6 p-2.5 hover:bg-white/10 rounded-xl transition-all active:scale-95 z-10 text-white/60 hover:text-white"
+                  aria-label="Close modal"
                 >
                   <X className="w-5 h-5" />
                 </button>
               )}
-              <div className={title ? 'p-6' : (showCloseButton ? 'p-6 pt-12' : 'p-6')}>{children}</div>
+              <div className={title ? 'p-6 sm:p-8' : (showCloseButton ? 'p-6 sm:p-8 pt-16' : 'p-6 sm:p-8')}>{children}</div>
             </div>
           </motion.div>
         </>

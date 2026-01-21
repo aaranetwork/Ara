@@ -8,48 +8,61 @@ import { useAuth } from '@/hooks/useAuth'
 import { db } from '@/lib/firebase/config'
 import { collection, addDoc, Timestamp, query, orderBy, getDocs } from 'firebase/firestore'
 
-// Ultra-fast mood slider - GPU accelerated for 60fps
+// Ultra-optimized slider - 60fps GPU accelerated, mobile-optimized
 function FastMoodSlider({ value, onChange }: { value: number; onChange: (v: number) => void }) {
+    const [isActive, setIsActive] = useState(false)
+
+    // Calculate percentage (0-100) from value (1-10)
+    const percentage = ((value - 1) / 9) * 100
+
     return (
-        <div className="w-full max-w-md mx-auto px-4">
+        <div className="w-full max-w-md mx-auto px-4 sm:px-6">
             {/* Number Display */}
-            <div className="flex items-center justify-center gap-3 mb-12">
-                <span className="text-7xl font-serif text-white tabular-nums">{value}</span>
-                <span className="text-3xl text-white/30 font-light">/10</span>
+            <div className="flex items-center justify-center gap-2 sm:gap-3 mb-8 sm:mb-12">
+                <span className="text-6xl sm:text-7xl md:text-8xl font-serif text-white tabular-nums">{value}</span>
+                <span className="text-2xl sm:text-3xl text-white/30 font-light">/10</span>
             </div>
 
             {/* Slider Container */}
             <div className="relative">
                 {/* Labels */}
-                <div className="flex justify-between mb-4">
-                    <span className="text-[10px] uppercase tracking-widest font-semibold text-white/40">Heavy</span>
-                    <span className="text-[10px] uppercase tracking-widest font-semibold text-white/40">Light</span>
+                <div className="flex justify-between mb-3 sm:mb-4 px-1">
+                    <span className="text-[9px] sm:text-[10px] uppercase tracking-widest font-semibold text-white/40">Heavy</span>
+                    <span className="text-[9px] sm:text-[10px] uppercase tracking-widest font-semibold text-white/40">Light</span>
                 </div>
 
-                {/* Track Container */}
-                <div className="relative h-12 flex items-center">
+                {/* Track Container - Increased height for better touch target */}
+                <div className="relative h-16 sm:h-12 flex items-center">
                     {/* Track */}
-                    <div className="relative w-full h-2 bg-white/5 rounded-full">
-                        {/* Fill - GPU accelerated with scaleX */}
+                    <div className="relative w-full h-2.5 sm:h-2 bg-white/5 rounded-full">
+                        {/* Fill Bar - GPU accelerated */}
                         <div
-                            className="absolute left-0 top-0 h-full bg-white/20 rounded-full pointer-events-none will-change-transform origin-left"
-                            style={{ transform: `scaleX(${((value - 1) / 9)})` }}
+                            className="absolute inset-y-0 left-0 bg-white/20 rounded-full origin-left transition-transform duration-150 ease-out"
+                            style={{
+                                transform: `scaleX(${percentage / 100})`,
+                                willChange: 'transform'
+                            }}
                         />
                     </div>
 
-                    {/* Thumb */}
+                    {/* Thumb - Larger on mobile */}
                     <div
-                        className="absolute w-6 h-6 bg-white rounded-full shadow-lg flex items-center justify-center border border-white/10 pointer-events-none will-change-transform"
+                        className={`absolute rounded-full flex items-center justify-center border transition-all duration-150 ease-out ${isActive
+                                ? 'w-8 h-8 sm:w-7 sm:h-7 shadow-[0_0_24px_rgba(255,255,255,0.5)] scale-110 border-white/20'
+                                : 'w-7 h-7 sm:w-6 sm:h-6 shadow-[0_0_12px_rgba(255,255,255,0.3)] border-white/10'
+                            } bg-white`}
                         style={{
-                            left: '-12px',
+                            left: `${percentage}%`,
                             top: '50%',
-                            transform: `translate(${((value - 1) * 100 / 9)}%, -50%)`
+                            transform: 'translate(-50%, -50%)',
+                            willChange: 'transform'
                         }}
                     >
-                        <div className="w-1.5 h-1.5 bg-black rounded-full" />
+                        <div className={`rounded-full bg-black transition-all duration-150 ${isActive ? 'w-2 h-2' : 'w-1.5 h-1.5'
+                            }`} />
                     </div>
 
-                    {/* Invisible Input Overlay */}
+                    {/* Input Overlay - Larger touch area on mobile */}
                     <input
                         type="range"
                         min="1"
@@ -57,8 +70,16 @@ function FastMoodSlider({ value, onChange }: { value: number; onChange: (v: numb
                         step="1"
                         value={value}
                         onChange={(e) => onChange(Number(e.target.value))}
-                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10 m-0 p-0"
-                        style={{ WebkitTapHighlightColor: 'transparent', touchAction: 'none' }}
+                        onMouseDown={() => setIsActive(true)}
+                        onMouseUp={() => setIsActive(false)}
+                        onTouchStart={() => setIsActive(true)}
+                        onTouchEnd={() => setIsActive(false)}
+                        className="absolute inset-0 w-full opacity-0 cursor-pointer touch-none"
+                        style={{
+                            margin: 0,
+                            padding: 0,
+                            WebkitTapHighlightColor: 'transparent'
+                        }}
                     />
                 </div>
             </div>

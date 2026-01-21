@@ -25,9 +25,9 @@ export function TextBlurReveal({ text, className = "", delay = 0 }: TextBlurReve
             y: 0,
             filter: "blur(0px)",
             transition: {
-                type: "spring",
-                damping: 12,
-                stiffness: 100
+                filter: { type: "tween", ease: "easeOut", duration: 0.8 },
+                opacity: { duration: 0.4 },
+                y: { type: "spring", damping: 12, stiffness: 100 }
             }
         },
         hidden: {
@@ -35,9 +35,9 @@ export function TextBlurReveal({ text, className = "", delay = 0 }: TextBlurReve
             y: 20,
             filter: "blur(10px)",
             transition: {
-                type: "spring",
-                damping: 12,
-                stiffness: 100
+                filter: { duration: 0.4 },
+                opacity: { duration: 0.4 },
+                y: { type: "spring", damping: 12, stiffness: 100 }
             }
         }
     }

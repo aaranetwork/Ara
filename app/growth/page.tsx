@@ -160,21 +160,27 @@ export default function GrowthPage() {
 
     if (authLoading || loading) {
         return (
-            <div className="h-[100dvh] bg-[#050505] text-white flex items-center justify-center">
-                <Loader2 className="animate-spin text-white/40" size={32} />
+            <div className="h-[100dvh] bg-[#030305] text-white flex items-center justify-center">
+                <div className="flex flex-col items-center gap-4">
+                    <Image src="/aara-logo.png" alt="AARA" width={48} height={48} className="rounded-xl animate-pulse" />
+                    <div className="w-8 h-1 bg-indigo-500/30 rounded-full animate-pulse" />
+                </div>
             </div>
         )
     }
 
     return (
-        <div className="min-h-screen text-white selection:bg-indigo-500/30 overflow-x-hidden">
+        <div className="min-h-screen bg-[#030305] text-white selection:bg-indigo-500/30 overflow-x-hidden">
 
 
-            {/* Background Ambience - Reduced for mobile */}
+            {/* Background Ambience */}
             <div className="fixed inset-0 overflow-hidden pointer-events-none">
-                <div className="absolute top-0 right-0 w-[300px] h-[300px] md:w-[500px] md:h-[500px] bg-blue-500/5 rounded-full blur-[60px] md:blur-[100px]" />
-                <div className="absolute bottom-0 left-0 w-[300px] h-[300px] md:w-[500px] md:h-[500px] bg-indigo-500/5 rounded-full blur-[60px] md:blur-[100px]" />
+                <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-indigo-500/10 rounded-full blur-[100px]" />
+                <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-purple-500/10 rounded-full blur-[100px]" />
             </div>
+
+            {/* Grain Texture Overlay */}
+            <div className="fixed inset-0 opacity-[0.015] bg-[url('/noise.svg')] pointer-events-none" />
 
             {/* Back Button */}
             <div className="fixed top-6 left-6 z-[60]">
@@ -190,15 +196,15 @@ export default function GrowthPage() {
                     transition={{ duration: 0.6 }}
                     className="text-center mb-16"
                 >
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/5 mb-6 backdrop-blur-sm md:backdrop-blur-md">
-                        <Sparkles size={12} className="text-indigo-300" />
-                        <span className="text-[10px] font-bold uppercase tracking-widest text-white/60">Your Journey</span>
+                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/[0.02] border border-white/5 mb-8 backdrop-blur-sm">
+                        <Sparkles size={14} className="text-indigo-400" />
+                        <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/60">Your Journey</span>
                     </div>
-                    <h1 className="text-4xl md:text-5xl font-serif font-medium tracking-tight mb-4 text-white">
-                        Hello, <span className="text-indigo-300">{firstName}</span>
+                    <h1 className="text-5xl md:text-6xl font-serif font-light tracking-tight mb-6 text-white">
+                        Hello, <span className="text-indigo-400">{firstName}</span>
                     </h1>
-                    <p className="text-white/60 max-w-lg mx-auto leading-relaxed font-light text-lg">
-                        Every step you take adds to your story. Here is your progress so far.
+                    <p className="text-white/50 max-w-lg mx-auto leading-relaxed text-base md:text-lg">
+                        Every step you take adds to your story. Here's your progress so far.
                     </p>
                 </motion.div>
 
@@ -206,22 +212,22 @@ export default function GrowthPage() {
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
                     {[
                         { label: 'Active Days', value: stats.totalCheckins, icon: Calendar, color: 'text-white/70', bg: 'bg-white/5' },
-                        { label: 'Streak', value: `${stats.currentStreak} Days`, icon: Zap, color: 'text-white/70', bg: 'bg-white/5' },
-                        { label: 'Avg Mood', value: stats.moodAverage, icon: Heart, color: 'text-white/70', bg: 'bg-white/5' },
-                        { label: 'Goals', value: goals.length, icon: Target, color: 'text-white/70', bg: 'bg-white/5' },
+                        { label: 'Streak', value: `${stats.currentStreak}`, icon: Zap, color: 'text-yellow-400/80', bg: 'bg-yellow-500/10' },
+                        { label: 'Avg Mood', value: stats.moodAverage.toFixed(1), icon: Heart, color: 'text-rose-400/80', bg: 'bg-rose-500/10' },
+                        { label: 'Goals', value: goals.length, icon: Target, color: 'text-indigo-400/80', bg: 'bg-indigo-500/10' },
                     ].map((stat, i) => (
                         <motion.div
                             key={stat.label}
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.1 + (i * 0.1) }}
-                            className="p-6 rounded-[24px] bg-white/[0.02] border border-white/5 flex flex-col items-center justify-center text-center group hover:bg-white/[0.04] transition-all duration-300 hover:border-white/10 backdrop-blur-sm md:backdrop-blur-md"
+                            transition={{ delay: 0.1 + (i * 0.1), duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                            className="relative p-6 rounded-3xl bg-white/[0.02] border border-white/5 flex flex-col items-center justify-center text-center group hover:bg-white/[0.04] transition-all duration-300 hover:border-indigo-500/30 hover:shadow-[0_0_30px_rgba(99,102,241,0.15)] backdrop-blur-sm will-change-transform"
                         >
-                            <div className={`w-12 h-12 rounded-2xl ${stat.bg} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}>
+                            <div className={`w-12 h-12 rounded-2xl ${stat.bg} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 will-change-transform`}>
                                 <stat.icon size={22} className={stat.color} strokeWidth={1.5} />
                             </div>
-                            <span className="text-2xl md:text-3xl font-serif text-white mb-1">{stat.value}</span>
-                            <span className="text-[10px] uppercase tracking-widest text-white/60 font-bold">{stat.label}</span>
+                            <span className="text-3xl md:text-4xl font-serif text-white mb-1.5 tabular-nums">{stat.value}</span>
+                            <span className="text-[10px] uppercase tracking-[0.2em] text-white/50 font-bold">{stat.label}</span>
                         </motion.div>
                     ))}
                 </div>
@@ -235,10 +241,10 @@ export default function GrowthPage() {
                         className="p-8 rounded-[32px] bg-white/[0.02] border border-white/5 backdrop-blur-md md:backdrop-blur-xl"
                     >
                         <div className="flex items-center justify-between mb-8">
-                            <h3 className="text-lg font-serif text-white">Active Goals</h3>
+                            <h3 className="text-xl font-serif text-white">Active Goals</h3>
                             <button
                                 onClick={() => setShowGoalModal(true)}
-                                className="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-white transition-all active:scale-95 border border-white/5"
+                                className="w-10 h-10 rounded-full bg-indigo-500/10 hover:bg-indigo-500/20 flex items-center justify-center text-indigo-400 transition-all active:scale-95 border border-indigo-500/20 hover:border-indigo-500/30 hover:shadow-[0_0_20px_rgba(99,102,241,0.2)]"
                             >
                                 <Plus size={18} />
                             </button>
@@ -246,9 +252,12 @@ export default function GrowthPage() {
 
                         <div className="space-y-3">
                             {goals.length === 0 ? (
-                                <div className="py-12 flex flex-col items-center text-center opacity-40">
-                                    <Target size={32} className="mb-3 stroke-1" />
-                                    <p className="text-sm font-light">No goals set yet</p>
+                                <div className="py-16 flex flex-col items-center text-center">
+                                    <div className="w-16 h-16 rounded-2xl bg-indigo-500/10 flex items-center justify-center mb-4">
+                                        <Target size={28} className="text-indigo-400/60" strokeWidth={1.5} />
+                                    </div>
+                                    <p className="text-sm text-white/40">No goals set yet</p>
+                                    <p className="text-xs text-white/30 mt-1">Click + to add your first goal</p>
                                 </div>
                             ) : (
                                 goals.map((goal) => (
@@ -277,33 +286,64 @@ export default function GrowthPage() {
                         initial={{ opacity: 0, x: 20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: 0.5 }}
-                        className="p-8 rounded-[32px] bg-white/[0.02] border border-white/5 backdrop-blur-md md:backdrop-blur-xl"
+                        className="p-8 rounded-[32px] bg-white/[0.02] border border-white/5 backdrop-blur-md hover:border-white/10 transition-all duration-300"
                     >
-                        <div className="flex items-center gap-3 mb-8">
-                            <div className="w-8 h-8 rounded-full bg-yellow-500/10 flex items-center justify-center">
-                                <Award size={16} className="text-yellow-400" />
+                        <div className="flex items-center gap-3 mb-10">
+                            <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-yellow-500/10 to-amber-500/10 border border-yellow-500/20 flex items-center justify-center shadow-[0_0_20px_rgba(234,179,8,0.1)]">
+                                <Award size={20} className="text-yellow-400" strokeWidth={2} />
                             </div>
-                            <h3 className="text-lg font-serif text-white">Milestones</h3>
+                            <h3 className="text-xl font-serif text-white">Milestones</h3>
                         </div>
 
-                        <div className="space-y-6 relative pl-3">
-                            {/* Vertical Line */}
-                            <div className="absolute left-[19px] top-3 bottom-3 w-px bg-gradient-to-b from-white/10 to-transparent" />
+                        <div className="space-y-8 relative">
+                            {/* Vertical Timeline */}
+                            <div className="absolute left-5 top-5 bottom-5 w-0.5 bg-gradient-to-b from-indigo-500/30 via-indigo-500/10 to-transparent rounded-full" />
 
                             {milestones.map((item, i) => (
-                                <div key={i} className="flex gap-6 relative group">
-                                    <div className={`
-                                        w-8 h-8 rounded-full flex items-center justify-center shrink-0 relative z-10 border-4 border-[#030305] shadow-lg transition-transform duration-300 group-hover:scale-110
-                                        ${item.type === 'milestone' ? 'bg-yellow-400 text-black shadow-yellow-400/20' : 'bg-white/10 text-white/40'}
-                                    `}>
-                                        {item.type === 'milestone' ? <Star size={12} fill="currentColor" /> : <div className="w-2 h-2 rounded-full bg-white/40" />}
+                                <motion.div
+                                    key={i}
+                                    initial={{ opacity: 0, x: -10 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    transition={{ delay: 0.6 + i * 0.1 }}
+                                    className="flex gap-5 relative group"
+                                >
+                                    {/* Milestone Circle */}
+                                    <div className={`relative flex-shrink-0 z-10 transition-all duration-300 group-hover:scale-110 ${item.type === 'milestone'
+                                            ? 'w-10 h-10'
+                                            : 'w-10 h-10'
+                                        }`}>
+                                        {item.type === 'milestone' ? (
+                                            // Active Milestone
+                                            <div className="relative w-full h-full">
+                                                {/* Glow Effect */}
+                                                <div className="absolute inset-0 bg-yellow-400/20 rounded-full blur-md animate-pulse" />
+                                                {/* Circle */}
+                                                <div className="relative w-full h-full rounded-full bg-gradient-to-br from-yellow-400 to-amber-500 flex items-center justify-center shadow-lg shadow-yellow-400/30">
+                                                    <Star size={14} fill="currentColor" className="text-black" strokeWidth={0} />
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            // Inactive Milestone
+                                            <div className="w-full h-full rounded-full bg-white/5 border-2 border-white/10 flex items-center justify-center group-hover:border-white/20 transition-colors">
+                                                <div className="w-2 h-2 rounded-full bg-white/30" />
+                                            </div>
+                                        )}
                                     </div>
-                                    <div className="pt-1">
-                                        <span className="text-[10px] font-bold text-white/50 uppercase tracking-widest block mb-1">{item.date}</span>
-                                        <h4 className={`text-base font-medium ${item.type === 'milestone' ? 'text-white' : 'text-white/70'}`}>{item.title}</h4>
-                                        <p className="text-sm text-white/60 mt-1 font-light leading-relaxed">{item.desc}</p>
+
+                                    {/* Content */}
+                                    <div className="flex-1 pt-1.5">
+                                        <span className="text-[10px] font-bold text-white/40 uppercase tracking-[0.15em] block mb-1.5">
+                                            {item.date}
+                                        </span>
+                                        <h4 className={`text-base font-medium mb-1 transition-colors ${item.type === 'milestone' ? 'text-white' : 'text-white/60 group-hover:text-white/80'
+                                            }`}>
+                                            {item.title}
+                                        </h4>
+                                        <p className="text-sm text-white/50 leading-relaxed">
+                                            {item.desc}
+                                        </p>
                                     </div>
-                                </div>
+                                </motion.div>
                             ))}
                         </div>
                     </motion.div>
@@ -311,29 +351,55 @@ export default function GrowthPage() {
 
             </main>
 
-            {/* Add Goal Modal - Premium Style */}
             <Modal isOpen={showGoalModal} onClose={() => setShowGoalModal(false)} title="Set New Goal">
-                <div className="space-y-6 pt-2">
-                    <input
-                        autoFocus
-                        value={newGoalText}
-                        onChange={(e) => setNewGoalText(e.target.value)}
-                        placeholder="What do you want to achieve?"
-                        className="w-full bg-white/[0.03] border border-white/10 rounded-2xl p-5 text-lg text-white placeholder-white/40 focus:outline-none focus:border-indigo-500/50 focus:bg-white/[0.05] transition-all"
-                    />
-                    <div className="flex flex-wrap gap-2">
-                        {["Meditate 10m", "Drink Water", "Read 10 pages", "Sleep 8h"].map(s => (
-                            <button key={s} onClick={() => setNewGoalText(s)} className="px-4 py-2 bg-white/5 rounded-xl text-xs font-bold text-white/50 hover:text-white hover:bg-white/10 border border-transparent hover:border-white/5 transition-all">
-                                {s}
-                            </button>
-                        ))}
+                <div className="space-y-6">
+                    {/* Input Field */}
+                    <div className="relative">
+                        <input
+                            autoFocus
+                            value={newGoalText}
+                            onChange={(e) => setNewGoalText(e.target.value)}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter' && newGoalText.trim() && !isSubmittingGoal) {
+                                    handleAddGoal()
+                                }
+                            }}
+                            placeholder="What do you want to achieve?"
+                            className="w-full bg-white/[0.02] border border-white/10 rounded-2xl px-5 py-4 text-base text-white placeholder-white/30 focus:outline-none focus:border-indigo-500/50 focus:bg-white/[0.04] transition-all"
+                        />
                     </div>
+
+                    {/* Suggestion Pills */}
+                    <div>
+                        <p className="text-xs uppercase tracking-wider text-white/40 font-bold mb-3">Quick Suggestions</p>
+                        <div className="flex flex-wrap gap-2">
+                            {["Meditate 10m", "Drink 8 glasses", "Read 10 pages", "Sleep 8h", "Exercise 30m", "Journal today"].map(s => (
+                                <button
+                                    key={s}
+                                    onClick={() => setNewGoalText(s)}
+                                    className="px-4 py-2.5 bg-white/[0.03] rounded-xl text-xs font-medium text-white/60 hover:text-white hover:bg-indigo-500/10 border border-white/5 hover:border-indigo-500/30 transition-all active:scale-95"
+                                >
+                                    {s}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Submit Button */}
                     <button
                         onClick={handleAddGoal}
                         disabled={!newGoalText.trim() || isSubmittingGoal}
-                        className="w-full py-4 bg-white text-black rounded-xl text-sm font-bold hover:bg-gray-200 transition-colors disabled:opacity-50 shadow-lg"
+                        className="w-full py-4 bg-white text-black rounded-2xl text-sm font-bold hover:bg-white/90 transition-all disabled:opacity-30 disabled:cursor-not-allowed shadow-[0_0_30px_rgba(255,255,255,0.1)] hover:shadow-[0_0_40px_rgba(255,255,255,0.2)] active:scale-[0.98]"
                     >
-                        {isSubmittingGoal ? 'Adding...' : 'Commit Goal'}
+                        {isSubmittingGoal ? (
+                            <span className="flex items-center justify-center gap-2">
+                                <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                Adding...
+                            </span>
+                        ) : 'Commit Goal'}
                     </button>
                 </div>
             </Modal>

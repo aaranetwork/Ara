@@ -10,8 +10,7 @@ import { Send, Sparkles, Trash2, RotateCcw, History, X, User, Briefcase, Heart, 
 import { apiClient } from '@/lib/api-client'
 import { FadeIn } from '@/components/MotionPrimitives'
 
-import { getChatSessions, saveChatSession, deleteChatSession } from '@/app/actions/chat'
-import { getUserProfile, saveUserProfile } from '@/app/actions/profile'
+
 interface Message {
     role: 'user' | 'assistant'
     content: string
@@ -317,41 +316,19 @@ export default function ChatPage() {
         return () => clearInterval(typeInterval)
     }, [showSplash, loading])
 
-    // Load profile and chat history on mount
+    // Chat history disabled - this is for AI conversations, not journal entries
+    // Journal entries should be viewed in /journal page
     useEffect(() => {
-        const initData = async () => {
-            if (!user) return
-
-            try {
-                const token = await user.getIdToken()
-
-                const { data: profile } = await getUserProfile(token)
-                if (profile) {
-                    setUserProfile(profile as any)
-                    setShowOnboarding(false)
-                } else if (user.displayName) {
-                    setUserProfile({ name: user.displayName, profession: '', reason: '', referral: '', completedAt: '' })
-                    setShowOnboarding(false)
-                } else {
-                    setShowOnboarding(true)
-                }
-
-                const { data: sessions } = await getChatSessions(token)
-                if (sessions) {
-                    setChatHistory(sessions as ChatSession[])
-
-                    if (sessions.length > 0 && !currentChatId) {
-                        const latest = sessions[0]
-                        setMessages(latest.messages)
-                        setCurrentChatId(latest.id)
-                    }
-                }
-            } catch (e) {
-                console.error('Error loading data', e)
+        if (user) {
+            // Set profile from user data
+            if (user.displayName) {
+                setUserProfile({ name: user.displayName, profession: '', reason: '', referral: '', completedAt: '' })
+                setShowOnboarding(false)
+            } else {
+                setShowOnboarding(true)
             }
         }
-        initData()
-    }, [user, currentChatId])
+    }, [user])
 
     // Scroll to bottom
     useEffect(() => {
@@ -365,57 +342,13 @@ export default function ChatPage() {
         }
     }, [showOnboarding])
 
-    // Save messages to Server
-    useEffect(() => {
-        const sync = async () => {
-            if (!user || messages.length === 0) return
-
-            const chatId = currentChatId || `chat_${crypto.randomUUID()}`
-
-            if (!currentChatId) {
-                setCurrentChatId(chatId)
-            }
-
-            const session: ChatSession = {
-                id: chatId,
-                messages,
-                updatedAt: new Date().toISOString(),
-                preview: messages[0]?.content || 'New chat'
-            }
-
-            setChatHistory(prev => {
-                const idx = prev.findIndex(s => s.id === chatId)
-                if (idx >= 0) {
-                    const newArr = [...prev]
-                    newArr[idx] = session
-                    return newArr
-                } else {
-                    return [session, ...prev].slice(0, 20)
-                }
-            })
-
-            try {
-                const token = await user.getIdToken()
-                await saveChatSession(token, session)
-            } catch (e) {
-                console.error('Final sync failed', e)
-            }
-        }
-
-        const timer = setTimeout(sync, 1000)
-        return () => clearTimeout(timer)
-    }, [messages, user, currentChatId])
+    // Note: Journal entries are already saved by WritingView and OneLineJournal components
+    // This chat page just displays them - no need to save here
 
     const handleOnboardingComplete = async (profile: UserProfile) => {
-        if (!user) return
-        try {
-            const token = await user.getIdToken()
-            await saveUserProfile(token, profile)
-            setUserProfile(profile)
-            setShowOnboarding(false)
-        } catch (e) {
-            console.error('Error saving profile', e)
-        }
+        // Just set profile locally - no need to save to server for now
+        setUserProfile(profile)
+        setShowOnboarding(false)
     }
 
     const handleSend = async () => {
@@ -467,21 +400,14 @@ export default function ChatPage() {
 
     const deleteSession = async (sessionId: string, e: React.MouseEvent) => {
         e.stopPropagation()
-        if (!user) return
 
-        const newHistory = chatHistory.filter(s => s.id !== sessionId)
-        setChatHistory(newHistory)
+        // Remove from local state
+        setChatHistory(prev => prev.filter(s => s.id !== sessionId))
 
         if (currentChatId === sessionId) {
             setMessages([])
             setCurrentChatId(null)
-        }
-
-        try {
-            const token = await user.getIdToken()
-            await deleteChatSession(token, sessionId)
-        } catch (e) {
-            console.error('Error deleting session', e)
+            setSessionId(null)
         }
     }
 
