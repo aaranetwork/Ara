@@ -204,7 +204,7 @@ export default function GrowthPage() {
                         Hello, <span className="text-indigo-400">{firstName}</span>
                     </h1>
                     <p className="text-white/50 max-w-lg mx-auto leading-relaxed text-base md:text-lg">
-                        Every step you take adds to your story. Here's your progress so far.
+                        Every step you take adds to your story. Here&apos;s your progress so far.
                     </p>
                 </motion.div>
 
@@ -309,8 +309,8 @@ export default function GrowthPage() {
                                 >
                                     {/* Milestone Circle */}
                                     <div className={`relative flex-shrink-0 z-10 transition-all duration-300 group-hover:scale-110 ${item.type === 'milestone'
-                                            ? 'w-10 h-10'
-                                            : 'w-10 h-10'
+                                        ? 'w-10 h-10'
+                                        : 'w-10 h-10'
                                         }`}>
                                         {item.type === 'milestone' ? (
                                             // Active Milestone

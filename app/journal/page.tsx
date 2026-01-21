@@ -13,6 +13,7 @@ import { useAuth } from '@/hooks/useAuth'
 import { useRouter } from 'next/navigation'
 import { Home, Calendar, History, BarChart2, Plus, X, ChevronLeft, BookOpen, PenLine } from 'lucide-react'
 import Link from 'next/link'
+import Image from 'next/image'
 
 type JournalState = 'home' | 'writing' | 'calendar' | 'one-line' | 'history' | 'insights' | 'entry-view'
 
@@ -138,10 +139,10 @@ export default function JournalPage() {
                             href="/"
                             className="pointer-events-auto flex items-center gap-2 px-4 py-2 rounded-full bg-white/[0.03] border border-white/5 backdrop-blur-xl hover:bg-white/5 transition-all active:scale-95 cursor-pointer shadow-2xl"
                         >
-                            <img
+                            <Image
                                 alt="Aara Logo"
-                                width="18"
-                                height="18"
+                                width={18}
+                                height={18}
                                 src="/aara-logo.png"
                                 className="rounded opacity-80"
                             />
