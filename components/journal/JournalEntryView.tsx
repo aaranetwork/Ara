@@ -57,7 +57,7 @@ export default function JournalEntryView({ entry, onBack, onEdit, onDelete }: Jo
     }
 
     return (
-        <div className="flex flex-col min-h-full max-w-4xl mx-auto pb-40 px-4 md:px-8 pt-10">
+        <div className="flex flex-col min-h-full max-w-4xl mx-auto pb-40 px-4 md:px-8 pt-24">
             {/* Action Bar */}
             <div className="flex items-center justify-between mb-8">
                 <button
@@ -102,7 +102,7 @@ export default function JournalEntryView({ entry, onBack, onEdit, onDelete }: Jo
                         </div>
                     </div>
 
-                    <h1 className="text-3xl md:text-5xl font-serif text-white/90 leading-tight">
+                    <h1 className="text-3xl md:text-5xl font-serif text-white/70 leading-tight">
                         {entry.title || (entry.isOneLine ? 'Quick Reflection' : formattedDate)}
                     </h1>
 

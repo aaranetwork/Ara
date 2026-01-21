@@ -101,7 +101,7 @@ export default function JournalInsights({ onBack }: JournalInsightsProps) {
     }
 
     return (
-        <div className="space-y-12 pb-40 max-w-4xl mx-auto pt-10 px-4 md:px-8">
+        <div className="space-y-12 pb-40 max-w-4xl mx-auto pt-24 px-4 md:px-8">
             {/* Header */}
             <header className="flex items-center justify-between pb-4">
                 <button

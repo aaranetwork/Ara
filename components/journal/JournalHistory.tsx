@@ -103,7 +103,7 @@ export default function JournalHistory({ onBack, onViewEntry }: JournalHistoryPr
     }
 
     return (
-        <div className="space-y-10 pb-40 max-w-5xl mx-auto pt-10 px-4 md:px-8">
+        <div className="space-y-10 pb-40 max-w-5xl mx-auto pt-24 px-4 md:px-8">
             {/* Header */}
             <header className="flex items-center justify-between pb-4">
                 <button

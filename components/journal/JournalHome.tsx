@@ -64,7 +64,7 @@ export default function JournalHome({ onBegin, onOneLine, onViewHistory, onViewI
     }, [user])
 
     return (
-        <div className="space-y-12 pb-32 max-w-5xl mx-auto pt-10 px-4 md:px-8">
+        <div className="space-y-12 pb-32 max-w-5xl mx-auto pt-24 px-4 md:px-8">
             {/* Hero Section */}
             <div className="text-center space-y-4">
                 <TextBlurReveal

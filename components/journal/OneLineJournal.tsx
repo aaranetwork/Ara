@@ -32,6 +32,8 @@ export default function OneLineJournal({ onExit }: OneLineJournalProps) {
         setCharCount(content.length)
     }, [content])
 
+    // Persistence logic removed as per user request
+
     const handleSave = async () => {
         if (!content || !user || !db || isSaving) return
         setIsSaving(true)
@@ -49,6 +51,7 @@ export default function OneLineJournal({ onExit }: OneLineJournalProps) {
 
             setIsSaving(false)
             setIsSuccess(true)
+            // clearDraft() removed
             setTimeout(() => onExit(), 1500)
         } catch (error: any) {
             console.error('Error saving:', error)
@@ -58,7 +61,7 @@ export default function OneLineJournal({ onExit }: OneLineJournalProps) {
     }
 
     return (
-        <div className="flex flex-col min-h-screen max-w-4xl mx-auto pb-40 pt-10 px-4 md:px-12 overflow-x-hidden">
+        <div className="flex flex-col min-h-screen max-w-4xl mx-auto pb-40 pt-24 px-4 md:px-12 overflow-x-hidden">
             {/* Action Bar */}
             <div className="flex items-center justify-between mb-8">
                 <button
@@ -110,9 +113,9 @@ export default function OneLineJournal({ onExit }: OneLineJournalProps) {
                     <button
                         onClick={handleSave}
                         disabled={!content || isSaving || isSuccess}
-                        className={`group relative px-12 py-5 rounded-full font-black text-[11px] tracking-[0.4em] uppercase overflow-hidden transition-all active:scale-95 ${content && !isSaving && !isSuccess
-                            ? 'bg-white text-black hover:shadow-[0_0_50px_rgba(255,255,255,0.15)] hover:scale-[1.02]'
-                            : 'bg-white/5 text-white/20 cursor-not-allowed'
+                        className={`group relative px-12 py-5 rounded-[32px] font-black text-[11px] tracking-[0.4em] uppercase overflow-hidden transition-all duration-300 transform-gpu backface-hidden active:scale-95 ${content && !isSaving && !isSuccess
+                            ? 'bg-white/5 border border-white/10 text-white backdrop-blur-xl hover:bg-white/10 hover:border-white/20 shadow-[0_0_50px_rgba(255,255,255,0.05)] hover:scale-[1.02]'
+                            : 'bg-white/5 text-white/20 cursor-not-allowed border-white/5'
                             }`}
                     >
                         <span className="relative z-10 flex items-center gap-3">

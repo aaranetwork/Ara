@@ -200,7 +200,6 @@ export default function JournalPage() {
                                 <Home size={18} />
                                 <span className="text-[9px] font-black uppercase tracking-widest">Home</span>
                             </button>
-
                             <button
                                 onClick={() => setState('calendar')}
                                 className={`flex-1 py-3 flex flex-col items-center gap-1 rounded-2xl transition-all ${state === 'calendar' ? 'bg-white/10 text-white shadow-xl' : 'text-white/40 hover:text-white/60'
@@ -209,7 +208,6 @@ export default function JournalPage() {
                                 <Calendar size={18} />
                                 <span className="text-[9px] font-black uppercase tracking-widest">Calendar</span>
                             </button>
-
                             {/* Floating Action-like Center Button */}
                             <button
                                 onClick={() => {
@@ -220,7 +218,6 @@ export default function JournalPage() {
                             >
                                 <Plus size={24} />
                             </button>
-
                             <button
                                 onClick={() => setState('history')}
                                 className={`flex-1 py-3 flex flex-col items-center gap-1 rounded-2xl transition-all ${state === 'history' ? 'bg-white/10 text-white shadow-xl' : 'text-white/40 hover:text-white/60'
@@ -229,7 +226,6 @@ export default function JournalPage() {
                                 <History size={18} />
                                 <span className="text-[9px] font-black uppercase tracking-widest">History</span>
                             </button>
-
                             <button
                                 onClick={() => setState('insights')}
                                 className={`flex-1 py-3 flex flex-col items-center gap-1 rounded-2xl transition-all ${state === 'insights' ? 'bg-white/10 text-white shadow-xl' : 'text-white/40 hover:text-white/60'
