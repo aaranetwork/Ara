@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useAuth } from '@/hooks/useAuth'
 import { db } from '@/lib/firebase/config'
 import { collection, query, orderBy, getDocs, deleteDoc, doc, where } from 'firebase/firestore'
-import { Calendar, BookOpen, Sparkles, Loader2, Trash2, X, Clock, ChevronRight, Search, Filter, ArrowLeft } from 'lucide-react'
+import { Calendar, BookOpen, Loader2, Trash2, ChevronRight, Search, ArrowLeft } from 'lucide-react'
 import { TextBlurReveal } from '@/components/ui/TextBlurReveal'
 
 interface JournalEntry {

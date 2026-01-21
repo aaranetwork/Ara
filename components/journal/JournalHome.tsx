@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { PenLine, BookOpen, ChevronRight, BarChart2, MoreHorizontal, Calendar, Brain, Mic, Trash2 } from 'lucide-react'
+import { PenLine, BookOpen, ChevronRight, Calendar, Brain, Mic, Trash2 } from 'lucide-react'
 import { TextBlurReveal } from '@/components/ui/TextBlurReveal'
 import { useEffect, useState } from 'react'
 import { useAuth } from '@/hooks/useAuth'

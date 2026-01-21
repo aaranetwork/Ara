@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { ArrowLeft, BarChart2, TrendingUp, Calendar, Zap, Sparkles, ShieldCheck } from 'lucide-react'
+import { ArrowLeft, BarChart2, TrendingUp, Zap, Sparkles, ShieldCheck } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useAuth } from '@/hooks/useAuth'
 import { db } from '@/lib/firebase/config'

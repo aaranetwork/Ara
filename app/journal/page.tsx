@@ -172,7 +172,7 @@ export default function JournalPage() {
                 </div>
             </div>
 
-            <div className="max-w-7xl mx-auto px-4 md:px-8 py-12 md:py-20 lg:py-24">
+            <div className="max-w-7xl mx-auto px-4 md:px-8">
                 <AnimatePresence mode="wait">
                     <motion.div
                         key={state}
