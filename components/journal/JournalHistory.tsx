@@ -7,6 +7,7 @@ import { db } from '@/lib/firebase/config'
 import { collection, query, orderBy, getDocs, deleteDoc, doc, where } from 'firebase/firestore'
 import { Calendar, BookOpen, Loader2, Trash2, ChevronRight, Search, ArrowLeft } from 'lucide-react'
 import { TextBlurReveal } from '@/components/ui/TextBlurReveal'
+import Modal from '@/components/ui/Modal'
 
 interface JournalEntry {
     id: string
@@ -35,6 +36,7 @@ export default function JournalHistory({ onBack, onViewEntry }: JournalHistoryPr
     const [searchTerm, setSearchTerm] = useState('')
     const [filterCategory, setFilterCategory] = useState('all')
     const [sortBy, setSortBy] = useState<'desc' | 'asc'>('desc')
+    const [entryToDelete, setEntryToDelete] = useState<string | null>(null)
 
     useEffect(() => {
         const loadEntries = async () => {
@@ -65,13 +67,18 @@ export default function JournalHistory({ onBack, onViewEntry }: JournalHistoryPr
         loadEntries()
     }, [user, sortBy])
 
-    const handleDelete = async (e: React.MouseEvent, entryId: string) => {
+    const handleDelete = (e: React.MouseEvent, entryId: string) => {
         e.stopPropagation()
-        if (!user || !db || !confirm('Are you sure you want to delete this entry? This action cannot be undone.')) return
+        setEntryToDelete(entryId)
+    }
+
+    const confirmDelete = async () => {
+        if (!user || !db || !entryToDelete) return
 
         try {
-            await deleteDoc(doc(db, 'users', user.uid, 'journal', entryId))
-            setEntries(prev => prev.filter(entry => entry.id !== entryId))
+            await deleteDoc(doc(db, 'users', user.uid, 'journal', entryToDelete))
+            setEntries(prev => prev.filter(entry => entry.id !== entryToDelete))
+            setEntryToDelete(null)
         } catch (error) {
             console.error('Error deleting entry:', error)
         }
@@ -224,7 +231,7 @@ export default function JournalHistory({ onBack, onViewEntry }: JournalHistoryPr
                                             <div className="flex items-center gap-3">
                                                 <button
                                                     onClick={(e) => handleDelete(e, entry.id)}
-                                                    className="p-2 rounded-xl bg-red-500/0 text-white/0 group-hover:bg-red-500/10 group-hover:text-red-400 transition-all"
+                                                    className="hidden md:block p-2 rounded-xl bg-red-500/0 text-white/0 group-hover:bg-red-500/10 group-hover:text-red-400 transition-all"
                                                 >
                                                     <Trash2 size={14} />
                                                 </button>
@@ -252,6 +259,33 @@ export default function JournalHistory({ onBack, onViewEntry }: JournalHistoryPr
                     </div>
                 )}
             </div>
-        </div>
+
+
+            <Modal
+                isOpen={!!entryToDelete}
+                onClose={() => setEntryToDelete(null)}
+                title="Delete Entry"
+            >
+                <div className="space-y-6">
+                    <p className="text-white/60 text-sm font-serif leading-relaxed">
+                        Are you sure you want to delete this entry? This action cannot be undone and the memory will be lost forever.
+                    </p>
+                    <div className="flex items-center justify-end gap-3">
+                        <button
+                            onClick={() => setEntryToDelete(null)}
+                            className="px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest text-white/60 hover:text-white hover:bg-white/5 transition-all"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            onClick={confirmDelete}
+                            className="px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20 transition-all"
+                        >
+                            Delete
+                        </button>
+                    </div>
+                </div>
+            </Modal>
+        </div >
     )
 }

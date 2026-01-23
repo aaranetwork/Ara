@@ -172,19 +172,26 @@ export default function JournalInsights({ onBack }: JournalInsightsProps) {
                     <div className="h-px flex-1 bg-gradient-to-r from-white/10 to-transparent" />
                 </div>
 
-                <div className="space-y-4">
-                    {stats?.patterns.map((pattern, i) => (
-                        <motion.div
-                            key={i}
-                            initial={{ opacity: 0, x: -10 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: i * 0.1 }}
-                            className="p-6 rounded-[32px] bg-indigo-500/[0.02] border border-indigo-500/5 flex items-start gap-4 group"
-                        >
-                            <Sparkles size={16} className="text-indigo-400/40 mt-0.5 group-hover:rotate-12 transition-transform" />
-                            <p className="text-sm text-white/70 leading-relaxed font-serif italic">{pattern}</p>
-                        </motion.div>
-                    ))}
+                <div className="group relative p-8 bg-white/[0.015] border border-white/5 rounded-[32px] overflow-hidden">
+                    <div className="relative z-10 flex flex-col items-center justify-center text-center space-y-4">
+                        <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 flex items-center justify-center shrink-0 border border-indigo-500/10">
+                            <Sparkles size={20} className="text-indigo-400/60" />
+                        </div>
+                        <div className="space-y-1">
+                            <h3 className="text-base font-serif font-medium text-white/80">Advanced Pattern Recognition</h3>
+                            <p className="text-sm text-white/40 max-w-sm mx-auto leading-relaxed">
+                                Our AI is learning to identify deeper correlations in your journaling habits. Check back soon for personalized insights.
+                            </p>
+                        </div>
+                        <div className="pt-2">
+                            <span className="text-[9px] font-bold px-3 py-1 rounded-full bg-white/5 text-white/50 uppercase tracking-widest border border-white/5">
+                                Coming Soon
+                            </span>
+                        </div>
+                    </div>
+
+                    {/* Background Pattern */}
+                    <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/[0.01] to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                 </div>
             </section>
 

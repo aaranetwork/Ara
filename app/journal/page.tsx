@@ -36,11 +36,40 @@ export default function JournalPage() {
     const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
     const [selectedEntry, setSelectedEntry] = useState<JournalEntry | null>(null)
 
+    // Splash Animation State
+    const [showSplash, setShowSplash] = useState(true)
+    const [typedText, setTypedText] = useState('')
+    const splashMessage = 'Opening Journal...'
+
     useEffect(() => {
         if (!authLoading && !user) {
             router.push('/login')
         }
     }, [user, authLoading, router])
+
+    // Handle Splash Typewriter
+    useEffect(() => {
+        if (!showSplash || authLoading) return
+
+        // Check session storage to maybe skip if already shown? 
+        // User requested animation, so we play it. Optional: store flag to show only once per session.
+        // if (sessionStorage.getItem('journal_splash_shown')) { setShowSplash(false); return }
+
+        let i = 0
+        const typeInterval = setInterval(() => {
+            if (i < splashMessage.length) {
+                setTypedText(splashMessage.slice(0, i + 1))
+                i++
+            } else {
+                clearInterval(typeInterval)
+                setTimeout(() => {
+                    setShowSplash(false)
+                    // sessionStorage.setItem('journal_splash_shown', 'true')
+                }, 800)
+            }
+        }, 50)
+        return () => clearInterval(typeInterval)
+    }, [showSplash, authLoading])
 
     const handleCategorySelect = (categoryId: string) => {
         setSelectedCategory(categoryId)
@@ -119,6 +148,21 @@ export default function JournalPage() {
 
     if (authLoading) return null
 
+    if (showSplash) {
+        return (
+            <div className="min-h-screen bg-[#030305] flex items-center justify-center z-[100] relative">
+                <div className="flex flex-col items-center gap-6">
+                    <div className="w-16 h-16 rounded-2xl bg-white/[0.03] border border-white/5 flex items-center justify-center">
+                        <Image src="/aara-logo.png" alt="AARA" width={32} height={32} className="opacity-80" />
+                    </div>
+                    <p className="text-white/70 font-serif text-lg tracking-wide">
+                        {typedText}<span className="animate-pulse text-indigo-400">_</span>
+                    </p>
+                </div>
+            </div>
+        )
+    }
+
     return (
         <main className="min-h-screen bg-[#030305] text-white">
             {/* Custom Fixed Header */}
@@ -187,53 +231,61 @@ export default function JournalPage() {
                 </AnimatePresence>
             </div>
 
-            {/* Premium Bottom Navigation */}
+            {/* Premium Bottom Navigation - Ultramodern Floating Dock */}
             {state === 'home' || state === 'history' || state === 'insights' || state === 'calendar' ? (
-                <div className="fixed bottom-8 left-0 right-0 px-6 z-50">
-                    <div className="max-w-md mx-auto">
-                        <nav className="bg-white/[0.03] backdrop-blur-2xl border border-white/5 rounded-[32px] p-2 flex items-center justify-between shadow-2xl">
+                <div className="fixed bottom-6 md:bottom-10 left-0 right-0 px-6 z-50 pointer-events-none">
+                    <div className="max-w-[320px] md:max-w-md mx-auto pointer-events-auto">
+                        <nav className="relative bg-[#121216]/60 backdrop-blur-3xl border border-white/[0.08] rounded-[24px] md:rounded-[32px] p-2 flex items-center justify-between shadow-[0_20px_40px_-5px_rgba(0,0,0,0.6)] ring-1 ring-white/[0.05]">
+
                             <button
                                 onClick={() => setState('home')}
-                                className={`flex-1 py-3 flex flex-col items-center gap-1 rounded-2xl transition-all ${state === 'home' ? 'bg-white/10 text-white shadow-xl' : 'text-white/40 hover:text-white/60'
-                                    }`}
+                                className="w-12 h-12 flex items-center justify-center rounded-xl transition-all relative group"
                             >
-                                <Home size={18} />
-                                <span className="text-[9px] font-black uppercase tracking-widest">Home</span>
+                                <div className={`absolute inset-0 bg-white/10 rounded-xl scale-50 opacity-0 transition-all duration-300 ${state === 'home' ? 'scale-100 opacity-100' : 'group-hover:scale-100 group-hover:opacity-50'}`} />
+                                <Home size={20} className={`relative z-10 transition-colors duration-300 ${state === 'home' ? 'text-white' : 'text-white/40 group-hover:text-white/70'}`} strokeWidth={state === 'home' ? 2.5 : 2} />
+                                {state === 'home' && <div className="absolute -bottom-1 w-1 h-1 rounded-full bg-white shadow-[0_0_5px_white]" />}
                             </button>
+
                             <button
                                 onClick={() => setState('calendar')}
-                                className={`flex-1 py-3 flex flex-col items-center gap-1 rounded-2xl transition-all ${state === 'calendar' ? 'bg-white/10 text-white shadow-xl' : 'text-white/40 hover:text-white/60'
-                                    }`}
+                                className="w-12 h-12 flex items-center justify-center rounded-xl transition-all relative group"
                             >
-                                <Calendar size={18} />
-                                <span className="text-[9px] font-black uppercase tracking-widest">Calendar</span>
+                                <div className={`absolute inset-0 bg-white/10 rounded-xl scale-50 opacity-0 transition-all duration-300 ${state === 'calendar' ? 'scale-100 opacity-100' : 'group-hover:scale-100 group-hover:opacity-50'}`} />
+                                <Calendar size={20} className={`relative z-10 transition-colors duration-300 ${state === 'calendar' ? 'text-white' : 'text-white/40 group-hover:text-white/70'}`} strokeWidth={state === 'calendar' ? 2.5 : 2} />
+                                {state === 'calendar' && <div className="absolute -bottom-1 w-1 h-1 rounded-full bg-white shadow-[0_0_5px_white]" />}
                             </button>
-                            {/* Floating Action-like Center Button */}
-                            <button
-                                onClick={() => {
-                                    setSelectedCategory('daily-reflection')
-                                    setState('writing')
-                                }}
-                                className="w-14 h-14 bg-white text-black rounded-full flex items-center justify-center shadow-[0_0_30px_rgba(255,255,255,0.2)] hover:scale-110 active:scale-95 transition-all mx-2"
-                            >
-                                <Plus size={24} />
-                            </button>
+
+                            {/* Center Action Button - Floating Orb */}
+                            <div className="mx-2 relative group md:-mt-2">
+                                <button
+                                    onClick={() => {
+                                        setSelectedCategory('daily-reflection')
+                                        setState('writing')
+                                    }}
+                                    className="relative w-14 h-14 md:w-16 md:h-16 bg-gradient-to-tr from-[#1a1a20] to-[#0d0d10] border border-white/10 rounded-full flex items-center justify-center shadow-xl group-hover:scale-105 active:scale-95 transition-all duration-300"
+                                >
+                                    <Plus size={24} className="text-white relative z-10" strokeWidth={2.5} />
+                                </button>
+                            </div>
+
                             <button
                                 onClick={() => setState('history')}
-                                className={`flex-1 py-3 flex flex-col items-center gap-1 rounded-2xl transition-all ${state === 'history' ? 'bg-white/10 text-white shadow-xl' : 'text-white/40 hover:text-white/60'
-                                    }`}
+                                className="w-12 h-12 flex items-center justify-center rounded-xl transition-all relative group"
                             >
-                                <History size={18} />
-                                <span className="text-[9px] font-black uppercase tracking-widest">History</span>
+                                <div className={`absolute inset-0 bg-white/10 rounded-xl scale-50 opacity-0 transition-all duration-300 ${state === 'history' ? 'scale-100 opacity-100' : 'group-hover:scale-100 group-hover:opacity-50'}`} />
+                                <History size={20} className={`relative z-10 transition-colors duration-300 ${state === 'history' ? 'text-white' : 'text-white/40 group-hover:text-white/70'}`} strokeWidth={state === 'history' ? 2.5 : 2} />
+                                {state === 'history' && <div className="absolute -bottom-1 w-1 h-1 rounded-full bg-white shadow-[0_0_5px_white]" />}
                             </button>
+
                             <button
                                 onClick={() => setState('insights')}
-                                className={`flex-1 py-3 flex flex-col items-center gap-1 rounded-2xl transition-all ${state === 'insights' ? 'bg-white/10 text-white shadow-xl' : 'text-white/40 hover:text-white/60'
-                                    }`}
+                                className="w-12 h-12 flex items-center justify-center rounded-xl transition-all relative group"
                             >
-                                <BarChart2 size={18} />
-                                <span className="text-[9px] font-black uppercase tracking-widest">Insights</span>
+                                <div className={`absolute inset-0 bg-white/10 rounded-xl scale-50 opacity-0 transition-all duration-300 ${state === 'insights' ? 'scale-100 opacity-100' : 'group-hover:scale-100 group-hover:opacity-50'}`} />
+                                <BarChart2 size={20} className={`relative z-10 transition-colors duration-300 ${state === 'insights' ? 'text-white' : 'text-white/40 group-hover:text-white/70'}`} strokeWidth={state === 'insights' ? 2.5 : 2} />
+                                {state === 'insights' && <div className="absolute -bottom-1 w-1 h-1 rounded-full bg-white shadow-[0_0_5px_white]" />}
                             </button>
+
                         </nav>
                     </div>
                 </div>
