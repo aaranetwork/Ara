@@ -8,35 +8,8 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
-import { initializeApp, cert, getApps, App } from 'firebase-admin/app'
-import { getFirestore, Timestamp } from 'firebase-admin/firestore'
-
-// Initialize Firebase Admin SDK
-let adminApp: App | null = null
-let adminDb: FirebaseFirestore.Firestore | null = null
-
-try {
-  // Use service account if available, otherwise use default credentials
-  if (process.env.FIREBASE_SERVICE_ACCOUNT_KEY) {
-    const serviceAccount = JSON.parse(
-      Buffer.from(process.env.FIREBASE_SERVICE_ACCOUNT_KEY, 'base64').toString('utf-8')
-    )
-    adminApp = getApps().length === 0
-      ? initializeApp({
-          credential: cert(serviceAccount),
-        })
-      : getApps()[0]
-  } else if (process.env.FIREBASE_PROJECT_ID) {
-    // Use default credentials (works in Firebase Cloud Functions, GCP, etc.)
-    adminApp = getApps().length === 0 ? initializeApp() : getApps()[0]
-  }
-  
-  if (adminApp) {
-    adminDb = getFirestore(adminApp)
-  }
-} catch (error) {
-  console.error('Firebase Admin initialization error:', error)
-}
+import { adminDb } from '@/lib/firebase/admin'
+import { Timestamp } from 'firebase-admin/firestore'
 
 interface ArticleData {
   title: string
@@ -296,7 +269,7 @@ export async function POST(request: NextRequest) {
   // Allow in development, or with proper authentication in production
   const isDevelopment = process.env.NODE_ENV === 'development'
   const hasAuth = request.headers.get('authorization') === `Bearer ${process.env.ADMIN_API_KEY}`
-  
+
   if (!isDevelopment && !hasAuth) {
     return NextResponse.json(
       { error: 'Unauthorized' },
@@ -305,25 +278,13 @@ export async function POST(request: NextRequest) {
   }
 
   if (!adminDb) {
-    // Try to initialize with default credentials (works in Firebase environment)
-    try {
-      if (!adminApp && process.env.FIREBASE_PROJECT_ID) {
-        adminApp = getApps().length === 0 ? initializeApp() : getApps()[0]
-        adminDb = getFirestore(adminApp)
-      }
-    } catch (error) {
-      console.error('Failed to initialize Admin SDK:', error)
-    }
-
-    if (!adminDb) {
-      return NextResponse.json(
-        { 
-          error: 'Firebase Admin SDK not initialized. In development, this should work automatically. For production, configure FIREBASE_SERVICE_ACCOUNT_KEY or deploy to Firebase Cloud Functions.',
-          hint: 'Make sure you have Firebase CLI installed and logged in, or configure service account credentials.'
-        },
-        { status: 500 }
-      )
-    }
+    console.error('Failed to initialize Admin SDK')
+    return NextResponse.json(
+      {
+        error: 'Firebase Admin SDK not initialized. For production, ensure FIREBASE env vars are set.',
+      },
+      { status: 500 }
+    )
   }
 
   try {
@@ -340,7 +301,7 @@ export async function POST(request: NextRequest) {
       try {
         // Check if article exists
         const existingQuery = await articlesRef.where('title', '==', article.title).limit(1).get()
-        
+
         if (!existingQuery.empty) {
           results.skipped++
           continue
