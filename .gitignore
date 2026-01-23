@@ -1,6 +1,7 @@
 # ===== Environment / Secrets =====
 .env
 .env.local
+.env.vercel
 .env.development
 .env.production
 .env.*
