@@ -23,7 +23,6 @@ yarn-error.log*
 Thumbs.db
 
 # ===== Firebase / Google Secrets =====
-*.json
 serviceAccountKey.json
 firebase-adminsdk*.json
 
