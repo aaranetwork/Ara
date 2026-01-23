@@ -1,5 +1,32 @@
-node_modules
-.next
-.next/cache
+# ===== Environment / Secrets =====
 .env
+.env.local
+.env.development
+.env.production
+.env.*
+*.env
+
+# ===== Node / Next.js =====
+node_modules/
+.next/
+.next/cache/
+out/
+dist/
+
+# ===== Logs =====
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ===== OS / Editor =====
 .DS_Store
+Thumbs.db
+
+# ===== Firebase / Google Secrets =====
+*.json
+serviceAccountKey.json
+firebase-adminsdk*.json
+
+# ===== Build tools / cache =====
+.cache/
+.vercel/

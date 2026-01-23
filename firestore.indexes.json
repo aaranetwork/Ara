@@ -1,8 +1,0 @@
-{
-  "indexes": [
-    // No composite indexes required at this time. Add here if queries demand.
-  ],
-  "fieldOverrides": []
-}
-
-
