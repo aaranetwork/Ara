@@ -273,6 +273,8 @@ async function markJournalsAsProcessed(
     reportId: string
 ): Promise<void> {
     try {
+        if (!adminDb) return;
+
         const journalsRef = adminDb.collection('users').doc(userId).collection('journal');
 
         const snapshot = await journalsRef

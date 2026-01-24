@@ -177,6 +177,10 @@ export async function revokeShare(
   shareId: string
 ): Promise<{ success: boolean; error?: string }> {
   try {
+    if (!adminDb) {
+      return { success: false, error: 'Database not initialized' };
+    }
+
     const shareRef = adminDb
       .collection('users')
       .doc(userId)
@@ -260,6 +264,8 @@ export async function revokeAllShares(userId: string): Promise<{ success: boolea
  */
 async function logShareAccess(shareId: string, userId: string, reportId: string): Promise<void> {
   try {
+    if (!adminDb) return;
+
     const shareRef = adminDb
       .collection('users')
       .doc(userId)
