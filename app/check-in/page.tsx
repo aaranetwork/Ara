@@ -271,7 +271,7 @@ export default function CheckInPage() {
             <div className="min-h-screen bg-[#030305] text-white flex items-center justify-center px-6">
                 <div className="text-center max-w-md">
                     <div className="text-6xl mb-6">🌸</div>
-                    <h1 className="text-2xl font-serif mb-4">You've already checked in today!</h1>
+                    <h1 className="text-2xl font-serif mb-4">You&apos;ve already checked in today!</h1>
                     <p className="text-white/60 mb-8">{error}</p>
                     <button
                         onClick={() => router.push('/')}
