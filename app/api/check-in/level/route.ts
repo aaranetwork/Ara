@@ -7,6 +7,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+export const dynamic = 'force-dynamic';
 import { adminAuth } from '@/lib/firebase/admin';
 import { getCurrentCheckInLevel } from '@/lib/services/checkIn';
 

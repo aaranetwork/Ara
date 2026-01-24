@@ -8,7 +8,9 @@
  * GET /api/check-in/level - Get current progressive level
  */
 
+
 import { NextRequest, NextResponse } from 'next/server';
+export const dynamic = 'force-dynamic';
 import { adminAuth } from '@/lib/firebase/admin';
 import { createCheckIn, getLatestCheckIn, canUserCheckIn } from '@/lib/services/checkIn';
 import type { CheckInResponses } from '@/lib/models/backend';

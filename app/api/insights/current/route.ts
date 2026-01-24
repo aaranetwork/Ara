@@ -8,6 +8,8 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+
+export const dynamic = 'force-dynamic';
 import { adminAuth } from '@/lib/firebase/admin';
 import { generateInsights, getInsight, getUserInsights } from '@/lib/services/insights';
 

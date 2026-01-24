@@ -8,6 +8,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+export const dynamic = 'force-dynamic';
 import { adminAuth } from '@/lib/firebase/admin';
 import { getUserState, updateUserState, detectTransitionTriggers } from '@/lib/services/userState';
 import type { UserStateType } from '@/lib/models/backend';
