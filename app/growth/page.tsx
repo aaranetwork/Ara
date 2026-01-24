@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import {
     TrendingUp, Award, Target, MapPin, Calendar, ArrowRight,
     Star, Zap, Heart, ChevronLeft, BookOpen, Loader2,
-    Plus, Trash2, X, Sparkles, CheckCircle2, Flag
+    Plus, Trash2, X, Sparkles, CheckCircle2, Flag, Brain, Activity
 } from 'lucide-react'
 import BackButton from '@/components/ui/BackButton'
 import { useRouter } from 'next/navigation'
@@ -32,6 +32,8 @@ export default function GrowthPage() {
     const [showGoalModal, setShowGoalModal] = useState(false)
     const [newGoalText, setNewGoalText] = useState('')
     const [isSubmittingGoal, setIsSubmittingGoal] = useState(false)
+    const [insights, setInsights] = useState<any>(null)
+    const [insightsLoading, setInsightsLoading] = useState(false)
 
     useEffect(() => {
         if (authLoading) return
@@ -119,6 +121,23 @@ export default function GrowthPage() {
                 if (totalCheckins >= 1) newMilestones.push({ title: "Journey Begun", date: "First Steps", desc: "Started tracking mood.", type: "start" })
                 if (newMilestones.length === 0) newMilestones.push({ title: "Ready to Start?", date: "Today", desc: "Complete a check-in to see milestones.", type: "start" })
                 setMilestones(newMilestones)
+
+                // Fetch Insights
+                setInsightsLoading(true)
+                try {
+                    const idToken = await user.getIdToken()
+                    const insightsResponse = await fetch('/api/insights/current?days=30', {
+                        headers: { 'Authorization': `Bearer ${idToken}` }
+                    })
+                    if (insightsResponse.ok) {
+                        const insightsData = await insightsResponse.json()
+                        setInsights(insightsData.data)
+                    }
+                } catch (err) {
+                    console.error('Error fetching insights:', err)
+                } finally {
+                    setInsightsLoading(false)
+                }
 
             } catch (error) {
                 console.error("Error fetching growth data:", error)
@@ -231,6 +250,89 @@ export default function GrowthPage() {
                         </motion.div>
                     ))}
                 </div>
+
+                {/* Insights Section */}
+                {insights && !insightsLoading && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.5 }}
+                        className="mb-12 p-8 rounded-[32px] bg-white/[0.02] border border-white/5 backdrop-blur-md"
+                    >
+                        <div className="flex items-center gap-3 mb-8">
+                            <div className="w-11 h-11 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center">
+                                <Brain size={20} className="text-indigo-400" strokeWidth={2} />
+                            </div>
+                            <h3 className="text-xl font-serif text-white">Emotional Insights</h3>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            {/* Average Mood */}
+                            <div className="p-5 bg-white/[0.02] rounded-2xl border border-white/5">
+                                <div className="flex items-center justify-between mb-3">
+                                    <span className="text-sm text-white/60 font-medium">Average Mood</span>
+                                    <span className="text-2xl font-serif text-white/90">
+                                        {insights.emotionalPatterns?.intensity || 0}/10
+                                    </span>
+                                </div>
+                                <div className="h-2 bg-white/10 rounded-full overflow-hidden">
+                                    <div
+                                        className="h-full bg-indigo-500 rounded-full transition-all"
+                                        style={{ width: `${((insights.emotionalPatterns?.intensity || 0) / 10) * 100}%` }}
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Dominant Emotions */}
+                            {insights.emotionalPatterns?.dominant?.length > 0 && (
+                                <div className="p-5 bg-white/[0.02] rounded-2xl border border-white/5">
+                                    <span className="text-sm text-white/60 font-medium block mb-3">Dominant Emotions</span>
+                                    <div className="flex flex-wrap gap-2">
+                                        {insights.emotionalPatterns.dominant.slice(0, 3).map((emotion: string, i: number) => (
+                                            <span
+                                                key={i}
+                                                className="px-3 py-1 bg-indigo-500/10 border border-indigo-500/20 text-indigo-200 rounded-full text-xs font-medium"
+                                            >
+                                                {emotion}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Trend */}
+                            {insights.emotionalPatterns?.trend && (
+                                <div className="p-5 bg-white/[0.02] rounded-2xl border border-white/5">
+                                    <span className="text-sm text-white/60 font-medium block mb-3">Trend</span>
+                                    <div className="flex items-center gap-2">
+                                        {insights.emotionalPatterns.trend === 'improving' && <TrendingUp size={18} className="text-emerald-400" />}
+                                        {insights.emotionalPatterns.trend === 'declining' && <TrendingUp size={18} className="text-rose-400 rotate-180" />}
+                                        {insights.emotionalPatterns.trend === 'volatile' && <Activity size={18} className="text-amber-400" />}
+                                        <span className="text-sm text-white/80 capitalize">{insights.emotionalPatterns.trend}</span>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Themes */}
+                        {insights.themes?.length > 0 && (
+                            <div className="mt-6">
+                                <span className="text-sm text-white/60 font-medium block mb-3">Active Themes</span>
+                                <div className="flex flex-wrap gap-2">
+                                    {insights.themes.slice(0, 5).map((theme: string, i: number) => (
+                                        <div
+                                            key={i}
+                                            className="px-4 py-2 bg-white/[0.02] rounded-xl text-white/70 text-sm flex items-center gap-2 border border-white/5"
+                                        >
+                                            <div className="w-1.5 h-1.5 bg-indigo-400 rounded-full" />
+                                            {theme}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                    </motion.div>
+                )}
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     {/* Goals Section */}

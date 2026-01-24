@@ -104,3 +104,64 @@ export async function deleteJournalEntry(idToken: string, entryId: string) {
         return { error: error.message }
     }
 }
+
+/**
+ * Toggles journal consent for report inclusion
+ * Per v1.0 spec: Journals are private by default and require explicit consent
+ */
+export async function toggleJournalConsent(
+    idToken: string,
+    entryId: string,
+    includeInReport: boolean
+) {
+    try {
+        if (!adminAuth || !adminDb) {
+            return { error: 'Firebase Admin not initialized' }
+        }
+
+        const decodedToken = await adminAuth.verifyIdToken(idToken)
+        const uid = decodedToken.uid
+
+        const journalRef = adminDb
+            .collection('users')
+            .doc(uid)
+            .collection('journal')
+            .doc(entryId)
+
+        // Get current journal to check if already processed
+        const journalDoc = await journalRef.get()
+        if (!journalDoc.exists) {
+            return { error: 'Journal entry not found' }
+        }
+
+        const journalData = journalDoc.data()
+
+        // Prevent consent toggle if journal already processed
+        if (journalData?.processed && journalData?.processedInReportId) {
+            return {
+                error: 'This journal has already been used in a report and cannot be modified',
+                processedInReportId: journalData.processedInReportId
+            }
+        }
+
+        // Update journal with consent fields
+        await journalRef.update({
+            includeInReport,
+            consentGivenAt: includeInReport ? FieldValue.serverTimestamp() : null,
+        })
+
+        // Log consent action
+        const { grantConsent, revokeConsent } = await import('@/lib/services/consent')
+
+        if (includeInReport) {
+            await grantConsent(uid, 'journal', entryId, 'Include in therapy report')
+        } else {
+            await revokeConsent(uid, 'journal', entryId, 'Exclude from therapy report')
+        }
+
+        return { success: true, includeInReport }
+    } catch (error: any) {
+        console.error('Error toggling journal consent:', error)
+        return { error: error.message }
+    }
+}

@@ -5,9 +5,10 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useAuth } from '@/hooks/useAuth'
 import { db } from '@/lib/firebase/config'
 import { collection, query, orderBy, getDocs, deleteDoc, doc, where } from 'firebase/firestore'
-import { Calendar, BookOpen, Loader2, Trash2, ChevronRight, Search, ArrowLeft } from 'lucide-react'
+import { Calendar, BookOpen, Loader2, Trash2, ChevronRight, Search, ArrowLeft, Lock } from 'lucide-react'
 import { TextBlurReveal } from '@/components/ui/TextBlurReveal'
 import Modal from '@/components/ui/Modal'
+import { toggleJournalConsent } from '@/app/actions/journal'
 
 interface JournalEntry {
     id: string
@@ -18,6 +19,8 @@ interface JournalEntry {
     createdAt: any
     mood?: number
     includeInReport?: boolean
+    processed?: boolean
+    processedInReportId?: string
 }
 
 interface JournalHistoryProps {
@@ -37,6 +40,7 @@ export default function JournalHistory({ onBack, onViewEntry }: JournalHistoryPr
     const [filterCategory, setFilterCategory] = useState('all')
     const [sortBy, setSortBy] = useState<'desc' | 'asc'>('desc')
     const [entryToDelete, setEntryToDelete] = useState<string | null>(null)
+    const [togglingConsent, setTogglingConsent] = useState<string | null>(null)
 
     useEffect(() => {
         const loadEntries = async () => {
@@ -81,6 +85,47 @@ export default function JournalHistory({ onBack, onViewEntry }: JournalHistoryPr
             setEntryToDelete(null)
         } catch (error) {
             console.error('Error deleting entry:', error)
+        }
+    }
+
+    const handleConsentToggle = async (e: React.MouseEvent, entry: JournalEntry) => {
+        e.stopPropagation()
+
+        // Prevent toggle if already processed
+        if (entry.processed && entry.processedInReportId) {
+            alert(`This journal has already been used in a report and cannot be modified.`)
+            return
+        }
+
+        if (!user) return
+
+        setTogglingConsent(entry.id)
+        const newValue = !entry.includeInReport
+
+        // Optimistic update
+        setEntries(prev => prev.map(e =>
+            e.id === entry.id ? { ...e, includeInReport: newValue } : e
+        ))
+
+        try {
+            const idToken = await user.getIdToken()
+            const result = await toggleJournalConsent(idToken, entry.id, newValue)
+
+            if (result.error) {
+                // Revert on error
+                setEntries(prev => prev.map(e =>
+                    e.id === entry.id ? { ...e, includeInReport: !newValue } : e
+                ))
+                alert(result.error)
+            }
+        } catch (error) {
+            console.error('Error toggling consent:', error)
+            // Revert on error
+            setEntries(prev => prev.map(e =>
+                e.id === entry.id ? { ...e, includeInReport: !newValue } : e
+            ))
+        } finally {
+            setTogglingConsent(null)
         }
     }
 
@@ -222,13 +267,35 @@ export default function JournalHistory({ onBack, onViewEntry }: JournalHistoryPr
                                                         🏷️ {entry.category.replace('-', ' ')}
                                                     </span>
                                                 )}
-                                                {entry.includeInReport && (
+                                                {entry.processed && entry.processedInReportId && (
+                                                    <span className="text-[9px] font-bold text-yellow-400/60 uppercase tracking-widest bg-yellow-500/5 px-2 py-0.5 rounded-lg border border-yellow-500/10 flex items-center gap-1">
+                                                        <Lock size={9} /> Used in Report
+                                                    </span>
+                                                )}
+                                                {!entry.processed && entry.includeInReport && (
                                                     <span className="text-[9px] font-bold text-green-400/60 uppercase tracking-widest bg-green-500/5 px-2 py-0.5 rounded-lg border border-green-500/10">
                                                         ✓ In Report
                                                     </span>
                                                 )}
                                             </div>
                                             <div className="flex items-center gap-3">
+                                                <button
+                                                    onClick={(e) => handleConsentToggle(e, entry)}
+                                                    disabled={togglingConsent === entry.id || (entry.processed && !!entry.processedInReportId)}
+                                                    className={`hidden md:block p-2 rounded-xl transition-all ${entry.includeInReport
+                                                            ? 'bg-green-500/10 text-green-400 hover:bg-green-500/20'
+                                                            : 'bg-white/5 text-white/40 hover:bg-white/10 hover:text-white/60'
+                                                        } disabled:opacity-30 disabled:cursor-not-allowed`}
+                                                    title={entry.processed ? 'Already used in report' : entry.includeInReport ? 'Exclude from reports' : 'Include in reports'}
+                                                >
+                                                    {togglingConsent === entry.id ? (
+                                                        <Loader2 size={14} className="animate-spin" />
+                                                    ) : entry.processed && entry.processedInReportId ? (
+                                                        <Lock size={14} />
+                                                    ) : (
+                                                        <span className="text-xs">📊</span>
+                                                    )}
+                                                </button>
                                                 <button
                                                     onClick={(e) => handleDelete(e, entry.id)}
                                                     className="hidden md:block p-2 rounded-xl bg-red-500/0 text-white/0 group-hover:bg-red-500/10 group-hover:text-red-400 transition-all"

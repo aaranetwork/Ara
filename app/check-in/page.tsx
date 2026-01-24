@@ -5,8 +5,6 @@ import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronLeft, ArrowRight } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
-import { db } from '@/lib/firebase/config'
-import { collection, addDoc, Timestamp, query, orderBy, getDocs } from 'firebase/firestore'
 
 // Ultra-optimized slider - 60fps GPU accelerated, mobile-optimized
 function FastMoodSlider({ value, onChange }: { value: number; onChange: (v: number) => void }) {
@@ -48,8 +46,8 @@ function FastMoodSlider({ value, onChange }: { value: number; onChange: (v: numb
                     {/* Thumb - Larger on mobile */}
                     <div
                         className={`absolute rounded-full flex items-center justify-center border transition-all duration-150 ease-out ${isActive
-                                ? 'w-8 h-8 sm:w-7 sm:h-7 shadow-[0_0_24px_rgba(255,255,255,0.5)] scale-110 border-white/20'
-                                : 'w-7 h-7 sm:w-6 sm:h-6 shadow-[0_0_12px_rgba(255,255,255,0.3)] border-white/10'
+                            ? 'w-8 h-8 sm:w-7 sm:h-7 shadow-[0_0_24px_rgba(255,255,255,0.5)] scale-110 border-white/20'
+                            : 'w-7 h-7 sm:w-6 sm:h-6 shadow-[0_0_12px_rgba(255,255,255,0.3)] border-white/10'
                             } bg-white`}
                         style={{
                             left: `${percentage}%`,
@@ -88,8 +86,19 @@ function FastMoodSlider({ value, onChange }: { value: number; onChange: (v: numb
 }
 
 // Simplified emotion picker
-function FastEmotionPicker({ selected, onSelect }: { selected: string; onSelect: (e: string) => void }) {
-    const emotions = ['Calm', 'Anxious', 'Tired', 'Hopeful', 'Stressed', 'Grateful', 'Overwhelmed', 'Content']
+function FastEmotionPicker({ selected, onSelect, moodValue }: { selected: string; onSelect: (e: string) => void; moodValue: number }) {
+    let emotions: string[] = []
+
+    if (moodValue <= 4) {
+        // Low: 1-4
+        emotions = ['Tired', 'Anxious', 'Stressed', 'Overwhelmed', 'Sad', 'Lonely']
+    } else if (moodValue <= 6) {
+        // Mid: 5-6 (Mixed)
+        emotions = ['Calm', 'Tired', 'Hopeful', 'Anxious', 'Content', 'Stressed', 'Grateful', 'Overwhelmed']
+    } else {
+        // High: 7-10
+        emotions = ['Hopeful', 'Calm', 'Grateful', 'Content', 'Happy', 'Excited']
+    }
 
     return (
         <div className="w-full max-w-lg mx-auto px-4">
@@ -164,10 +173,43 @@ export default function CheckInPage() {
     const [emotion, setEmotion] = useState('')
     const [context, setContext] = useState<string[]>([])
     const [saving, setSaving] = useState(false)
+    const [canCheckInToday, setCanCheckInToday] = useState(true)
+    const [lastCheckInTime, setLastCheckInTime] = useState<Date | null>(null)
+    const [error, setError] = useState<string | null>(null)
 
     useEffect(() => {
         if (!authLoading && !user) router.push('/auth/login')
     }, [user, authLoading, router])
+
+    // Check if user can check in today (24h rule)
+    useEffect(() => {
+        async function checkCanCheckIn() {
+            if (!user) return
+
+            try {
+                const idToken = await user.getIdToken()
+                const response = await fetch('/api/check-in/latest', {
+                    headers: {
+                        'Authorization': `Bearer ${idToken}`,
+                    },
+                })
+
+                if (response.ok) {
+                    const data = await response.json()
+                    setCanCheckInToday(data.canCheckIn)
+                    if (!data.canCheckIn && data.reason) {
+                        setError(data.reason)
+                    }
+                }
+            } catch (err) {
+                console.error('Error checking check-in status:', err)
+                // Fail open - allow check-in if API fails
+                setCanCheckInToday(true)
+            }
+        }
+
+        checkCanCheckIn()
+    }, [user])
 
     const handleContextToggle = (factor: string) => {
         setContext(prev =>
@@ -178,30 +220,68 @@ export default function CheckInPage() {
     }
 
     const handleSave = async () => {
-        if (!user || !db || saving) return
+        if (!user || saving) return
         setSaving(true)
+        setError(null)
 
         try {
-            await addDoc(collection(db, 'users', user.uid, 'moods'), {
-                moodValue,
-                emotionWord: emotion,
-                contextFactors: context,
-                value: moodValue,
-                average: moodValue,
-                createdAt: Timestamp.now()
+            const idToken = await user.getIdToken()
+
+            // Call new backend API
+            const response = await fetch('/api/check-in', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${idToken}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    responses: {
+                        emotionalIntensity: moodValue,
+                        emotionalCategory: emotion ? [emotion] : [],
+                        contextFlag: context,
+                    },
+                }),
             })
 
-            // Show brief confirmation then redirect
+            const data = await response.json()
+
+            if (!response.ok) {
+                // Handle API errors
+                setError(data.error || 'Failed to save check-in')
+                setSaving(false)
+                return
+            }
+
+            // Success - redirect to home (page will refresh naturally)
             setTimeout(() => router.push('/'), 1500)
         } catch (error) {
             console.error('Save error:', error)
-            alert('Failed to save. Please try again.')
+            setError('Failed to save. Please try again.')
             setSaving(false)
         }
     }
 
     if (authLoading || !user) {
         return <div className="min-h-screen bg-[#030305]" />
+    }
+
+    // If user can't check in (24h rule), show friendly message
+    if (!canCheckInToday && error) {
+        return (
+            <div className="min-h-screen bg-[#030305] text-white flex items-center justify-center px-6">
+                <div className="text-center max-w-md">
+                    <div className="text-6xl mb-6">🌸</div>
+                    <h1 className="text-2xl font-serif mb-4">You've already checked in today!</h1>
+                    <p className="text-white/60 mb-8">{error}</p>
+                    <button
+                        onClick={() => router.push('/')}
+                        className="px-8 py-3 bg-white text-black rounded-full font-medium text-sm hover:scale-105 transition-transform"
+                    >
+                        Back to Home
+                    </button>
+                </div>
+            </div>
+        )
     }
 
     return (
@@ -273,7 +353,7 @@ export default function CheckInPage() {
                                         <span className="text-[10px] font-bold uppercase tracking-wider text-white/60">Reflection</span>
                                     </div>
                                 </div>
-                                <FastEmotionPicker selected={emotion} onSelect={setEmotion} />
+                                <FastEmotionPicker selected={emotion} onSelect={setEmotion} moodValue={moodValue} />
                             </motion.div>
                         )}
 
@@ -298,7 +378,12 @@ export default function CheckInPage() {
                 </div>
 
                 {/* Footer CTA */}
-                <div className="fixed bottom-8 left-0 right-0 flex justify-center px-6">
+                <div className="fixed bottom-8 left-0 right-0 flex flex-col items-center px-6">
+                    {error && step === 3 && (
+                        <div className="mb-4 px-6 py-3 bg-red-500/10  border border-red-500/20 rounded-full text-red-200 text-sm">
+                            {error}
+                        </div>
+                    )}
                     <button
                         onClick={() => {
                             if (step === 1 && moodValue) setStep(2)

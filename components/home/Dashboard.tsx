@@ -478,7 +478,7 @@ export default function Dashboard({ user }: { user: any }) {
                                     </div>
                                 </Link>
 
-                                <Link href="/report/therapist" className="group flex flex-col justify-between p-4 md:p-6 rounded-[1.8rem] md:rounded-[2rem] bg-white/[0.02] border border-white/5 backdrop-blur-sm md:backdrop-blur-md hover:bg-white/[0.04] transition-all min-h-[120px] md:min-h-[140px] relative overflow-hidden">
+                                <Link href="/reports" className="group flex flex-col justify-between p-4 md:p-6 rounded-[1.8rem] md:rounded-[2rem] bg-white/[0.02] border border-white/5 backdrop-blur-sm md:backdrop-blur-md hover:bg-white/[0.04] transition-all min-h-[120px] md:min-h-[140px] relative overflow-hidden">
                                     <div className="absolute top-0 right-0 w-24 h-24 bg-amber-500/5 rounded-full blur-[40px] -mr-8 -mt-8 opacity-0 group-hover:opacity-100 transition-opacity" />
                                     <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg mb-3 md:mb-4">
                                         <FileText size={18} className="text-white/70" />

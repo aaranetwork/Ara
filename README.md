@@ -1,18 +1,104 @@
 # AARA - AI Therapist Platform
 
-A production-ready AI therapy platform built with Next.js, featuring glassmorphic design, AI chat, games, journaling, and therapist bookings.
+AARA is a pre-therapy and therapy companion that turns daily experiences into clear, shareable insights — so therapists understand users faster, and users feel understood. That’s it. No extra claims. No therapy replacement.
+
+## 🚫 What AARA is NOT
+
+Let’s be strict here (this builds trust):
+
+- ❌ **Not a therapist**
+- ❌ **Not a diagnosis tool**
+- ❌ **Not medical advice**
+- ❌ **Not crisis care**
+
+AARA never replaces human therapy. It supports it.
+
+## 🧠 Core Philosophy
+
+**Nothing is connected by default. Everything is connected by consent.**
+
+- Journals are private unless user opts in
+- Chat is summarized, not exposed
+- Reports are snapshots, not surveillance
 
 ## 🚀 Features
 
+### User Features
 - 🤖 **AI Therapy Chat** - Powered by OpenAI GPT-4 with voice input/output (Whisper + ElevenLabs)
-- 🎮 **Mental Wellness Games** - 5 interactive games (Focus Flash, Calm Breather, Memory Flow, Color Sync, Math Challenge)
-- 📝 **Journaling** - Voice and text entries with mood tracking
-- 👨‍⚕️ **Therapist Booking** - Book sessions with real therapists via Stripe
-- 📊 **Analytics Dashboard** - Real-time metrics and progress tracking
-- 🔐 **Authentication** - Firebase Auth with Google and Email
-- 💳 **Payments** - Stripe integration for secure session bookings
-- 📱 **PWA Support** - Installable as a mobile app
-- 🔒 **Privacy & Security** - GDPR-compliant data deletion, consent toggles
+- 📝 **Daily Check-Ins** - Progressive emotional tracking with 24h frequency validation
+- 📖 **Private Journaling** - Voice and text entries with granular consent controls
+- 📊 **Insights Dashboard** - Real-time mood trends, themes, and patterns (7/30/90 day views)
+- 📄 **Shareable Reports** - Generate pre-therapy, therapy, or self-insight reports
+- 🎮 **Mental Wellness Games** - 5 interactive games for focus, calm, and mindfulness
+- 👨‍⚕️ **Therapist Booking** - Secure session booking with Stripe integration
+
+### Therapist Features
+- 📨 **Secure Report Sharing** - PDF download or private link with revocation
+- 👁️ **Read-Only Access** - View patient insights without data collection
+- 🔐 **Privacy-First** - All sharing requires explicit patient consent
+
+### Privacy & Security
+- ✅ **Consent-Based Processing** - No data used without explicit opt-in
+- 🔒 **Immutable Reports** - Reports locked after creation, journals processed once
+- 📜 **Full Audit Trail** - All consent actions logged with timestamps
+- 🗑️ **GDPR Compliant** - Right to deletion and data export
+- 🔐 **Firebase Auth** - Google and Email authentication
+
+## 🏗️ Backend Architecture (v1.0)
+
+### Data Flow
+```
+User → Check-In/Journal → Consent → Insight Processing → Report Generation → Sharing
+```
+
+### Core Services
+
+| Service | Purpose | Key Features |
+|---------|---------|--------------|
+| **User State** | Manages therapy journey stages | 4 states (exploration→preparing→in_therapy→maintenance) |
+| **Check-In** | Daily emotional tracking | 24h frequency rule, progressive depth |
+| **Consent** | Privacy-first data control | Granular opt-in, full audit trail |
+| **Insights** | Pattern detection | Theme extraction, emotional patterns, recurrence signals |
+| **Reports** | Clinical summaries | 3 types (pre-therapy, therapy, self-insight), immutable |
+| **Sharing** | Therapist access | Secure tokens, PDF generation (Puppeteer), revocation |
+
+### API Endpoints
+
+**User State:**
+- `GET /api/user/state` - Get current state and suggestions
+- `PATCH /api/user/state` - Update state (requires confirmation)
+
+**Check-Ins:**
+- `POST /api/check-in` - Submit daily check-in
+- `GET /api/check-in/latest` - Get latest check-in + `canCheckIn` status
+- `GET /api/check-in/level` - Get progressive question level
+
+**Insights:**
+- `GET /api/insights/current?days={7|30|90}` - Real-time insights
+
+**Reports:**
+- `POST /api/reports` - Generate new report
+- `GET /api/reports` - List user reports
+- `GET /api/reports/:id` - Get specific report
+
+**Sharing:**
+- `POST /api/reports/:id/share` - Create share (PDF or secure link)
+- `DELETE /api/reports/:id/share/:shareId` - Revoke share
+- `GET /api/share/:token` - Public therapist access (validates token)
+
+### Data Models
+
+See [`/lib/models/backend.ts`](file:///d:/aara%20website/Aara%20app/lib/models/backend.ts) for complete TypeScript interfaces.
+
+### Privacy Guarantees
+
+1. **No Processing Without Consent** - Journals are private by default
+2. **One-Time Processing** - Journals marked `processed` after first report inclusion
+3. **Report Immutability** - Reports locked (`locked: true`) immediately after creation
+4. **State Transitions** - All state changes require user confirmation
+5. **Share Revocation** - Users can revoke therapist access anytime
+
+---
 
 ## 🛠️ Tech Stack
 

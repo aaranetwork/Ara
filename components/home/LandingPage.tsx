@@ -19,22 +19,22 @@ const MARQUEE_ITEMS = [
 
 const HOW_IT_WORKS = [
     {
-        icon: Ear,
+        icon: Activity,
         step: '01',
-        title: 'Listen',
-        desc: 'Vent freely. AARA listens without judgment, picking up on the emotions and nuances you might miss.'
+        title: 'Check-in',
+        desc: 'User does daily check-ins. User chats or journals when they want. Express thoughts safely.'
     },
     {
-        icon: Layout,
+        icon: Brain,
         step: '02',
-        title: 'Organize',
-        desc: 'We structure your scattered thoughts into clear, coherent summaries and identify recurring patterns.'
+        title: 'Insights',
+        desc: 'AARA turns approved data into insights. Notice patterns in emotions without pressure.'
     },
     {
-        icon: PenTool,
+        icon: FileText,
         step: '03',
-        title: 'Prepare',
-        desc: 'Get a "Therapist-Ready" report to bring to your next session, so you can dive deep immediately.'
+        title: 'Reports',
+        desc: 'AARA creates clear reports for therapy. Context before the first session.'
     }
 ]
 
@@ -165,7 +165,7 @@ export default function LandingPage() {
                             transition={{ delay: 0.1, duration: 0.6 }}
                             className="block"
                         >
-                            Therapy sessions
+                            Make every session
                         </motion.span>
                         <motion.span
                             initial={{ opacity: 0, y: 20 }}
@@ -173,7 +173,7 @@ export default function LandingPage() {
                             transition={{ delay: 0.2, duration: 0.6 }}
                             className="block text-white/40"
                         >
-                            are short.
+                            count.
                         </motion.span>
                     </h1>
 
@@ -183,9 +183,7 @@ export default function LandingPage() {
                         transition={{ delay: 0.8, duration: 1 }}
                         className="text-lg md:text-xl text-white/50 mb-12 leading-relaxed max-w-2xl mx-auto"
                     >
-                        Stop spending therapy trying to explain how you feel.
-                        <br className="hidden md:block" />
-                        AARA tracks your emotional landscape so you can dive deep immediately.
+                        AARA is a pre-therapy and therapy companion that turns daily experiences into clear, shareable insights — so therapists understand users faster, and users feel understood.
                     </motion.p>
 
                     <motion.div
@@ -208,7 +206,7 @@ export default function LandingPage() {
                         transition={{ delay: 1.5 }}
                         className="mt-10 text-[10px] text-white/30 uppercase tracking-widest font-medium"
                     >
-                        Trusted by 500+ Early Adopters
+                        See it in action
                     </motion.p>
                 </motion.div>
             </section>
@@ -361,11 +359,19 @@ export default function LandingPage() {
                     <RevealInfo>
                         <div>
                             <h2 className="text-3xl md:text-4xl font-serif mb-8 leading-tight">
-                                Why AARA is <br />
-                                <span className="text-white/40">different.</span>
+                                AARA fixes <br />
+                                <span className="text-white/40">the gap.</span>
                             </h2>
-                            <p className="text-white/50 leading-relaxed text-sm mb-8">
-                                Most apps give you generic advice. AARA gives you specific, actionable insight by organizing your own thoughts back to you.
+                            <p className="text-white/50 leading-relaxed text-sm mb-4">
+                                People don’t leave therapy because therapy doesn’t work. They leave because:
+                            </p>
+                            <ul className="space-y-2 mb-8 text-white/60 text-sm italic">
+                                <li>&quot;I can’t explain my problem&quot;</li>
+                                <li>&quot;My therapist doesn’t get me&quot;</li>
+                                <li>&quot;I don’t know what to say in sessions&quot;</li>
+                            </ul>
+                            <p className="text-white/50 leading-relaxed text-sm">
+                                AARA is an insight layer between human experience and therapy — helping both sides speak the same language.
                             </p>
                         </div>
                     </RevealInfo>
@@ -417,13 +423,14 @@ export default function LandingPage() {
                         <div className="p-8 md:p-12 rounded-3xl bg-[#0e0e12] border border-indigo-500/20 shadow-2xl relative overflow-hidden group">
                             <div className="absolute top-0 right-0 p-32 bg-indigo-500/10 blur-[100px] rounded-full pointer-events-none group-hover:bg-indigo-500/20 transition-colors" />
                             <h3 className="text-lg font-bold text-indigo-400 mb-8 uppercase tracking-widest flex items-center gap-2">
-                                <Sparkles size={16} /> AARA
+                                <Sparkles size={16} /> What AARA IS
                             </h3>
                             <ul className="space-y-6 relative z-10">
                                 {[
-                                    'Guided reflection to untangle your thoughts',
-                                    'Therapist-ready summaries (The 1-Page Report)',
-                                    'Clinical-grade privacy & encryption'
+                                    'Insight layer between you and therapy',
+                                    'Structured pre-therapy insights',
+                                    'Progress signals over time',
+                                    'Helper for therapy to start deeper'
                                 ].map((item, i) => (
                                     <motion.li
                                         key={i}
@@ -441,6 +448,8 @@ export default function LandingPage() {
                         </div>
                     </RevealInfo>
                 </div>
+
+
             </section>
 
             {/* TARGET AUDIENCE */}

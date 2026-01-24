@@ -33,6 +33,7 @@
     "next": "^14.2.33",
     "next-sitemap": "^4.2.3",
     "nextjs-toploader": "^3.9.17",
+    "puppeteer": "^24.36.0",
     "react": "^18.2.0",
     "react-calendar": "^4.6.0",
     "react-dom": "^18.2.0",
