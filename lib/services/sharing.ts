@@ -342,7 +342,7 @@ export async function generatePDF(
 
     // Upload to Firebase Storage (if configured)
     // For now, return a base64 data URL as fallback
-    const base64PDF = pdfBuffer.toString('base64');
+    const base64PDF = Buffer.from(pdfBuffer).toString('base64');
     const dataUrl = `data:application/pdf;base64,${base64PDF}`;
 
     // TODO: Upload to Firebase Storage and generate signed URL
