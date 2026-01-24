@@ -22,6 +22,11 @@ export async function GET(request: NextRequest) {
         }
 
         const idToken = authHeader.split('Bearer ')[1];
+
+        if (!adminAuth) {
+            return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
+        }
+
         const decodedToken = await adminAuth.verifyIdToken(idToken);
         const userId = decodedToken.uid;
 
@@ -59,6 +64,11 @@ export async function PATCH(request: NextRequest) {
         }
 
         const idToken = authHeader.split('Bearer ')[1];
+
+        if (!adminAuth) {
+            return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
+        }
+
         const decodedToken = await adminAuth.verifyIdToken(idToken);
         const userId = decodedToken.uid;
 
