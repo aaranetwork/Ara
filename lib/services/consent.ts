@@ -23,6 +23,10 @@ export async function grantConsent(
     purpose: string
 ): Promise<{ success: boolean; logId?: string; error?: string }> {
     try {
+        if (!adminDb) {
+            return { success: false, error: 'Database not initialized' };
+        }
+
         const consentLogRef = adminDb.collection('consent_logs').doc();
 
         const consentLog: Omit<ConsentLog, 'id'> = {
@@ -60,6 +64,10 @@ export async function revokeConsent(
     purpose: string
 ): Promise<{ success: boolean; logId?: string; error?: string }> {
     try {
+        if (!adminDb) {
+            return { success: false, error: 'Database not initialized' };
+        }
+
         const consentLogRef = adminDb.collection('consent_logs').doc();
 
         const consentLog: Omit<ConsentLog, 'id'> = {
@@ -100,6 +108,8 @@ export async function getConsentHistory(
     resourceId?: string
 ): Promise<ConsentLog[]> {
     try {
+        if (!adminDb) return [];
+
         let query = adminDb.collection('consent_logs').where('userId', '==', userId);
 
         if (resourceType) {
@@ -190,6 +200,10 @@ export async function exportConsentHistory(userId: string): Promise<any> {
  */
 export async function deleteAllConsentLogs(userId: string): Promise<{ success: boolean; deletedCount: number }> {
     try {
+        if (!adminDb) {
+            return { success: false, deletedCount: 0 };
+        }
+
         const snapshot = await adminDb.collection('consent_logs').where('userId', '==', userId).get();
 
         const batch = adminDb.batch();

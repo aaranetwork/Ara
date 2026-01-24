@@ -18,6 +18,8 @@ import type { UserState, StateChange, UserStateType } from '@/lib/models/backend
  */
 export async function getUserState(userId: string): Promise<UserState | null> {
     try {
+        if (!adminDb) return null;
+
         const userRef = adminDb.collection('users').doc(userId);
         const userDoc = await userRef.get();
 
@@ -115,6 +117,10 @@ export async function updateUserState(
             reason,
         };
 
+        if (!adminDb) {
+            return { success: false, error: 'Database not initialized' };
+        }
+
         // Update Firestore
         const userRef = adminDb.collection('users').doc(userId);
         await userRef.update({
@@ -202,6 +208,8 @@ export async function detectTransitionTriggers(
         const currentState = await getUserState(userId);
         if (!currentState) return null;
 
+        if (!adminDb) return null;
+
         const userRef = adminDb.collection('users').doc(userId);
         const userDoc = await userRef.get();
         const userData = userDoc.data();
@@ -282,6 +290,8 @@ export async function detectTransitionTriggers(
  */
 export async function trackTherapistPageView(userId: string): Promise<void> {
     try {
+        if (!adminDb) return;
+
         const userRef = adminDb.collection('users').doc(userId);
         await userRef.set(
             {

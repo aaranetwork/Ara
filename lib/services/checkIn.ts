@@ -23,6 +23,10 @@ export async function createCheckIn(
     level?: number
 ): Promise<{ success: boolean; id?: string; error?: string }> {
     try {
+        if (!adminDb) {
+            return { success: false, error: 'Database not initialized' };
+        }
+
         // Validate 24-hour frequency rule
         const canCheckIn = await canUserCheckIn(userId);
         if (!canCheckIn.allowed) {
@@ -96,6 +100,8 @@ export async function createCheckIn(
  */
 export async function getLatestCheckIn(userId: string): Promise<CheckIn | null> {
     try {
+        if (!adminDb) return null;
+
         const checkInsRef = adminDb.collection('users').doc(userId).collection('check-ins');
         const snapshot = await checkInsRef.orderBy('createdAt', 'desc').limit(1).get();
 
@@ -130,6 +136,8 @@ export async function getCheckIns(
     endDate?: Date
 ): Promise<CheckIn[]> {
     try {
+        if (!adminDb) return [];
+
         const checkInsRef = adminDb.collection('users').doc(userId).collection('check-ins');
         let query = checkInsRef.orderBy('createdAt', 'desc');
 
@@ -165,6 +173,8 @@ export async function getCheckIns(
  */
 export async function getUnprocessedCheckIns(userId: string): Promise<CheckIn[]> {
     try {
+        if (!adminDb) return [];
+
         const checkInsRef = adminDb.collection('users').doc(userId).collection('check-ins');
         const snapshot = await checkInsRef.where('processed', '==', false).get();
 
@@ -196,6 +206,8 @@ export async function getUnprocessedCheckIns(userId: string): Promise<CheckIn[]>
  */
 export async function getCurrentCheckInLevel(userId: string): Promise<number> {
     try {
+        if (!adminDb) return 1;
+
         const userRef = adminDb.collection('users').doc(userId);
         const userDoc = await userRef.get();
         const userData = userDoc.data();
@@ -255,6 +267,8 @@ export async function canUserCheckIn(
  */
 export async function markCheckInsAsProcessed(checkInIds: string[], userId: string): Promise<void> {
     try {
+        if (!adminDb) return;
+
         const batch = adminDb.batch();
 
         for (const checkInId of checkInIds) {

@@ -71,6 +71,10 @@ export async function generateReport(
         // Get next version number
         const version = await getNextReportVersion(userId);
 
+        if (!adminDb) {
+            return { success: false, error: 'Database not initialized' };
+        }
+
         // Create report document
         const reportRef = adminDb.collection('users').doc(userId).collection('reports').doc();
 
@@ -246,6 +250,8 @@ async function createComparison(userId: string): Promise<Comparison | null> {
  */
 export async function lockReport(reportId: string, userId: string): Promise<void> {
     try {
+        if (!adminDb) return;
+
         const reportRef = adminDb.collection('users').doc(userId).collection('reports').doc(reportId);
         await reportRef.update({ locked: true });
     } catch (error) {
@@ -302,6 +308,8 @@ async function markJournalsAsProcessed(
  */
 export async function getReport(userId: string, reportId: string): Promise<Report | null> {
     try {
+        if (!adminDb) return null;
+
         const reportRef = adminDb.collection('users').doc(userId).collection('reports').doc(reportId);
         const reportDoc = await reportRef.get();
 
@@ -334,6 +342,8 @@ export async function getReport(userId: string, reportId: string): Promise<Repor
  */
 export async function getUserReports(userId: string): Promise<Report[]> {
     try {
+        if (!adminDb) return [];
+
         const reportsRef = adminDb.collection('users').doc(userId).collection('reports');
         const snapshot = await reportsRef.orderBy('createdAt', 'desc').get();
 
@@ -364,6 +374,8 @@ export async function getUserReports(userId: string): Promise<Report[]> {
  */
 async function getLatestReport(userId: string, type: ReportType): Promise<Report | null> {
     try {
+        if (!adminDb) return null;
+
         const reportsRef = adminDb.collection('users').doc(userId).collection('reports');
         const snapshot = await reportsRef
             .where('type', '==', type)
@@ -406,6 +418,8 @@ async function getLatestReport(userId: string, type: ReportType): Promise<Report
  */
 async function getNextReportVersion(userId: string): Promise<number> {
     try {
+        if (!adminDb) return 1;
+
         const reportsRef = adminDb.collection('users').doc(userId).collection('reports');
         const snapshot = await reportsRef.orderBy('version', 'desc').limit(1).get();
 

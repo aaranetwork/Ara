@@ -86,6 +86,8 @@ export async function generateInsights(
             significantDates: checkIns.map((c) => c.createdAt),
         };
 
+        if (!adminDb) return null;
+
         // Create insight document
         const insightRef = adminDb.collection('users').doc(userId).collection('insights').doc();
 
@@ -124,6 +126,8 @@ async function getConsentedJournals(
     periodEnd: Date
 ): Promise<Journal[]> {
     try {
+        if (!adminDb) return [];
+
         const journalsRef = adminDb.collection('users').doc(userId).collection('journal');
 
         const snapshot = await journalsRef
@@ -173,6 +177,8 @@ async function getChatSummaries(
     periodEnd: Date
 ): Promise<ChatSummary[]> {
     try {
+        if (!adminDb) return [];
+
         const chatsRef = adminDb.collection('chats');
 
         const snapshot = await chatsRef
@@ -370,6 +376,8 @@ function detectRecurrenceSignals(checkIns: any[], journals: Journal[]): Recurren
  */
 export async function getInsight(userId: string, insightId: string): Promise<Insight | null> {
     try {
+        if (!adminDb) return null;
+
         const insightRef = adminDb.collection('users').doc(userId).collection('insights').doc(insightId);
         const insightDoc = await insightRef.get();
 
@@ -399,6 +407,8 @@ export async function getInsight(userId: string, insightId: string): Promise<Ins
  */
 export async function getUserInsights(userId: string): Promise<Insight[]> {
     try {
+        if (!adminDb) return [];
+
         const insightsRef = adminDb.collection('users').doc(userId).collection('insights');
         const snapshot = await insightsRef.orderBy('createdAt', 'desc').get();
 
