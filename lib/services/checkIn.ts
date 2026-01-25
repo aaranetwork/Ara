@@ -220,6 +220,48 @@ export async function getCurrentCheckInLevel(userId: string): Promise<number> {
 }
 
 // =============================================================================
+// HELPER FUNCTIONS FOR REPORT VALIDATION
+// =============================================================================
+
+/**
+ * Gets the date of the user's very first check-in.
+ */
+export async function getFirstCheckInDate(userId: string): Promise<Date | null> {
+    try {
+        if (!adminDb) return null;
+
+        const checkInsRef = adminDb.collection('users').doc(userId).collection('check-ins');
+        const snapshot = await checkInsRef.orderBy('createdAt', 'asc').limit(1).get();
+
+        if (snapshot.empty) {
+            return null;
+        }
+
+        return snapshot.docs[0].data().createdAt?.toDate() || null;
+    } catch (error) {
+        console.error('Error getting first check-in date:', error);
+        return null;
+    }
+}
+
+/**
+ * Gets the total count of check-ins for a user.
+ */
+export async function getCheckInCount(userId: string): Promise<number> {
+    try {
+        if (!adminDb) return 0;
+
+        const checkInsRef = adminDb.collection('users').doc(userId).collection('check-ins');
+        const snapshot = await checkInsRef.count().get();
+
+        return snapshot.data().count;
+    } catch (error) {
+        console.error('Error getting check-in count:', error);
+        return 0;
+    }
+}
+
+// =============================================================================
 // FREQUENCY VALIDATION
 // =============================================================================
 
@@ -231,28 +273,11 @@ export async function canUserCheckIn(
     userId: string
 ): Promise<{ allowed: boolean; reason?: string; lastCheckIn?: Date }> {
     try {
-        const latestCheckIn = await getLatestCheckIn(userId);
-
-        if (!latestCheckIn) {
-            return { allowed: true }; // No previous check-in, always allowed
-        }
-
-        const now = new Date();
-        const hoursSinceLastCheckIn =
-            (now.getTime() - latestCheckIn.createdAt.getTime()) / (1000 * 60 * 60);
-
-        if (hoursSinceLastCheckIn < 24) {
-            return {
-                allowed: false,
-                reason: 'You can check in once every 24 hours. Come back tomorrow! 🌸',
-                lastCheckIn: latestCheckIn.createdAt,
-            };
-        }
-
+        // We now allow multiple check-ins per day to support mood tracking throughout the day
+        // and to facilitate easier testing/demos.
         return { allowed: true };
     } catch (error) {
         console.error('Error validating check-in frequency:', error);
-        // In case of error, allow check-in (fail open)
         return { allowed: true };
     }
 }

@@ -253,7 +253,7 @@ export default function CheckInPage() {
             }
 
             // Success - redirect to home (page will refresh naturally)
-            setTimeout(() => router.push('/'), 1500)
+            setTimeout(() => router.push('/'), 50)
         } catch (error) {
             console.error('Save error:', error)
             setError('Failed to save. Please try again.')

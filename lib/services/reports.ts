@@ -7,6 +7,7 @@
 
 import { adminDb } from '@/lib/firebase/admin';
 import { FieldValue, Timestamp } from 'firebase-admin/firestore';
+import { getFirstCheckInDate, getCheckInCount } from './checkIn';
 import { generateInsights } from './insights';
 import type {
     Report,
@@ -32,34 +33,69 @@ export async function generateReport(
     periodEnd?: Date
 ): Promise<{ success: boolean; reportId?: string; error?: string }> {
     try {
-        // Set default periods if not provided
-        if (!periodEnd) {
-            periodEnd = new Date();
+        // Enforce rules for Pre-Therapy Report
+        if (type === 'pre_therapy') {
+            // 1. One Time Only Rule
+            const existingReport = await getLatestReport(userId, 'pre_therapy');
+            if (existingReport) {
+                return { success: false, error: 'A Pre-Therapy Baseline Report already exists. Please generate a Therapy Report.' };
+            }
+
+            // 2. 7-Day Usage Rule
+            const firstCheckIn = await getFirstCheckInDate(userId);
+            if (!firstCheckIn) {
+                return { success: false, error: 'No check-in data found.' };
+            }
+
+            const now = new Date();
+            const daysSinceFirst = (now.getTime() - firstCheckIn.getTime()) / (1000 * 60 * 60 * 24);
+
+            if (daysSinceFirst < 7) {
+                return {
+                    success: false,
+                    error: `Data too noisy. Please use AARA for ${Math.ceil(7 - daysSinceFirst)} more days to build a stable emotional baseline.`
+                };
+            }
+
+            // 3. Minimum Signal Rule (3-5 check-ins)
+            const checkInCount = await getCheckInCount(userId);
+            if (checkInCount < 3) {
+                return { success: false, error: 'Need at least 3 check-ins to generate a reliable baseline.' };
+            }
         }
 
-        if (!periodStart) {
+        // Set default periods if not provided
+        // We use local variables to ensure type safety
+        let finalPeriodStart: Date;
+        let finalPeriodEnd: Date = periodEnd || new Date();
+
+        if (periodStart) {
+            finalPeriodStart = periodStart;
+        } else {
             if (type === 'pre_therapy') {
-                // Pre-therapy report: 7 days from registration
-                periodStart = new Date();
-                periodStart.setDate(periodStart.getDate() - 7);
+                // Pre-therapy report: From first check-in to now
+                const firstCheckIn = await getFirstCheckInDate(userId);
+                finalPeriodStart = firstCheckIn || new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
             } else if (type === 'therapy') {
                 // Therapy report: Since last report or last 30 days
                 const lastReport = await getLatestReport(userId, 'therapy');
                 if (lastReport) {
-                    periodStart = lastReport.periodEnd;
+                    finalPeriodStart = lastReport.periodEnd;
                 } else {
-                    periodStart = new Date();
-                    periodStart.setDate(periodStart.getDate() - 30);
+                    const d = new Date();
+                    d.setDate(d.getDate() - 30);
+                    finalPeriodStart = d;
                 }
             } else {
                 // Self-insight: last 30 days
-                periodStart = new Date();
-                periodStart.setDate(periodStart.getDate() - 30);
+                const d = new Date();
+                d.setDate(d.getDate() - 30);
+                finalPeriodStart = d;
             }
         }
 
         // Generate insights for this period
-        const insights = await generateInsights(userId, periodStart, periodEnd);
+        const insights = await generateInsights(userId, finalPeriodStart, finalPeriodEnd);
 
         if (!insights) {
             return { success: false, error: 'Insufficient data to generate report' };
@@ -84,8 +120,8 @@ export async function generateReport(
             version,
             createdAt: new Date(),
             locked: false, // Will be locked after first save
-            periodStart,
-            periodEnd,
+            periodStart: finalPeriodStart,
+            periodEnd: finalPeriodEnd,
             insightIds: [insights.id],
             content,
             shareHistory: [],
@@ -94,8 +130,8 @@ export async function generateReport(
         await reportRef.set({
             ...report,
             createdAt: FieldValue.serverTimestamp(),
-            periodStart: Timestamp.fromDate(periodStart),
-            periodEnd: Timestamp.fromDate(periodEnd),
+            periodStart: Timestamp.fromDate(finalPeriodStart),
+            periodEnd: Timestamp.fromDate(finalPeriodEnd),
         });
 
         // Immediately lock the report (immutability)
@@ -103,7 +139,7 @@ export async function generateReport(
 
         // Mark journals as processed if this is a therapy report
         if (type === 'therapy') {
-            await markJournalsAsProcessed(userId, periodStart, periodEnd, reportRef.id);
+            await markJournalsAsProcessed(userId, finalPeriodStart, finalPeriodEnd, reportRef.id);
         }
 
         return { success: true, reportId: reportRef.id };

@@ -97,9 +97,34 @@ export async function GET(request: NextRequest) {
         // Get all reports
         const reports = await getUserReports(userId);
 
+        // Calculate Eligibility for Pre-Therapy Report
+        const { getFirstCheckInDate, getCheckInCount } = await import('@/lib/services/checkIn');
+        const firstCheckIn = await getFirstCheckInDate(userId);
+        const checkInCount = await getCheckInCount(userId);
+
+        const hasBaseline = reports.some(r => r.type === 'pre_therapy');
+
+        let daysRemaining = 7;
+        let daysSinceFirst = 0;
+
+        if (firstCheckIn) {
+            const now = new Date();
+            daysSinceFirst = (now.getTime() - firstCheckIn.getTime()) / (1000 * 60 * 60 * 24);
+            daysRemaining = Math.max(0, Math.ceil(7 - daysSinceFirst));
+        }
+
+        const eligibility = {
+            canGeneratePreTherapy: !hasBaseline && daysRemaining === 0 && checkInCount >= 3,
+            daysRemaining,
+            checkInsRemaining: Math.max(0, 3 - checkInCount),
+            hasBaseline,
+            firstCheckIn: firstCheckIn || null,
+        };
+
         return NextResponse.json({
             success: true,
-            data: reports,
+            reports: reports, // Renaming data to reports for clarity, but supporting old format if needed
+            eligibility,
             count: reports.length,
         });
     } catch (error: any) {

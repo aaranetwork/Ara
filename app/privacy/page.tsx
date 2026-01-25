@@ -1,97 +1,150 @@
-'use client'
-
-import { motion } from 'framer-motion'
 import Link from 'next/link'
-import Image from 'next/image'
-import { ArrowLeft, ScrollText } from 'lucide-react'
+import { ArrowLeft, Shield, Lock, Eye, FileText, Database, UserCheck } from 'lucide-react'
 
 export default function PrivacyPage() {
   return (
-    <div className="min-h-screen text-white pt-32 pb-20 px-6">
-      <nav className="fixed top-0 left-0 w-full z-50 px-6 py-6 bg-[#030305]/80 backdrop-blur-xl border-b border-white/5">
-        <div className="max-w-5xl mx-auto flex items-center justify-between">
-          <Link href="/" className="group flex items-center gap-3 text-white/60 hover:text-white transition-colors">
-            <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center border border-white/10 group-hover:bg-white/10 transition-colors">
-              <ArrowLeft size={16} />
-            </div>
-            <span className="text-sm font-medium">Back</span>
+    <div className="min-h-screen bg-[#030305] text-white font-sans selection:bg-indigo-500/30">
+      {/* Header */}
+      <header className="fixed top-0 left-0 w-full z-50 px-6 py-6 bg-[#030305]/80 backdrop-blur-md border-b border-white/5">
+        <div className="max-w-4xl mx-auto flex items-center justify-between">
+          <Link href="/" className="group flex items-center gap-2 text-sm font-medium text-white/60 hover:text-white transition-colors">
+            <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
+            Back to Home
           </Link>
-          <div className="flex items-center gap-2 opacity-50">
-            <Image src="/aara-logo.png" alt="AARA" width={24} height={24} className="rounded-md" />
-          </div>
+          <span className="font-serif text-lg tracking-tight">AARA Privacy</span>
         </div>
-      </nav>
+      </header>
 
-      <div className="max-w-3xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-12 border-b border-white/5 pb-12"
-        >
-          <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-400 mb-6 border border-indigo-500/20">
-            <ScrollText size={24} />
-          </div>
-          <h1 className="text-4xl md:text-5xl font-serif font-medium mb-4">Privacy Policy</h1>
-          <p className="text-white/40 text-sm uppercase tracking-widest font-bold">Last Updated: December 2024</p>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.1 }}
-          className="space-y-12"
-        >
-          <Section title="Your Privacy Matters">
-            At AARA, we understand that mental health information is deeply personal.
-            We are committed to protecting your privacy and ensuring that your data remains secure and confidential.
-            This policy outlines exactly how your data is handled.
-          </Section>
-
-          <Section title="Data Collection">
-            <ul className="list-disc list-outside ml-4 space-y-2 marker:text-indigo-500/50">
-              <li><strong className="text-white font-medium">Account Details:</strong> Basic identity info required for secure access.</li>
-              <li><strong className="text-white font-medium">Journal & Chat Logs:</strong> Stored securely to provide history and analysis.</li>
-              <li><strong className="text-white font-medium">Analytics:</strong> Anonymized usage patterns to improve AARA&apos;s core algorithms.</li>
-            </ul>
-          </Section>
-
-          <Section title="Security Protocol">
-            We employ a multi-layered security approach:
-            <ul className="list-disc list-outside ml-4 space-y-2 mt-4 marker:text-indigo-500/50">
-              <li>At-rest encryption for all database entries.</li>
-              <li>Strict TLS/SSL transport security for all data in transit.</li>
-              <li>Isolated sandbox environments for AI processing.</li>
-              <li>No third-party data selling. Ever.</li>
-            </ul>
-          </Section>
-
-          <Section title="User Control">
-            You retain full ownership of your data. You may:
-            <ul className="list-disc list-outside ml-4 space-y-2 mt-4 marker:text-indigo-500/50">
-              <li>Export your complete history at any time.</li>
-              <li>Request permanent deletion of your account and associated data.</li>
-              <li>Opt-out of non-essential analytical tracking.</li>
-            </ul>
-          </Section>
-
-          <div className="pt-8 border-t border-white/5">
-            <p className="text-white/40 text-sm">
-              Questions? Contact our Data Protection Officer at <a href="mailto:privacy@aara.app" className="text-indigo-400 hover:text-indigo-300 transition-colors">privacy@aara.app</a>
+      <main className="pt-32 pb-20 px-6">
+        <article className="max-w-3xl mx-auto">
+          {/* Title */}
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 mb-6 text-[10px] font-bold uppercase tracking-widest">
+              <Shield size={12} />
+              <span>Official Policy</span>
+            </div>
+            <h1 className="text-4xl md:text-5xl font-serif mb-6 leading-tight">
+              Your Privacy is Our <br />
+              <span className="text-white/40">Core Architecture.</span>
+            </h1>
+            <p className="text-white/50 text-lg leading-relaxed max-w-xl mx-auto">
+              AARA is built on a "Privacy-First" principle. We don't just promise privacy; we engineer it into every interaction.
             </p>
           </div>
-        </motion.div>
-      </div>
-    </div>
-  )
-}
 
-function Section({ title, children }: { title: string, children: React.ReactNode }) {
-  return (
-    <section className="space-y-4">
-      <h2 className="text-xl font-serif text-white/90">{title}</h2>
-      <div className="text-white/60 leading-relaxed text-base">
-        {children}
-      </div>
-    </section>
+          {/* Last Updated */}
+          <div className="text-center text-xs text-white/30 mb-16 uppercase tracking-widest">
+            Last Updated: January 25, 2026
+          </div>
+
+          {/* Content Blocks */}
+          <div className="space-y-12">
+
+            {/* 1. Philosophy */}
+            <section className="p-8 rounded-3xl bg-white/[0.02] border border-white/5">
+              <h2 className="text-2xl font-serif mb-4 flex items-center gap-3">
+                <Lock className="text-indigo-400" size={24} />
+                1. Our Philosophy
+              </h2>
+              <p className="text-white/60 leading-relaxed mb-4">
+                You are not the product. Your mental health data is sacred. We believe that for therapy to work, honesty is required, and for honesty to exist, absolute privacy is non-negotiable.
+              </p>
+              <p className="text-white/60 leading-relaxed">
+                AARA operates as a <strong>Zero-Surprise</strong> platform. No data is shared, processed, or analyzed without your explicit action or consent.
+              </p>
+            </section>
+
+            {/* 2. Data Collection */}
+            <section>
+              <h2 className="text-xl font-bold mb-4 text-white/90">2. Data We Collect & Why</h2>
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="p-6 rounded-2xl bg-[#0e0e12] border border-white/5">
+                  <div className="flex items-center gap-3 mb-3 text-emerald-400">
+                    <Database size={18} />
+                    <h3 className="font-bold text-sm">Daily Check-ins</h3>
+                  </div>
+                  <p className="text-xs text-white/50 leading-relaxed">
+                    Mood scores, emotions, and context tags.
+                    <br /><strong>Purpose:</strong> To track patterns over time.
+                  </p>
+                </div>
+                <div className="p-6 rounded-2xl bg-[#0e0e12] border border-white/5">
+                  <div className="flex items-center gap-3 mb-3 text-amber-400">
+                    <FileText size={18} />
+                    <h3 className="font-bold text-sm">Journal Entries</h3>
+                  </div>
+                  <p className="text-xs text-white/50 leading-relaxed">
+                    Free-text reflections you write.
+                    <br /><strong>Purpose:</strong> Self-reflection. Only processed for insights if you toggle consent.
+                  </p>
+                </div>
+              </div>
+            </section>
+
+            {/* 3. Data Processing */}
+            <section>
+              <h2 className="text-xl font-bold mb-4 text-white/90">3. How We Process Insights</h2>
+              <p className="text-white/60 leading-relaxed mb-4">
+                AARA uses secure AI processing to turn raw text into clinical insights (e.g., "You tend to feel anxious on Sundays").
+              </p>
+              <ul className="list-disc list-inside space-y-2 text-white/60 ml-2">
+                <li>Raw journals stay encrypted unless you explicitly select them for a report.</li>
+                <li>We do not use your data to train public AI models.</li>
+                <li>Processing happens in a secure, isolated environment.</li>
+              </ul>
+            </section>
+
+            {/* 4. Sharing */}
+            <section>
+              <h2 className="text-xl font-bold mb-4 text-white/90">4. Sharing with Therapists</h2>
+              <p className="text-white/60 leading-relaxed mb-4">
+                AARA does not automatically share anything with your therapist. Sharing is a <strong>manual action</strong> you take.
+              </p>
+              <div className="p-6 rounded-2xl bg-indigo-500/5 border border-indigo-500/10 flex gap-4">
+                <Eye className="text-indigo-400 shrink-0" size={24} />
+                <div>
+                  <h4 className="font-bold text-indigo-300 text-sm mb-1">You are in control</h4>
+                  <p className="text-xs text-white/50 leading-relaxed">
+                    When you generate a report, you create a static "snapshot". You can share this via PDF or secure link. You can revoke secure links at any time.
+                  </p>
+                </div>
+              </div>
+            </section>
+
+            {/* 5. Your Rights */}
+            <section>
+              <h2 className="text-xl font-bold mb-4 text-white/90">5. Your Rights</h2>
+              <div className="space-y-4">
+                <div className="flex gap-4">
+                  <UserCheck className="text-white/40 shrink-0" size={20} />
+                  <div>
+                    <h4 className="font-bold text-white text-sm">Right to Delete</h4>
+                    <p className="text-xs text-white/50">You can delete your account and all associated data permanently at any time.</p>
+                  </div>
+                </div>
+                <div className="flex gap-4">
+                  <Database className="text-white/40 shrink-0" size={20} />
+                  <div>
+                    <h4 className="font-bold text-white text-sm">Right to Export</h4>
+                    <p className="text-xs text-white/50">You can download a copy of all your check-ins and journals.</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* Contact */}
+            <section className="pt-8 border-t border-white/5 text-center">
+              <p className="text-white/40 text-sm mb-2">Questions about privacy?</p>
+              <a href="mailto:privacy@aara.app" className="text-white font-medium hover:underline">privacy@aara.app</a>
+            </section>
+
+          </div>
+        </article>
+      </main>
+
+      <footer className="text-center py-8 border-t border-white/5 bg-[#030305]">
+        <p className="text-white/20 text-xs">© 2026 AARA Wellness</p>
+      </footer>
+    </div>
   )
 }

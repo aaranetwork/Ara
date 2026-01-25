@@ -24,6 +24,12 @@ export default function ReportsPage() {
     const { user, loading: authLoading } = useAuth()
     const router = useRouter()
     const [reports, setReports] = useState<ClinicalReport[]>([])
+    const [eligibility, setEligibility] = useState<{
+        canGeneratePreTherapy: boolean
+        daysRemaining: number
+        checkInsRemaining: number
+        hasBaseline: boolean
+    } | null>(null)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
     const [showGenerateModal, setShowGenerateModal] = useState(false)
@@ -53,6 +59,7 @@ export default function ReportsPage() {
                 if (response.ok) {
                     const data = await response.json()
                     setReports(data.reports || [])
+                    setEligibility(data.eligibility || null)
                 } else {
                     const data = await response.json()
                     setError(data.error || 'Failed to load reports')
@@ -74,13 +81,17 @@ export default function ReportsPage() {
         setGenerating(true)
         try {
             const idToken = await user.getIdToken()
+
+            // Determine report type based on eligibility
+            const type = eligibility?.hasBaseline ? 'therapy' : 'pre_therapy'
+
             const response = await fetch('/api/reports/generate', {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${idToken}`,
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ days: 30 }),
+                body: JSON.stringify({ type }),
             })
 
             if (response.ok) {
@@ -271,7 +282,9 @@ export default function ReportsPage() {
                             className="relative z-10 w-full max-w-md p-8 rounded-[2rem] bg-[#0A0A0C] border border-white/10 shadow-2xl"
                         >
                             <div className="flex items-center justify-between mb-6">
-                                <h3 className="text-2xl font-serif text-white/90">Generate Report</h3>
+                                <h3 className="text-2xl font-serif text-white/90">
+                                    {eligibility?.hasBaseline ? 'Generate Report' : 'Pre-Therapy Insight'}
+                                </h3>
                                 {!generating && (
                                     <button
                                         onClick={() => setShowGenerateModal(false)}
@@ -283,13 +296,42 @@ export default function ReportsPage() {
                             </div>
 
                             <p className="text-white/60 mb-8 leading-relaxed">
-                                This will generate a comprehensive clinical report based on your check-ins, journal entries, and emotional patterns from the last 30 days.
+                                {eligibility?.hasBaseline
+                                    ? "This will generate a comprehensive clinical report based on your check-ins, journal entries, chat conversations, and emotional patterns from the last 30 days."
+                                    : "This will generate your foundational Pre-Therapy Insight Report. It analyzes your first 7 days of activity to establish a clinical baseline."
+                                }
                             </p>
+
+                            {!eligibility?.hasBaseline && !eligibility?.canGeneratePreTherapy ? (
+                                <div className="p-4 bg-white/5 border border-white/10 rounded-2xl mb-8">
+                                    <div className="flex items-center gap-3 text-amber-200 mb-2">
+                                        <Loader2 size={18} className="animate-spin" />
+                                        <span className="font-medium">Building Baseline</span>
+                                    </div>
+                                    <p className="text-sm text-white/50 mb-3">
+                                        We need a bit more data to make this report accurate.
+                                    </p>
+                                    <div className="space-y-2 text-sm">
+                                        {(eligibility?.daysRemaining || 0) > 0 && (
+                                            <div className="flex justify-between">
+                                                <span className="text-white/40">Time remaining</span>
+                                                <span className="text-white/80">{eligibility?.daysRemaining} days</span>
+                                            </div>
+                                        )}
+                                        {(eligibility?.checkInsRemaining || 0) > 0 && (
+                                            <div className="flex justify-between">
+                                                <span className="text-white/40">Check-ins needed</span>
+                                                <span className="text-white/80">{eligibility?.checkInsRemaining} more</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            ) : null}
 
                             <div className="flex gap-3">
                                 <button
                                     onClick={handleGenerateReport}
-                                    disabled={generating}
+                                    disabled={generating || (!eligibility?.hasBaseline && !eligibility?.canGeneratePreTherapy)}
                                     className="flex-1 px-6 py-3 bg-white text-black rounded-full font-medium hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-2"
                                 >
                                     {generating ? (
@@ -298,7 +340,9 @@ export default function ReportsPage() {
                                             <span>Generating...</span>
                                         </>
                                     ) : (
-                                        <span>Generate Report</span>
+                                        <span>
+                                            {eligibility?.hasBaseline ? 'Generate Report' : 'Generate Baseline'}
+                                        </span>
                                     )}
                                 </button>
                                 <button

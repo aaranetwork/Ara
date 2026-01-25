@@ -511,7 +511,9 @@ export default function LandingPage() {
             {/* DISCLAIMER / FOOTER */}
             <footer className="w-full border-t border-white/5 py-12 px-6 bg-black/20">
                 <div className="max-w-6xl mx-auto flex flex-col items-center text-center">
-                    <p className="text-white/20 text-xs mb-8">© 2026 AARA Wellness</p>
+                    <p className="text-white/20 text-xs mb-8">
+                        © 2026 AARA Wellness • <Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
+                    </p>
 
                     <div className="max-w-xl text-center mx-auto opacity-40 hover:opacity-100 transition-opacity">
                         <details className="group">
