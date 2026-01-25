@@ -1,4 +1,4 @@
-'use server'
+
 
 /**
  * User State API Endpoints

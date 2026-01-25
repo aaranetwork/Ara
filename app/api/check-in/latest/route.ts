@@ -1,4 +1,4 @@
-'use server'
+
 
 /**
  * Get Latest Check-In

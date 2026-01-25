@@ -1,4 +1,4 @@
-'use server'
+
 
 /**
  * Reports API Endpoints
