@@ -28,7 +28,7 @@ export default function PrivacyPage() {
               <span className="text-white/40">Core Architecture.</span>
             </h1>
             <p className="text-white/50 text-lg leading-relaxed max-w-xl mx-auto">
-              AARA is built on a "Privacy-First" principle. We don't just promise privacy; we engineer it into every interaction.
+              AARA is built on a &quot;Privacy-First&quot; principle. We don&apos;t just promise privacy; we engineer it into every interaction.
             </p>
           </div>
 
@@ -85,7 +85,7 @@ export default function PrivacyPage() {
             <section>
               <h2 className="text-xl font-bold mb-4 text-white/90">3. How We Process Insights</h2>
               <p className="text-white/60 leading-relaxed mb-4">
-                AARA uses secure AI processing to turn raw text into clinical insights (e.g., "You tend to feel anxious on Sundays").
+                AARA uses secure AI processing to turn raw text into clinical insights (e.g., &quot;You tend to feel anxious on Sundays&quot;).
               </p>
               <ul className="list-disc list-inside space-y-2 text-white/60 ml-2">
                 <li>Raw journals stay encrypted unless you explicitly select them for a report.</li>
@@ -105,7 +105,7 @@ export default function PrivacyPage() {
                 <div>
                   <h4 className="font-bold text-indigo-300 text-sm mb-1">You are in control</h4>
                   <p className="text-xs text-white/50 leading-relaxed">
-                    When you generate a report, you create a static "snapshot". You can share this via PDF or secure link. You can revoke secure links at any time.
+                    When you generate a report, you create a static &quot;snapshot&quot;. You can share this via PDF or secure link. You can revoke secure links at any time.
                   </p>
                 </div>
               </div>
