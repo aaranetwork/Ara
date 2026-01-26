@@ -245,7 +245,7 @@ export default function LandingPage() {
                                 variants={fadeUp}
                                 className="text-[19px] text-white/40 max-w-[480px] leading-relaxed font-light mb-12"
                             >
-                                AARA helps you organize your thoughts before therapy — so your therapist
+                                AARA helps you organize your thoughts before therapy &mdash; so your therapist
                                 understands you faster, and your sessions go deeper.
                             </motion.p>
 
@@ -337,7 +337,7 @@ export default function LandingPage() {
                                         <span className="text-[10px] font-medium text-indigo-200/50 uppercase tracking-widest">Capture</span>
                                     </div>
                                     <div className="bg-white/[0.02] rounded-lg p-2.5 border border-white/[0.02]">
-                                        <p className="text-[13px] text-white/60 italic font-light leading-snug">"Anxious about the review..."</p>
+                                        <p className="text-[13px] text-white/60 italic font-light leading-snug">&quot;Anxious about the review...&quot;</p>
                                     </div>
                                 </motion.div>
 
