@@ -23,7 +23,8 @@ const config: Config = {
         'gradient-glass': 'linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%)',
       },
       fontFamily: {
-        sans: ['var(--font-inter)', 'system-ui', 'sans-serif'],
+        sans: ['var(--font-poppins)', 'system-ui', 'sans-serif'],
+        serif: ['Georgia', 'serif'],
       },
       spacing: {
         'fluid-1': 'clamp(1rem, 2vw, 2rem)',

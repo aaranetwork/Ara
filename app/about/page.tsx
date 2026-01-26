@@ -33,15 +33,14 @@ export default function AboutPage() {
         >
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-[10px] font-bold uppercase tracking-widest mb-6">
             <Brain size={12} />
-            <span>Our Vision</span>
+            <span>Identity</span>
           </div>
-          <h1 className="text-5xl md:text-6xl font-serif font-medium mb-6 tracking-tight">
-            Mental Clarity, <br className="hidden md:block" />
-            <span className="text-white/40">Elevated.</span>
+          <h1 className="text-4xl md:text-5xl font-serif font-medium mb-8 tracking-tight leading-tight">
+            A pre-therapy companion used to <br className="hidden md:block" />
+            <span className="text-white/40">organize thoughts & emotions.</span>
           </h1>
-          <p className="text-lg text-white/60 max-w-2xl mx-auto leading-relaxed">
-            AARA is a signal processor for your mind. We help you structure your thoughts
-            before therapy, translating raw emotions into clear, actionable insights.
+          <p className="text-lg text-white/60 max-w-3xl mx-auto leading-relaxed">
+            AARA turns daily experiences into clear, shareable insights — so therapists understand users faster, and users feel understood.
           </p>
         </motion.div>
 
@@ -50,18 +49,18 @@ export default function AboutPage() {
           {[
             {
               icon: Brain,
-              title: 'Signal Processing',
-              desc: 'Advanced algorithms to identify patterns in your emotional data.'
+              title: 'Reflect',
+              desc: 'Structure what you are feeling before a session.'
             },
             {
               icon: FileText,
-              title: 'Clinical Reports',
-              desc: 'Turn journals into structured summaries for your therapist.'
+              title: 'Summarize',
+              desc: 'Share a clear summary with your therapist.'
             },
             {
               icon: Shield,
-              title: 'Human Centric',
-              desc: 'Designed to support professional therapy, not replace it.'
+              title: 'Understand',
+              desc: 'Reduce anxiety and feel understood faster.'
             }
           ].map((item, i) => (
             <motion.div
@@ -80,34 +79,42 @@ export default function AboutPage() {
           ))}
         </div>
 
-        {/* Mission Statement */}
-        <section className="relative overflow-hidden rounded-[32px] bg-[#0e0e12] border border-white/10 p-10 md:p-16 text-center">
-          <div className="absolute inset-0 bg-gradient-to-tr from-indigo-500/10 via-transparent to-transparent pointer-events-none" />
-          <div className="relative z-10 max-w-2xl mx-auto space-y-8">
-            <h2 className="text-3xl md:text-4xl font-serif font-medium">Important to Understand</h2>
-            <div className="grid sm:grid-cols-2 gap-4 text-left">
-              <div className="flex gap-3 text-white/60 text-sm">
-                <div className="w-1.5 h-1.5 rounded-full bg-white/20 mt-2 shrink-0" />
-                AARA is not a therapist.
+        {/* What AARA is NOT */}
+        <section className="relative overflow-hidden rounded-[32px] bg-[#0e0e12] border border-white/10 p-10 md:p-16 mb-16">
+          <div className="absolute inset-0 bg-gradient-to-tr from-red-500/5 via-transparent to-transparent pointer-events-none" />
+          <div className="relative z-10 max-w-2xl mx-auto space-y-8 text-center">
+            <h2 className="text-3xl font-serif font-medium">What AARA is NOT</h2>
+            <div className="grid sm:grid-cols-2 gap-x-8 gap-y-4 text-left mx-auto max-w-lg">
+              <div className="flex gap-3 text-white/60 text-sm items-center">
+                <div className="w-1.5 h-1.5 rounded-full bg-red-500/50 shrink-0" />
+                Not a therapy replacement
               </div>
-              <div className="flex gap-3 text-white/60 text-sm">
-                <div className="w-1.5 h-1.5 rounded-full bg-white/20 mt-2 shrink-0" />
-                We do not provide medical diagnosis.
+              <div className="flex gap-3 text-white/60 text-sm items-center">
+                <div className="w-1.5 h-1.5 rounded-full bg-red-500/50 shrink-0" />
+                Not diagnosis
               </div>
-              <div className="flex gap-3 text-white/60 text-sm">
-                <div className="w-1.5 h-1.5 rounded-full bg-white/20 mt-2 shrink-0" />
-                Emergency services should be contacted for crises.
+              <div className="flex gap-3 text-white/60 text-sm items-center">
+                <div className="w-1.5 h-1.5 rounded-full bg-red-500/50 shrink-0" />
+                Not a mental-health “solution” app
               </div>
-              <div className="flex gap-3 text-white/60 text-sm">
-                <div className="w-1.5 h-1.5 rounded-full bg-white/20 mt-2 shrink-0" />
-                We facilitate structured self-reflection.
+              <div className="flex gap-3 text-white/60 text-sm items-center">
+                <div className="w-1.5 h-1.5 rounded-full bg-red-500/50 shrink-0" />
+                Not motivation / quotes / meditation
               </div>
             </div>
-            <div className="pt-4">
-              <Link href="/auth/signup" className="inline-block px-8 py-4 bg-white text-black rounded-xl text-sm font-bold uppercase tracking-wider hover:bg-gray-200 transition-colors">
-                Start Your Journey
-              </Link>
-            </div>
+          </div>
+        </section>
+
+        {/* Why does this exist? */}
+        <section className="text-center max-w-3xl mx-auto py-12">
+          <h2 className="text-sm font-bold uppercase tracking-widest text-white/30 mb-8">Why does this exist?</h2>
+          <blockquote className="text-3xl md:text-5xl font-serif leading-tight">
+            &quot;Because most therapy sessions fail not due to lack of care, but due to <span className="text-indigo-400">lack of clarity</span>.&quot;
+          </blockquote>
+          <div className="pt-12">
+            <Link href="/try" className="inline-block px-10 py-5 bg-white text-black rounded-full text-xs font-bold uppercase tracking-widest hover:bg-gray-200 transition-colors shadow-xl shadow-white/5">
+              Start Your Journey
+            </Link>
           </div>
         </section>
 

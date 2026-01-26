@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 import Script from 'next/script'
-import { Inter } from 'next/font/google'
+import { Poppins } from 'next/font/google'
 import './globals.css'
 import { FeatureAccessProvider } from '@/components/providers/FeatureAccessProvider'
 import { AuthProvider } from '@/context/AuthContext'
@@ -12,9 +12,10 @@ import NextTopLoader from 'nextjs-toploader'
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import ScrollToTop from '@/components/ScrollToTop'
 
-const inter = Inter({
+const poppins = Poppins({
+  weight: ['300', '400', '500', '600', '700'],
   subsets: ['latin'],
-  variable: '--font-inter',
+  variable: '--font-poppins',
   display: 'swap',
   preload: true,
 })
@@ -24,13 +25,13 @@ export const metadata: Metadata = {
     default: 'AARA — Your Mental Health Companion',
     template: '%s | AARA',
   },
-  description: 'Organize your thoughts. Show up to therapy ready.',
+  description: 'AARA is a pre-therapy and therapy companion that turns daily experiences into clear, shareable insights — so therapists understand users faster, and users feel understood.',
   keywords: ['AI therapy', 'mental health', '2026 design', 'consciousness processor', 'AARA', 'emotional intelligence'],
   authors: [{ name: 'AARA Intelligence' }],
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://aara.site'),
   openGraph: {
     title: 'AARA — Your Mental Health Companion',
-    description: 'Organize your thoughts. Show up to therapy ready.',
+    description: 'AARA is a pre-therapy and therapy companion that turns daily experiences into clear, shareable insights — so therapists understand users faster, and users feel understood.',
     type: 'website',
     images: ['/og-image.png'],
   },
@@ -73,7 +74,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`${inter.variable}`}>
+    <html lang="en" className={`${poppins.variable}`}>
       <head>
         <Script
           id="json-ld"
