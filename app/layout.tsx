@@ -22,16 +22,16 @@ const poppins = Poppins({
 
 export const metadata: Metadata = {
   title: {
-    default: 'AARA — Your Mental Health Companion',
-    template: '%s | AARA',
+    default: 'AARA Prep — Pre-Therapy Companion',
+    template: '%s | AARA Prep',
   },
-  description: 'AARA is a pre-therapy and therapy companion that turns daily experiences into clear, shareable insights — so therapists understand users faster, and users feel understood.',
-  keywords: ['AI therapy', 'mental health', '2026 design', 'consciousness processor', 'AARA', 'emotional intelligence'],
-  authors: [{ name: 'AARA Intelligence' }],
+  description: 'AARA Prep is a pre-therapy companion that turns daily experiences into clear, shareable insights — so therapists understand users faster, and users feel understood.',
+  keywords: ['AI therapy', 'mental health', 'pre-therapy', 'therapy preparation', 'AARA Prep', 'emotional intelligence'],
+  authors: [{ name: 'AARA One' }],
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://aara.site'),
   openGraph: {
-    title: 'AARA — Your Mental Health Companion',
-    description: 'AARA is a pre-therapy and therapy companion that turns daily experiences into clear, shareable insights — so therapists understand users faster, and users feel understood.',
+    title: 'AARA Prep — Pre-Therapy Companion',
+    description: 'AARA Prep is a pre-therapy companion that turns daily experiences into clear, shareable insights — so therapists understand users faster, and users feel understood.',
     type: 'website',
     images: ['/og-image.png'],
   },
@@ -52,7 +52,7 @@ export const viewport: Viewport = {
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
-  "name": "AARA",
+  "name": "AARA Prep",
   "operatingSystem": "Web",
   "applicationCategory": "HealthApplication",
   "offers": {
@@ -60,7 +60,7 @@ const jsonLd = {
     "price": "0",
     "priceCurrency": "USD"
   },
-  "description": "AI-driven mental health signal processor for structured insights.",
+  "description": "Pre-therapy companion for structured insights.",
   "aggregateRating": {
     "@type": "AggregateRating",
     "ratingValue": "4.9",

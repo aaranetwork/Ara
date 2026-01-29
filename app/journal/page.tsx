@@ -153,7 +153,7 @@ export default function JournalPage() {
             <div className="min-h-screen bg-[#030305] flex items-center justify-center z-[100] relative">
                 <div className="flex flex-col items-center gap-6">
                     <div className="w-16 h-16 rounded-2xl bg-white/[0.03] border border-white/5 flex items-center justify-center">
-                        <Image src="/aara-logo.png" alt="AARA" width={32} height={32} className="opacity-80" />
+                        <Image src="/aara-logo.png" alt="AARA Prep" width={32} height={32} className="opacity-80" />
                     </div>
                     <p className="text-white/70 font-serif text-lg tracking-wide">
                         {typedText}<span className="animate-pulse text-indigo-400">_</span>

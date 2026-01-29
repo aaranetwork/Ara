@@ -11,7 +11,7 @@ export default function PrivacyPage() {
             <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
             Back to Home
           </Link>
-          <span className="font-serif text-lg tracking-tight">AARA Privacy</span>
+          <span className="font-serif text-lg tracking-tight">AARA Prep Privacy</span>
         </div>
       </header>
 
@@ -28,7 +28,7 @@ export default function PrivacyPage() {
               <span className="text-white/40">Core Architecture.</span>
             </h1>
             <p className="text-white/50 text-lg leading-relaxed max-w-xl mx-auto">
-              AARA is built on a &quot;Privacy-First&quot; principle. We don&apos;t just promise privacy; we engineer it into every interaction.
+              AARA Prep is built on a &quot;Privacy-First&quot; principle. We don&apos;t just promise privacy; we engineer it into every interaction.
             </p>
           </div>
 
@@ -50,7 +50,7 @@ export default function PrivacyPage() {
                 You are not the product. Your mental health data is sacred. We believe that for therapy to work, honesty is required, and for honesty to exist, absolute privacy is non-negotiable.
               </p>
               <p className="text-white/60 leading-relaxed">
-                AARA operates as a <strong>Zero-Surprise</strong> platform. No data is shared, processed, or analyzed without your explicit action or consent.
+                AARA Prep operates as a <strong>Zero-Surprise</strong> platform. No data is shared, processed, or analyzed without your explicit action or consent.
               </p>
             </section>
 
@@ -85,7 +85,7 @@ export default function PrivacyPage() {
             <section>
               <h2 className="text-xl font-bold mb-4 text-white/90">3. How We Process Insights</h2>
               <p className="text-white/60 leading-relaxed mb-4">
-                AARA uses secure AI processing to turn raw text into clinical insights (e.g., &quot;You tend to feel anxious on Sundays&quot;).
+                AARA Prep uses secure AI processing to turn raw text into clinical insights (e.g., &quot;You tend to feel anxious on Sundays&quot;).
               </p>
               <ul className="list-disc list-inside space-y-2 text-white/60 ml-2">
                 <li>Raw journals stay encrypted unless you explicitly select them for a report.</li>
@@ -98,7 +98,7 @@ export default function PrivacyPage() {
             <section>
               <h2 className="text-xl font-bold mb-4 text-white/90">4. Sharing with Therapists</h2>
               <p className="text-white/60 leading-relaxed mb-4">
-                AARA does not automatically share anything with your therapist. Sharing is a <strong>manual action</strong> you take.
+                AARA Prep does not automatically share anything with your therapist. Sharing is a <strong>manual action</strong> you take.
               </p>
               <div className="p-6 rounded-2xl bg-indigo-500/5 border border-indigo-500/10 flex gap-4">
                 <Eye className="text-indigo-400 shrink-0" size={24} />
@@ -143,7 +143,7 @@ export default function PrivacyPage() {
       </main>
 
       <footer className="text-center py-8 border-t border-white/5 bg-[#030305]">
-        <p className="text-white/20 text-xs">© 2026 AARA Wellness</p>
+        <p className="text-white/20 text-xs">© 2026 AARA One</p>
       </footer>
     </div>
   )

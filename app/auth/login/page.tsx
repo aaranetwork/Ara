@@ -69,7 +69,7 @@ export default function LoginPage() {
           <Link href="/" className="inline-flex items-center gap-3 mb-6 group">
             <div className="relative">
               <div className="absolute inset-0 bg-white/20 blur-lg rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              <Image src="/aara-logo.png" alt="AARA" width={48} height={48} className="relative rounded-2xl shadow-2xl" />
+              <Image src="/aara-logo.png" alt="AARA Prep" width={48} height={48} className="relative rounded-2xl shadow-2xl" />
             </div>
           </Link>
           <h1 className="text-4xl font-serif font-medium text-white mb-3 tracking-tight">Welcome Back</h1>

@@ -42,7 +42,7 @@ export default function TherapistLoginPage() {
                         <Link href="/" className="flex items-center gap-3 mb-20 group">
                             <div className="relative">
                                 <div className="absolute inset-0 bg-white/20 blur-lg rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                                <Image src="/aara-logo.png" alt="AARA" width={48} height={48} className="relative rounded-2xl shadow-xl" />
+                                <Image src="/aara-logo.png" alt="AARA Prep" width={48} height={48} className="relative rounded-2xl shadow-xl" />
                             </div>
                             <span className="font-serif text-2xl tracking-tight text-white/90">AARA</span>
                         </Link>
@@ -105,7 +105,7 @@ export default function TherapistLoginPage() {
                         {/* Mobile Logo */}
                         <div className="lg:hidden text-center mb-12">
                             <Link href="/" className="inline-block mb-8">
-                                <Image src="/aara-logo.png" alt="AARA" width={56} height={56} className="rounded-2xl mx-auto shadow-2xl" />
+                                <Image src="/aara-logo.png" alt="AARA Prep" width={56} height={56} className="rounded-2xl mx-auto shadow-2xl" />
                             </Link>
                             <div className="inline-flex items-center gap-2 px-4 py-2 bg-purple-500/10 border border-purple-500/20 rounded-full mb-4">
                                 <Shield size={16} className="text-purple-300" />

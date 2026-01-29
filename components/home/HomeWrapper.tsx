@@ -19,7 +19,7 @@ function LoadingScreen() {
     return (
         <div className="min-h-screen bg-aara-dark flex items-center justify-center">
             <div className="flex flex-col items-center gap-4">
-                <Image src="/aara-logo.png" alt="AARA" width={48} height={48} className="rounded-xl animate-pulse" />
+                <Image src="/aara-logo.png" alt="AARA Prep" width={48} height={48} className="rounded-xl animate-pulse" />
                 <div className="w-8 h-1 bg-aara-accent/30 rounded-full animate-pulse" />
             </div>
         </div>

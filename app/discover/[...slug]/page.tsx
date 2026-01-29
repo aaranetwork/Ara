@@ -77,7 +77,7 @@ export default function DiscoverDetail() {
             <nav className="hidden md:block fixed top-0 left-0 right-0 z-50 bg-[#050505]/80 backdrop-blur-xl border-b border-white/5">
                 <div className="max-w-7xl mx-auto px-6 py-3 flex justify-between items-center">
                     <Link href="/" className="flex items-center gap-2 group">
-                        <Image src="/aara-logo.png" alt="AARA" width={32} height={32} className="rounded-lg border border-white/10 group-hover:scale-105 transition-transform" />
+                        <Image src="/aara-logo.png" alt="AARA Prep" width={32} height={32} className="rounded-lg border border-white/10 group-hover:scale-105 transition-transform" />
                         <span className="text-[10px] font-black tracking-[0.4em] text-white/60 uppercase group-hover:text-white transition-colors">AARA</span>
                     </Link>
 

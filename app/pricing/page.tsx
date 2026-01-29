@@ -25,7 +25,7 @@ export default async function PricingPage({ searchParams }: { searchParams: { us
             <span className="text-sm font-medium">Back</span>
           </Link>
           <div className="flex items-center gap-2 opacity-50">
-            <Image src="/aara-logo.png" alt="AARA" width={24} height={24} className="rounded-md" />
+            <Image src="/aara-logo.png" alt="AARA Prep" width={24} height={24} className="rounded-md" />
           </div>
         </div>
       </nav>

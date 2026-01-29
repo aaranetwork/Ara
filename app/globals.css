@@ -87,6 +87,19 @@ html {
   overscroll-behavior-y: none;
 }
 
+/* Smooth scroll for anchor links (hash navigation) */
+html:has([data-smooth-scroll]) {
+  scroll-behavior: smooth;
+}
+
+@supports not selector(:has(*)) {
+
+  /* Fallback for browsers without :has() support */
+  .smooth-scroll-page {
+    scroll-behavior: smooth;
+  }
+}
+
 body {
   overscroll-behavior-y: none;
 }

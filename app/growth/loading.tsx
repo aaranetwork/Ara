@@ -7,7 +7,7 @@ export default function Loading() {
                 <div className="relative">
                     <Image
                         src="/aara-logo.png"
-                        alt="AARA"
+                        alt="AARA Prep"
                         width={48}
                         height={48}
                         className="rounded-xl animate-pulse"

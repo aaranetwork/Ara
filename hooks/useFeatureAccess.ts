@@ -24,7 +24,7 @@ export const useFeatureAccess = () => {
                 return {
                     hasAccess: gateCheck('therapist_match'),
                     requiredPlan: 'plus',
-                    label: 'Available in AARA Plus'
+                    label: 'Available in AARA Prep Plus'
                 }
 
             case 'view_mood_trends_page':

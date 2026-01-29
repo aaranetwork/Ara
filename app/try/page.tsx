@@ -78,7 +78,7 @@ export default function TryPage() {
             {/* Subtle Top Nav */}
             <nav className="absolute top-0 left-0 w-full z-50 px-6 py-8 flex justify-between items-center opacity-0 animate-fade-in safe-area-top" style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }}>
                 <Link href="/" className="flex items-center gap-3 opacity-60 hover:opacity-100 transition-opacity">
-                    <Image src="/aara-logo.png" alt="AARA" width={24} height={24} className="rounded-md" />
+                    <Image src="/aara-logo.png" alt="AARA Prep" width={24} height={24} className="rounded-md" />
                 </Link>
                 <Link href="/auth/login" className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/30 hover:text-white transition-colors">
                     Sign In

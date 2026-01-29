@@ -53,7 +53,7 @@ export async function generateReport(
             if (daysSinceFirst < 7) {
                 return {
                     success: false,
-                    error: `Data too noisy. Please use AARA for ${Math.ceil(7 - daysSinceFirst)} more days to build a stable emotional baseline.`
+                    error: `Data too noisy. Please use AARA Prep for ${Math.ceil(7 - daysSinceFirst)} more days to build a stable emotional baseline.`
                 };
             }
 

@@ -67,7 +67,7 @@ export default function PlansPage() {
 
             {/* Simple Header (No Navbar) */}
             <div className="absolute top-0 left-0 right-0 p-6 flex justify-center z-20">
-                <Image src="/aara-logo.png" alt="AARA" width={32} height={32} className="rounded-lg opacity-80" />
+                <Image src="/aara-logo.png" alt="AARA Prep" width={32} height={32} className="rounded-lg opacity-80" />
             </div>
 
             {/* Background Ambience */}
@@ -136,7 +136,7 @@ export default function PlansPage() {
                         <div className="p-6 relative">
                             <div className="flex justify-between items-start mb-6">
                                 <div>
-                                    <h3 className="text-lg font-bold text-white">AARA Plus</h3>
+                                    <h3 className="text-lg font-bold text-white">AARA Prep Plus</h3>
                                     <p className="text-xs text-indigo-400 font-medium">Monthly Plan</p>
                                 </div>
                                 <div className="text-right">

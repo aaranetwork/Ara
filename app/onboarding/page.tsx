@@ -86,7 +86,7 @@ export default function OnboardingPage() {
 
             {/* Header */}
             <div className="absolute top-0 left-0 right-0 p-6 flex justify-between items-center z-50">
-                <Image src="/aara-logo.png" alt="AARA" width={32} height={32} className="rounded-lg opacity-80" />
+                <Image src="/aara-logo.png" alt="AARA Prep" width={32} height={32} className="rounded-lg opacity-80" />
                 <button
                     onClick={() => router.push('/auth/login')}
                     className="text-white/30 text-[10px] font-bold uppercase tracking-widest hover:text-white transition-colors"
@@ -147,7 +147,7 @@ export default function OnboardingPage() {
                                     <div
                                         key={idx}
                                         className={`h-1 rounded-full transition-all duration-700 ease-[0.22,1,0.36,1] ${idx === currentIndex ? 'w-8 bg-white' :
-                                                idx < currentIndex ? 'w-2 bg-white/40' : 'w-2 bg-white/10'
+                                            idx < currentIndex ? 'w-2 bg-white/40' : 'w-2 bg-white/10'
                                             }`}
                                     />
                                 ))}

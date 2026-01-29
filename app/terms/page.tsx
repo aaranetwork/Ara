@@ -17,7 +17,7 @@ export default function TermsPage() {
             <span className="text-sm font-medium">Back</span>
           </Link>
           <div className="flex items-center gap-2 opacity-50">
-            <Image src="/aara-logo.png" alt="AARA" width={24} height={24} className="rounded-md" />
+            <Image src="/aara-logo.png" alt="AARA Prep" width={24} height={24} className="rounded-md" />
           </div>
         </div>
       </nav>
@@ -42,20 +42,20 @@ export default function TermsPage() {
           className="space-y-12"
         >
           <Section title="Service Description">
-            AARA describes itself as an AI-powered consciousness processor and therapy support tool.
+            AARA Prep describes itself as an AI-powered pre-therapy companion and therapy support tool.
             Our services provide structured self-reflection, journaling assistance, and data visualization.
           </Section>
 
           <Section title="Not Medical Advice">
             <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-200/80 text-sm leading-relaxed mb-4">
-              <strong>Critical Disclaimer:</strong> AARA is not a substitute for professional medical or mental health treatment.
+              <strong>Critical Disclaimer:</strong> AARA Prep is not a substitute for professional medical or mental health treatment.
             </div>
             If you are experiencing a mental health emergency, please contact local emergency services or a mental health professional immediately.
-            AARA is a tool for self-help and organization, not diagnosis or treatment.
+            AARA Prep is a tool for self-help and organization, not diagnosis or treatment.
           </Section>
 
           <Section title="User Responsibilities">
-            By using AARA, you agree to:
+            By using AARA Prep, you agree to:
             <ul className="list-disc list-outside ml-4 space-y-2 mt-4 marker:text-indigo-500/50">
               <li>Maintain the confidentiality of your account credentials.</li>
               <li>Provide accurate information during onboarding.</li>
@@ -65,13 +65,13 @@ export default function TermsPage() {
           </Section>
 
           <Section title="Limitation of Liability">
-            AARA is provided on an &quot;as is&quot; and &quot;as available&quot; basis. We do not guarantee that the service will be uninterrupted or error-free.
-            To the maximum extent permitted by law, AARA shall not be liable for any indirect, incidental, or consequential damages arising from your use of the service.
+            AARA Prep is provided on an &quot;as is&quot; and &quot;as available&quot; basis. We do not guarantee that the service will be uninterrupted or error-free.
+            To the maximum extent permitted by law, AARA Prep shall not be liable for any indirect, incidental, or consequential damages arising from your use of the service.
           </Section>
 
           <div className="pt-8 border-t border-white/5">
             <p className="text-white/40 text-sm">
-              Acceptance of these terms is a condition of usage for AARA services.
+              Acceptance of these terms is a condition of usage for AARA Prep services.
             </p>
           </div>
 

@@ -66,7 +66,7 @@ export default function FeedbackModal({ isOpen, onClose }: { isOpen: boolean, on
                             </div>
                             <div>
                                 <h3 className="text-lg font-bold text-white">Send Feedback</h3>
-                                <p className="text-xs text-gray-500">Help us improve AARA</p>
+                                <p className="text-xs text-gray-500">Help us improve AARA Prep</p>
                             </div>
                         </div>
 

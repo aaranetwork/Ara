@@ -44,8 +44,8 @@ export default function MobileHeader() {
           </button>
 
           <Link href="/" className="flex items-center gap-2">
-            <Image src="/aara-logo.png" alt="AARA" width={32} height={32} className="rounded-lg" />
-            <span className="font-bold tracking-wider text-white">AARA</span>
+            <Image src="/aara-logo.png" alt="AARA Prep" width={32} height={32} className="rounded-lg" />
+            <span className="font-bold tracking-wider text-white">AARA Prep</span>
           </Link>
         </div>
 

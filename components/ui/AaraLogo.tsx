@@ -34,7 +34,7 @@ export default function AaraLogo({ className = '', size = 'md', showText = false
         <div className="relative w-full h-full">
           <Image
             src="/aara-logo.png"
-            alt="AARA Logo"
+            alt="AARA Prep Logo"
             width={imageSizes[size]}
             height={imageSizes[size]}
             className="w-full h-full object-contain select-none"
@@ -44,7 +44,7 @@ export default function AaraLogo({ className = '', size = 'md', showText = false
           />
         </div>
       </div>
-      
+
       {/* AARA Text (optional) */}
       {showText && (
         <span className={`font-bold text-white ${textSizeClasses[size]} transition-colors duration-300`}>

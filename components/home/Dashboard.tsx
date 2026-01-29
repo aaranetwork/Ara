@@ -239,7 +239,7 @@ export default function Dashboard({ user }: { user: any }) {
             <div className="fixed top-0 left-0 right-0 z-[80] px-6 py-4 flex justify-between items-center md:hidden bg-[#030305] border-b border-white/5 shadow-lg">
                 <div className="flex items-center gap-3">
                     <Image src="/aara-logo.png" alt="" width={24} height={24} className="rounded-lg opacity-80" priority sizes="24px" />
-                    <span className="text-[10px] font-bold tracking-[0.2em] text-white/50 uppercase">AARA</span>
+                    <span className="text-[10px] font-bold tracking-[0.2em] text-white/50 uppercase">AARA Prep</span>
                 </div>
                 <Link href="/profile" className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center border border-white/10 text-xs font-medium text-white/70 overflow-hidden relative">
                     {user?.photoURL ? (
@@ -499,7 +499,7 @@ export default function Dashboard({ user }: { user: any }) {
                                     </div>
                                     <div>
                                         <h3 className="text-sm md:text-base font-serif font-medium text-white/90">Feedback</h3>
-                                        <p className="text-[9px] md:text-[10px] text-zinc-500 uppercase tracking-wider mt-0.5 md:mt-1">Improve AARA</p>
+                                        <p className="text-[9px] md:text-[10px] text-zinc-500 uppercase tracking-wider mt-0.5 md:mt-1">Improve AARA Prep</p>
                                     </div>
                                 </button>
                             </div>

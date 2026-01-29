@@ -30,7 +30,7 @@ export default function Navbar() {
                         className="rounded-lg border border-white/10 group-hover:scale-105 transition-transform"
                     />
                     <span className="text-[10px] font-black tracking-[0.4em] text-white/60 uppercase group-hover:text-white transition-colors">
-                        AARA
+                        AARA Prep
                     </span>
                 </Link>
             </div>

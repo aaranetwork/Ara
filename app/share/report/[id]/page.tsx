@@ -123,12 +123,12 @@ export default function SharedReportPage() {
             <nav className="border-b border-white/5 bg-[#030305]/80 backdrop-blur-xl fixed top-0 w-full z-50 print:hidden transition-all duration-300">
                 <div className="max-w-5xl mx-auto px-6 h-20 flex items-center justify-between">
                     <div className="flex items-center gap-3 opacity-80">
-                        <Image src="/aara-logo.png" alt="AARA" width={24} height={24} className="rounded-lg" />
-                        <span className="text-[10px] font-bold tracking-[0.2em] text-white/50 uppercase">AARA Clinical Report</span>
+                        <Image src="/aara-logo.png" alt="AARA Prep" width={24} height={24} className="rounded-lg" />
+                        <span className="text-[10px] font-bold tracking-[0.2em] text-white/50 uppercase">AARA Prep Clinical Report</span>
                     </div>
 
                     <Link href="https://aara.site" target="_blank" className="px-4 py-2 rounded-lg bg-white text-black text-xs font-bold uppercase tracking-wider hover:bg-gray-200 transition-colors">
-                        Get AARA
+                        Get AARA Prep
                     </Link>
                 </div>
             </nav>
@@ -148,7 +148,7 @@ export default function SharedReportPage() {
                             </h1>
                             <div className="flex items-center gap-2 text-sm text-white/40 print:text-black/60">
                                 <span>Source</span>
-                                <span className="text-white font-medium print:text-black">AARA Intelligence</span>
+                                <span className="text-white font-medium print:text-black">AARA Prep</span>
                             </div>
                         </div>
 

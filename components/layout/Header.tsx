@@ -39,8 +39,8 @@ export default function Header() {
   return (
     <header
       className={`sticky top-0 z-50 backdrop-blur-xl transition-all duration-300 ${isScrolled
-          ? 'glass-card border-b border-white/20 shadow-glass'
-          : 'bg-dark-bg/80 border-b border-white/10'
+        ? 'glass-card border-b border-white/20 shadow-glass'
+        : 'bg-dark-bg/80 border-b border-white/10'
         }`}
     >
       <div className="container-custom py-4">
@@ -49,7 +49,7 @@ export default function Header() {
           <Link
             href="/"
             className="flex items-center gap-3"
-            aria-label="AARA Home"
+            aria-label="AARA Prep Home"
           >
             <AaraLogo size="md" showText />
           </Link>

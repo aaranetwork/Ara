@@ -28,7 +28,7 @@ export default function TrialSelector({ userId, open, onClose, onStarted }: Prop
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
       <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
-        <h3 className="mb-2 text-xl font-semibold">Start your 3-day AARA Care trial</h3>
+        <h3 className="mb-2 text-xl font-semibold">Start your 3-day AARA Prep trial</h3>
         <p className="mb-4 text-sm text-gray-600">Choose your tier. You can upgrade later.</p>
         <div className="grid grid-cols-2 gap-3">
           <button

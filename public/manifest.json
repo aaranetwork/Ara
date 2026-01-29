@@ -1,6 +1,6 @@
 {
-  "name": "AARA — Your Mental Health Companion",
-  "short_name": "AARA",
+  "name": "AARA Prep — Pre-Therapy Companion",
+  "short_name": "AARA Prep",
   "description": "Organize your thoughts. Show up to therapy ready.",
   "start_url": "/",
   "display": "standalone",

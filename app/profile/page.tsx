@@ -253,7 +253,7 @@ export default function ProfilePage() {
           </h1>
           <div className="flex items-center justify-center gap-3 text-xs text-white/50 font-bold uppercase tracking-widest">
             <span className="px-3 py-1 rounded-full bg-white/5 border border-white/5">
-              {userPlan === 'free' ? 'Free Plan' : 'AARA Plus'}
+              {userPlan === 'free' ? 'Free Plan' : 'AARA Prep Plus'}
             </span>
             <span className="w-1 h-1 rounded-full bg-white/20" />
             <span>Joined {formatMemberSince()}</span>

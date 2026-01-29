@@ -370,7 +370,7 @@ export default function ChatPage() {
 
             const assistantMessage: Message = {
                 role: 'assistant',
-                content: "AARA is processing your thought pattern. \n\nWe are currently in beta. This response is a placeholder for the actual AI model integration.",
+                content: "AARA Prep is processing your thought pattern. \n\nWe are currently in beta. This response is a placeholder for the actual AI model integration.",
                 timestamp: new Date().toISOString(),
             }
 
@@ -418,7 +418,7 @@ export default function ChatPage() {
             <div className="min-h-screen bg-[#030305] flex items-center justify-center">
                 <div className="flex flex-col items-center gap-6">
                     <div className="w-16 h-16 rounded-2xl bg-white/[0.03] border border-white/5 flex items-center justify-center">
-                        <Image src="/aara-logo.png" alt="AARA" width={32} height={32} className="opacity-80" />
+                        <Image src="/aara-logo.png" alt="AARA Prep" width={32} height={32} className="opacity-80" />
                     </div>
                     <p className="text-white/70 font-serif text-lg tracking-wide">
                         {typedText}<span className="animate-pulse text-indigo-400">_</span>

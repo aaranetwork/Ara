@@ -43,7 +43,7 @@ export default function Sidebar() {
     <aside className="hidden lg:flex fixed left-0 top-0 h-screen w-[72px] bg-[#050505] border-r border-white/10 py-4 flex-col items-center z-40">
       {/* Logo */}
       <Link href="/" className="mb-6" aria-label="Home">
-        <Image src="/aara-logo.png" alt="AARA" width={40} height={40} className="rounded-xl" />
+        <Image src="/aara-logo.png" alt="AARA Prep" width={40} height={40} className="rounded-xl" />
       </Link>
 
       {/* New Chat Button */}
