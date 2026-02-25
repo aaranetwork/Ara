@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronLeft, ArrowRight } from 'lucide-react'
@@ -211,13 +211,13 @@ export default function CheckInPage() {
         checkCanCheckIn()
     }, [user])
 
-    const handleContextToggle = (factor: string) => {
+    const handleContextToggle = useCallback((factor: string) => {
         setContext(prev =>
             prev.includes(factor)
                 ? prev.filter(f => f !== factor)
                 : prev.length < 3 ? [...prev, factor] : prev
         )
-    }
+    }, [])
 
     const handleSave = async () => {
         if (!user || saving) return
@@ -324,7 +324,9 @@ export default function CheckInPage() {
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, y: -20 }}
+                                transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
                                 className="w-full"
+                                style={{ willChange: 'opacity, transform' }}
                             >
                                 <div className="text-center mb-8">
                                     <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 mb-6">
@@ -345,7 +347,9 @@ export default function CheckInPage() {
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, y: -20 }}
+                                transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
                                 className="w-full"
+                                style={{ willChange: 'opacity, transform' }}
                             >
                                 <div className="text-center mb-8">
                                     <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 mb-6">
@@ -363,7 +367,9 @@ export default function CheckInPage() {
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, y: -20 }}
+                                transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
                                 className="w-full"
+                                style={{ willChange: 'opacity, transform' }}
                             >
                                 <div className="text-center mb-8">
                                     <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 mb-6">

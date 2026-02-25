@@ -105,7 +105,9 @@ export default function Dashboard({ user }: { user: any }) {
                 console.error('Failed to load goals', e)
             }
 
-            const validMoods = moods.filter(m => m.value > 0)
+            const sevenDaysAgo = new Date()
+            sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
+            const validMoods = moods.filter(m => m.value > 0 && m.createdAt >= sevenDaysAgo)
             const overallAvg = validMoods.length > 0
                 ? (validMoods.reduce((sum, m) => sum + m.value, 0) / validMoods.length).toFixed(1)
                 : '-'

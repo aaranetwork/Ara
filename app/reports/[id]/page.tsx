@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { motion } from 'framer-motion'
-import { ChevronLeft, Share2, Download, Link2, X } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { ChevronLeft, Share2, Download, Link2, X, FileText, Calendar, TrendingUp, Sparkles, CheckCircle2, Loader2 } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
+import { TextBlurReveal } from '@/components/ui/TextBlurReveal'
 
 interface Report {
     id: string
@@ -100,15 +101,11 @@ export default function ReportDetailPage({ params }: { params: { id: string } })
 
             if (response.ok) {
                 if (method === 'secure_link' && data.shareUrl) {
-                    // Copy to clipboard
                     navigator.clipboard.writeText(data.shareUrl)
                     alert('Link copied to clipboard!')
                 } else if (method === 'pdf' && data.pdfUrl) {
-                    // Download PDF
                     window.open(data.pdfUrl, '_blank')
                 }
-
-                // Refresh report to show new share
                 window.location.reload()
             } else {
                 alert(data.error || 'Failed to share report')
@@ -136,7 +133,6 @@ export default function ReportDetailPage({ params }: { params: { id: string } })
             })
 
             if (response.ok) {
-                // Refresh report
                 window.location.reload()
             } else {
                 alert('Failed to revoke share')
@@ -158,7 +154,10 @@ export default function ReportDetailPage({ params }: { params: { id: string } })
     if (authLoading || loading) {
         return (
             <div className="min-h-screen bg-[#030305] flex items-center justify-center">
-                <div className="text-white/60">Loading...</div>
+                <div className="flex flex-col items-center gap-4">
+                    <Loader2 size={32} className="text-indigo-500 animate-spin" />
+                    <div className="text-white/40 text-sm font-medium tracking-widest uppercase">Deciphering Report...</div>
+                </div>
             </div>
         )
     }
@@ -166,13 +165,17 @@ export default function ReportDetailPage({ params }: { params: { id: string } })
     if (error || !report) {
         return (
             <div className="min-h-screen bg-[#030305] flex items-center justify-center px-6">
-                <div className="text-center">
-                    <h1 className="text-2xl font-serif text-white/60 mb-4">{error || 'Report not found'}</h1>
+                <div className="text-center max-w-sm">
+                    <div className="w-20 h-20 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-8">
+                        <X size={32} className="text-red-400" />
+                    </div>
+                    <h1 className="text-2xl font-serif text-white/90 mb-4">{error || 'Report not found'}</h1>
+                    <p className="text-white/40 mb-8 leading-relaxed">The report you are looking for might have been archived or is temporarily unavailable.</p>
                     <button
                         onClick={() => router.push('/reports')}
-                        className="px-6 py-3 bg-white text-black rounded-full font-medium text-sm"
+                        className="w-full px-8 py-4 bg-white text-black rounded-full font-bold text-xs uppercase tracking-widest hover:scale-105 transition-transform"
                     >
-                        Back to Reports
+                        Return to Portfolio
                     </button>
                 </div>
             </div>
@@ -180,173 +183,248 @@ export default function ReportDetailPage({ params }: { params: { id: string } })
     }
 
     const activeShares = report.shareHistory.filter(s => !s.revokedAt)
-    const canShare = report.type !== 'self_insight' // Self-insight reports are user-only
+    const canShare = report.type !== 'self_insight'
+
+    const containerVariants = {
+        hidden: { opacity: 0 },
+        visible: {
+            opacity: 1,
+            transition: {
+                staggerChildren: 0.1,
+                delayChildren: 0.1
+            }
+        }
+    }
+
+    const itemVariants = {
+        hidden: { opacity: 0, y: 20 },
+        visible: {
+            opacity: 1,
+            y: 0,
+            transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] }
+        }
+    }
 
     return (
-        <div className="min-h-screen bg-[#030305] text-white">
-            {/* Background */}
-            <div className="fixed inset-0 pointer-events-none">
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-indigo-500/5 blur-[100px] rounded-full" />
+        <div className="min-h-screen bg-[#030305] text-[#F3F4F6] pb-32 selection:bg-indigo-500/30">
+            {/* Background Glows */}
+            <div className="fixed inset-0 overflow-hidden pointer-events-none">
+                <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-indigo-500/5 rounded-full blur-[120px]" />
+                <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-purple-500/5 rounded-full blur-[100px]" />
             </div>
 
-            {/* Content */}
-            <div className="relative z-10 max-w-4xl mx-auto px-6 py-8">
-                {/* Header */}
-                <div className="flex items-center justify-between mb-8">
-                    <div className="flex items-center gap-4">
-                        <button
-                            onClick={() => router.push('/reports')}
-                            className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-white/5 transition-colors"
-                        >
-                            <ChevronLeft size={20} className="text-white/60" />
-                        </button>
+            <motion.div
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+                className="bg-[#0A0A0C]/80 backdrop-blur-2xl border border-white/10 rounded-[2.5rem] overflow-hidden shadow-2xl relative"
+            >
+                {/* Document Substrate Glow */}
+                <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-indigo-500/20 to-transparent" />
+
+                {/* Header Section */}
+                <motion.div variants={itemVariants} className="p-10 md:p-14 border-b border-white/5 relative">
+                    <div className="absolute top-0 right-0 p-10 opacity-10 pointer-events-none">
+                        <Sparkles size={120} />
+                    </div>
+                    <h1 className="text-3xl md:text-5xl font-serif text-white/90 capitalize leading-tight mb-4 pr-20">
+                        {report.type.replace('_', ' ')} Report
+                    </h1>
+                    <div className="flex flex-wrap items-center gap-4 text-xs font-bold uppercase tracking-widest text-white/40">
+                        <span className="text-indigo-400">Version {report.version}</span>
+                        <span className="w-1.5 h-1.5 rounded-full bg-white/10" />
+                        <span>{formatDate(report.createdAt)}</span>
+                    </div>
+
+                    <div className="mt-10 p-5 rounded-2xl bg-white/[0.02] border border-white/5 flex items-center gap-4 inline-flex">
+                        <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center">
+                            <TrendingUp size={18} className="text-indigo-400/80" />
+                        </div>
                         <div>
-                            <h1 className="text-2xl font-serif capitalize">{report.type.replace('_', ' ')} Report</h1>
-                            <p className="text-sm text-white/40">Version {report.version} · {formatDate(report.createdAt)}</p>
+                            <div className="text-[10px] font-bold uppercase tracking-widest text-white/30 mb-0.5">Analysis Window</div>
+                            <div className="text-sm font-medium text-white/80">
+                                {formatDate(report.periodStart)} — {formatDate(report.periodEnd)}
+                            </div>
                         </div>
                     </div>
+                </motion.div>
 
-                    {canShare && (
-                        <button
-                            onClick={() => setShowShareModal(true)}
-                            className="px-6 py-3 bg-indigo-500 text-white rounded-full font-medium text-sm flex items-center gap-2 hover:bg-indigo-600 transition-colors"
-                        >
-                            <Share2 size={16} />
-                            Share with Therapist
-                        </button>
-                    )}
-                </div>
+                <div className="px-10 md:px-14 py-12 space-y-16">
 
-                {/* Period */}
-                <div className="mb-8 p-4 bg-white/5 border border-white/10 rounded-xl">
-                    <div className="text-sm text-white/60">
-                        {formatDate(report.periodStart)} - {formatDate(report.periodEnd)}
-                    </div>
-                </div>
+                    {/* Summary Section */}
+                    <motion.section variants={itemVariants} className="space-y-6">
+                        <div className="flex items-center gap-3 border-b border-white/5 pb-4">
+                            <div className="w-1 h-6 bg-indigo-500 rounded-full" />
+                            <h2 className="text-xl font-serif text-white/80 uppercase tracking-widest">Clinical Summary</h2>
+                        </div>
+                        <p className="text-white/70 leading-relaxed text-lg font-light pl-4 border-l-2 border-white/10 italic">
+                            {report.content.summary}
+                        </p>
+                    </motion.section>
 
-                {/* Summary */}
-                <section className="mb-8">
-                    <h2 className="text-xl font-serif mb-4">Summary</h2>
-                    <p className="text-white/70 leading-relaxed">{report.content.summary}</p>
-                </section>
-
-                {/* Themes */}
-                <section className="mb-8">
-                    <h2 className="text-xl font-serif mb-4">Themes</h2>
-                    <div className="space-y-3">
-                        {report.content.themes.map((theme, i) => (
-                            <div key={i} className="p-4 bg-white/5 border border-white/10 rounded-xl">
-                                <div className="flex items-center justify-between mb-2">
-                                    <h3 className="font-medium">{theme.name}</h3>
-                                    <div className="text-sm text-white/40">{Math.round(theme.strength * 100)}%</div>
-                                </div>
-                                <p className="text-sm text-white/60">{theme.description}</p>
-                            </div>
-                        ))}
-                    </div>
-                </section>
-
-                {/* Patterns */}
-                <section className="mb-8">
-                    <h2 className="text-xl font-serif mb-4">Patterns</h2>
-                    <div className="space-y-3">
-                        {report.content.patterns.map((pattern, i) => (
-                            <div key={i} className="p-4 bg-white/5 border border-white/10 rounded-xl">
-                                <div className="flex items-center gap-2 mb-2">
-                                    <span className="px-2 py-1 bg-white/10 rounded text-xs">{pattern.type}</span>
-                                    <span className="text-xs text-white/40">{pattern.frequency}</span>
-                                    <span className="text-xs text-white/40">· {pattern.trend}</span>
-                                </div>
-                                <p className="text-sm text-white/70">{pattern.description}</p>
-                            </div>
-                        ))}
-                    </div>
-                </section>
-
-                {/* Recommendations */}
-                <section className="mb-8">
-                    <h2 className="text-xl font-serif mb-4">Recommendations</h2>
-                    <ul className="space-y-2">
-                        {report.content.recommendations.map((rec, i) => (
-                            <li key={i} className="flex items-start gap-3 text-white/70">
-                                <span className="text-indigo-400 mt-1">•</span>
-                                {rec}
-                            </li>
-                        ))}
-                    </ul>
-                </section>
-
-                {/* Share History */}
-                {activeShares.length > 0 && (
-                    <section>
-                        <h2 className="text-xl font-serif mb-4">Shared With</h2>
-                        <div className="space-y-2">
-                            {activeShares.map((share) => (
-                                <div key={share.id} className="p-4 bg-white/5 border border-white/10 rounded-xl flex items-center justify-between">
-                                    <div>
-                                        <div className="flex items-center gap-2 mb-1">
-                                            {share.shareMethod === 'pdf' ? <Download size={14} /> : <Link2 size={14} />}
-                                            <span className="text-sm capitalize">{share.shareMethod.replace('_', ' ')}</span>
-                                        </div>
-                                        <div className="text-xs text-white/40">
-                                            Shared {formatDate(share.sharedAt)}
-                                            {share.accessedAt && ` · Accessed ${share.accessCount} time${share.accessCount !== 1 ? 's' : ''}`}
-                                        </div>
+                    {/* Themes Grid */}
+                    <motion.section variants={itemVariants} className="space-y-6">
+                        <div className="flex items-center gap-3 border-b border-white/5 pb-4">
+                            <div className="w-1 h-6 bg-purple-500 rounded-full" />
+                            <h2 className="text-xl font-serif text-white/80 uppercase tracking-widest">Core Psychological Themes</h2>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pl-4">
+                            {report.content.themes.map((theme, i) => (
+                                <div key={i} className="space-y-2">
+                                    <div className="flex items-center justify-between">
+                                        <h3 className="font-serif text-lg text-white/90">{theme.name}</h3>
+                                        <span className="text-xs font-mono text-purple-400/80">{Math.round(theme.strength * 100)}% Match</span>
                                     </div>
-                                    <button
-                                        onClick={() => handleRevokeShare(share.id)}
-                                        className="px-4 py-2 bg-red-500/10 text-red-200 rounded-full text-sm hover:bg-red-500/20 transition-colors"
-                                    >
-                                        Revoke
-                                    </button>
+                                    <p className="text-sm text-white/40 leading-relaxed">{theme.description}</p>
                                 </div>
                             ))}
                         </div>
-                    </section>
-                )}
-            </div>
+                    </motion.section>
+
+                    {/* Patterns Table/List */}
+                    <motion.section variants={itemVariants} className="space-y-6">
+                        <div className="flex items-center gap-3 border-b border-white/5 pb-4">
+                            <div className="w-1 h-6 bg-blue-500 rounded-full" />
+                            <h2 className="text-xl font-serif text-white/80 uppercase tracking-widest">Behavioral Patterns</h2>
+                        </div>
+                        <div className="space-y-4 pl-4">
+                            {report.content.patterns.map((pattern, i) => (
+                                <div key={i} className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-4 rounded-xl bg-white/[0.02] border border-white/5">
+                                    <div className="flex items-center gap-3">
+                                        <span className="px-2 py-1 bg-white/5 rounded text-[9px] font-bold uppercase tracking-wider text-white/40">{pattern.type}</span>
+                                        <h4 className="text-white/80 font-medium text-sm">{pattern.description}</h4>
+                                    </div>
+                                    <div className="flex items-center gap-4 text-[10px] font-bold uppercase tracking-widest">
+                                        <div className="text-white/30">Freq: <span className="text-white/60">{pattern.frequency}</span></div>
+                                        <div className="w-1 h-1 rounded-full bg-white/10" />
+                                        <div className="text-white/30">Trend: <span className="text-blue-400">{pattern.trend}</span></div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </motion.section>
+
+                    {/* Recommendations Section */}
+                    <motion.section variants={itemVariants} className="space-y-6">
+                        <div className="flex items-center gap-3 border-b border-white/5 pb-4">
+                            <div className="w-1 h-6 bg-emerald-500 rounded-full" />
+                            <h2 className="text-xl font-serif text-white/80 uppercase tracking-widest">Proposed Focus Areas</h2>
+                        </div>
+                        <ul className="space-y-4 pl-4">
+                            {report.content.recommendations.map((rec, i) => (
+                                <li key={i} className="flex items-start gap-4 text-white/70">
+                                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500/50 mt-2.5 flex-shrink-0" />
+                                    <span className="text-md leading-relaxed font-light">{rec}</span>
+                                </li>
+                            ))}
+                        </ul>
+                    </motion.section>
+
+                    {/* Share History embedded at bottom of document */}
+                    {activeShares.length > 0 && (
+                        <motion.section variants={itemVariants} className="pt-12 mt-12 border-t border-white/5">
+                            <h2 className="text-sm font-bold uppercase tracking-widest text-white/30 mb-6 pl-4">Clinical Access History</h2>
+                            <div className="space-y-2 pl-4">
+                                {activeShares.map((share) => (
+                                    <div key={share.id} className="flex items-center justify-between py-3 border-b border-white/5 last:border-0">
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
+                                                {share.shareMethod === 'pdf' ? <Download size={14} className="text-white/40" /> : <Link2 size={14} className="text-white/40" />}
+                                            </div>
+                                            <div>
+                                                <div className="text-xs font-medium text-white/80 capitalize">
+                                                    {share.shareMethod.replace('_', ' ')} Access
+                                                </div>
+                                                <div className="text-[9px] text-white/40 uppercase tracking-widest">
+                                                    Shared {formatDate(share.sharedAt)}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <button
+                                            onClick={() => handleRevokeShare(share.id)}
+                                            className="px-4 py-1.5 text-red-400 text-[10px] font-bold uppercase tracking-widest hover:bg-red-500/10 rounded-md transition-colors"
+                                        >
+                                            Revoke
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        </motion.section>
+                    )}
+
+                </div>
+            </motion.div>
 
             {/* Share Modal */}
-            {showShareModal && (
-                <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-6">
-                    <div className="bg-[#0a0a0f] border border-white/10 rounded-2xl p-8 max-w-md w-full">
-                        <div className="flex items-center justify-between mb-6">
-                            <h2 className="text-2xl font-serif">Share Report</h2>
-                            <button onClick={() => setShowShareModal(false)} className="text-white/60 hover:text-white">
-                                <X size={20} />
-                            </button>
-                        </div>
+            <AnimatePresence>
+                {showShareModal && (
+                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="absolute inset-0 bg-[#030305]/80 backdrop-blur-md"
+                            onClick={() => !sharing && setShowShareModal(false)}
+                        />
 
-                        <p className="text-white/60 mb-6">Choose how to share this report with your therapist:</p>
-
-                        <div className="space-y-3">
-                            <button
-                                onClick={() => handleShare('pdf')}
-                                disabled={sharing}
-                                className="w-full p-4 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-colors text-left disabled:opacity-50"
-                            >
-                                <div className="flex items-center gap-3 mb-2">
-                                    <Download size={20} />
-                                    <span className="font-medium">Download PDF</span>
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                            className="relative z-10 w-full max-w-md p-10 rounded-[2.5rem] bg-[#0A0A0C] border border-white/10 shadow-2xl"
+                        >
+                            <div className="flex items-center justify-between mb-8">
+                                <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center">
+                                    <Share2 size={24} className="text-indigo-400" />
                                 </div>
-                                <p className="text-sm text-white/60">Get a PDF file to share directly</p>
-                            </button>
+                                <button onClick={() => setShowShareModal(false)} className="text-white/20 hover:text-white p-2">
+                                    <X size={24} />
+                                </button>
+                            </div>
 
-                            <button
-                                onClick={() => handleShare('secure_link')}
-                                disabled={sharing}
-                                className="w-full p-4 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-colors text-left disabled:opacity-50"
-                            >
-                                <div className="flex items-center gap-3 mb-2">
-                                    <Link2 size={20} />
-                                    <span className="font-medium">Secure Link</span>
-                                </div>
-                                <p className="text-sm text-white/60">Copy a private link (you can revoke later)</p>
-                            </button>
-                        </div>
+                            <h2 className="text-3xl font-serif text-white/90 mb-4">Clinical Bridge</h2>
+                            <p className="text-white/40 mb-10 leading-relaxed text-sm">Choose how you wish to securely provide this synthesis to your practitioner.</p>
+
+                            <div className="space-y-4">
+                                <motion.button
+                                    whileHover={{ scale: 1.02 }}
+                                    whileTap={{ scale: 0.98 }}
+                                    onClick={() => handleShare('pdf')}
+                                    disabled={sharing}
+                                    className="w-full group p-6 bg-white/5 border border-white/10 rounded-3xl hover:bg-white text-white hover:text-black transition-all flex items-center justify-between disabled:opacity-50"
+                                >
+                                    <div className="flex items-center gap-4 text-left">
+                                        <Download size={24} />
+                                        <div>
+                                            <div className="font-bold text-xs uppercase tracking-widest">Document Export (PDF)</div>
+                                            <div className="text-[10px] opacity-60">High-Fidelity Clinical Layout</div>
+                                        </div>
+                                    </div>
+                                    <ChevronLeft size={20} className="rotate-180 opacity-40 group-hover:opacity-100 transition-opacity" />
+                                </motion.button>
+
+                                <motion.button
+                                    whileHover={{ scale: 1.02 }}
+                                    whileTap={{ scale: 0.98 }}
+                                    onClick={() => handleShare('secure_link')}
+                                    disabled={sharing}
+                                    className="w-full group p-6 bg-white/5 border border-white/10 rounded-3xl hover:bg-white text-white hover:text-black transition-all flex items-center justify-between disabled:opacity-50"
+                                >
+                                    <div className="flex items-center gap-4 text-left">
+                                        <Link2 size={24} />
+                                        <div>
+                                            <div className="font-bold text-xs uppercase tracking-widest">Digital Vault (Link)</div>
+                                            <div className="text-[10px] opacity-60">Temporary, Revocable URL</div>
+                                        </div>
+                                    </div>
+                                    <ChevronLeft size={20} className="rotate-180 opacity-40 group-hover:opacity-100 transition-opacity" />
+                                </motion.button>
+                            </div>
+                        </motion.div>
                     </div>
-                </div>
-            )}
+                )}
+            </AnimatePresence>
         </div>
     )
 }
+

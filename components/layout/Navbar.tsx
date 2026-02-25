@@ -1,21 +1,22 @@
 'use client'
 
+import { memo, useMemo } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { Home, MessageSquare, BookOpen, TrendingUp, User } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
 
-export default function Navbar() {
+export default memo(function Navbar() {
     const { user } = useAuth()
     const pathname = usePathname()
 
-    const navItems = [
+    const navItems = useMemo(() => [
         { href: '/', label: 'Home', icon: Home },
         { href: '/chat', label: 'Chat', icon: MessageSquare },
         { href: '/journal', label: 'Journal', icon: BookOpen },
         { href: '/growth', label: 'Growth', icon: TrendingUp },
-    ]
+    ], [])
 
     return (
         <nav className="flex justify-between md:justify-center items-center px-4 py-3 relative max-w-7xl mx-auto">
@@ -106,5 +107,5 @@ export default function Navbar() {
             </div>
         </nav>
     )
-}
+})
 

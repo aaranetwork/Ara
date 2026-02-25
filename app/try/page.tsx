@@ -1,21 +1,89 @@
 'use client'
 
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useRouter } from 'next/navigation'
-import { ArrowRight, Leaf, Heart, ChevronRight, Send } from 'lucide-react'
+import { ArrowRight, Leaf, Heart, ChevronRight, Send, ChevronLeft } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { TextBlurReveal } from '@/components/ui/TextBlurReveal'
-
-// Reusing gradients from check-in for consistency
-const GRADIENTS: Record<string, string> = {
-    rose: 'from-rose-500/10 via-rose-500/5 to-transparent',
-    violet: 'from-violet-500/10 via-violet-500/5 to-transparent',
-    emerald: 'from-emerald-500/10 via-emerald-500/5 to-transparent',
-}
 
 type Stage = 'mood' | 'reflect' | 'insight'
+
+// Optimized GPU-accelerated slider - same as check-in page
+function FastMoodSlider({ value, onChange }: { value: number; onChange: (v: number) => void }) {
+    const [isActive, setIsActive] = useState(false)
+    const percentage = ((value - 1) / 9) * 100
+
+    return (
+        <div className="w-full max-w-md mx-auto px-4 sm:px-6">
+            {/* Number Display */}
+            <div className="flex items-center justify-center gap-2 sm:gap-3 mb-8 sm:mb-12">
+                <span className="text-6xl sm:text-7xl md:text-8xl font-serif text-white tabular-nums">{value}</span>
+                <span className="text-2xl sm:text-3xl text-white/30 font-light">/10</span>
+            </div>
+
+            {/* Slider Container */}
+            <div className="relative">
+                {/* Labels */}
+                <div className="flex justify-between mb-3 sm:mb-4 px-1">
+                    <span className="text-[9px] sm:text-[10px] uppercase tracking-widest font-semibold text-white/40">Heavy</span>
+                    <span className="text-[9px] sm:text-[10px] uppercase tracking-widest font-semibold text-white/40">Light</span>
+                </div>
+
+                {/* Track Container */}
+                <div className="relative h-16 sm:h-12 flex items-center">
+                    {/* Track */}
+                    <div className="relative w-full h-2.5 sm:h-2 bg-white/5 rounded-full">
+                        {/* Fill Bar - GPU accelerated */}
+                        <div
+                            className="absolute inset-y-0 left-0 bg-white/20 rounded-full origin-left transition-transform duration-150 ease-out"
+                            style={{
+                                transform: `scaleX(${percentage / 100})`,
+                                willChange: 'transform'
+                            }}
+                        />
+                    </div>
+
+                    {/* Thumb */}
+                    <div
+                        className={`absolute rounded-full flex items-center justify-center border transition-all duration-150 ease-out ${isActive
+                            ? 'w-8 h-8 sm:w-7 sm:h-7 shadow-[0_0_24px_rgba(255,255,255,0.5)] scale-110 border-white/20'
+                            : 'w-7 h-7 sm:w-6 sm:h-6 shadow-[0_0_12px_rgba(255,255,255,0.3)] border-white/10'
+                            } bg-white`}
+                        style={{
+                            left: `${percentage}%`,
+                            top: '50%',
+                            transform: 'translate(-50%, -50%)',
+                            willChange: 'transform'
+                        }}
+                    >
+                        <div className={`rounded-full bg-black transition-all duration-150 ${isActive ? 'w-2 h-2' : 'w-1.5 h-1.5'}`} />
+                    </div>
+
+                    {/* Input Overlay */}
+                    <input
+                        type="range"
+                        min="1"
+                        max="10"
+                        step="1"
+                        value={value}
+                        onChange={(e) => onChange(Number(e.target.value))}
+                        onMouseDown={() => setIsActive(true)}
+                        onMouseUp={() => setIsActive(false)}
+                        onTouchStart={() => setIsActive(true)}
+                        onTouchEnd={() => setIsActive(false)}
+                        className="absolute inset-0 w-full opacity-0 cursor-pointer touch-none"
+                        style={{
+                            margin: 0,
+                            padding: 0,
+                            WebkitTapHighlightColor: 'transparent'
+                        }}
+                    />
+                </div>
+            </div>
+        </div>
+    )
+}
 
 export default function TryPage() {
     const router = useRouter()
@@ -28,19 +96,17 @@ export default function TryPage() {
     // Focus textarea on mount of stage
     useEffect(() => {
         if (stage === 'reflect') {
-            // Increased delay to 700ms to ensure transition completes before keyboard slides up (which causes layout thrashing)
-            setTimeout(() => textareaRef.current?.focus(), 700)
+            setTimeout(() => textareaRef.current?.focus(), 500)
         }
     }, [stage])
 
-    const handleMoodNext = () => {
+    const handleMoodNext = useCallback(() => {
         setStage('reflect')
-    }
+    }, [])
 
-    const handleReflectNext = async () => {
+    const handleReflectNext = useCallback(async () => {
         if (!reflection.trim()) return
         setIsAnalyzing(true)
-        // Simulate deep AI thinking
         await new Promise(resolve => setTimeout(resolve, 2000))
         setIsAnalyzing(false)
         setStage('insight')
@@ -49,302 +115,210 @@ export default function TryPage() {
             sessionStorage.setItem('guest_mood', mood.toString())
             sessionStorage.setItem('guest_reflection', reflection)
         }
-    }
+    }, [reflection, mood])
 
-    const handleSaveProgress = () => {
+    const handleSaveProgress = useCallback(() => {
         router.push('/auth/signup?mode=save')
-    }
-
-    // Determine current gradient theme
-    const currentTheme = stage === 'mood' ? 'rose' : stage === 'reflect' ? 'violet' : 'emerald'
+    }, [router])
 
     return (
-        <div className="min-h-screen bg-[#030305] text-[#F3F4F6] font-sans flex flex-col items-center justify-center relative overflow-hidden selection:bg-white/20 select-none">
+        <div className="min-h-screen bg-[#030305] text-white relative overflow-hidden">
+            {/* Background - Same as check-in */}
+            <div className="fixed inset-0 pointer-events-none">
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-indigo-500/5 blur-[100px] rounded-full" />
+            </div>
 
-            {/* Dynamic Ambient Background - Optimized: Removed mix-blend-overlay from noise */}
-            <motion.div
-                key={currentTheme}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 1.5 }}
-                className={`absolute inset-0 bg-gradient-radial ${GRADIENTS[currentTheme]} opacity-60 pointer-events-none`}
-                style={{ willChange: 'opacity' }}
-            />
+            {/* Content */}
+            <div className="relative z-10">
+                {/* Header */}
+                <nav className="flex items-center justify-between px-6 py-6">
+                    <button
+                        onClick={() => stage === 'mood' ? router.push('/') : setStage('mood')}
+                        className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-white/5 transition-colors"
+                    >
+                        <ChevronLeft size={20} className="text-white/60" />
+                    </button>
 
-            {/* Grain Texture Overlay - Optimized: Removed mix-blend-overlay which is expensive on mobile */}
-            {/* Reduced opacity to match the visual effect without blending */}
-            <div className="absolute inset-0 opacity-[0.05] bg-[url('/noise.svg')] pointer-events-none"></div>
+                    <Link href="/" className="flex items-center gap-2 opacity-60 hover:opacity-100 transition-opacity">
+                        <Image src="/aara-logo.png" alt="AARA Prep" width={24} height={24} className="rounded-md" />
+                    </Link>
 
-            {/* Subtle Top Nav */}
-            <nav className="absolute top-0 left-0 w-full z-50 px-6 py-8 flex justify-between items-center opacity-0 animate-fade-in safe-area-top" style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }}>
-                <Link href="/" className="flex items-center gap-3 opacity-60 hover:opacity-100 transition-opacity">
-                    <Image src="/aara-logo.png" alt="AARA Prep" width={24} height={24} className="rounded-md" />
-                </Link>
-                <Link href="/auth/login" className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/30 hover:text-white transition-colors">
-                    Sign In
-                </Link>
-            </nav>
+                    <Link href="/auth/login" className="text-[10px] font-bold uppercase tracking-[0.15em] text-white/40 hover:text-white transition-colors px-3 py-2">
+                        Sign In
+                    </Link>
+                </nav>
 
-            {/* Main Stage */}
-            <div className="relative z-10 w-full max-w-lg px-6 flex flex-col items-center justify-center min-h-[70vh]">
-                <AnimatePresence mode="wait">
+                {/* Main Content */}
+                <div className="flex items-center justify-center min-h-[calc(100vh-200px)] px-6">
+                    <AnimatePresence mode="wait">
 
-                    {/* STAGE 1: MOOD - Using PremiumSlider */}
-                    {stage === 'mood' && (
-                        <motion.div
-                            key="mood"
-                            initial={{ opacity: 0, scale: 0.98, y: 10 }}
-                            animate={{ opacity: 1, scale: 1, y: 0 }}
-                            exit={{ opacity: 0, scale: 0.98, y: -10 }}
-                            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                            className="w-full flex flex-col items-center"
-                            style={{ willChange: 'opacity, transform' }}
-                        >
-                            {/* Step Identifier */}
-                            <div className="flex justify-center mb-12">
-                                <motion.div
-                                    initial={{ opacity: 0, y: 10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: 0.2 }}
-                                    className="px-4 py-1.5 rounded-full border border-white/5 bg-white/[0.02] backdrop-blur-md flex items-center gap-2"
-                                >
-                                    <Heart size={12} className="text-white/70" />
-                                    <span className="text-[10px] font-medium uppercase tracking-[0.2em] text-white/50">First Check-in</span>
-                                </motion.div>
-                            </div>
-
-
-                            {/* Question */}
-                            <div className="mb-20 px-2">
-                                <TextBlurReveal
-                                    text="How is your mind feeling right now?"
-                                    className="text-3xl md:text-5xl font-serif text-center font-light leading-[1.2] text-white/90"
-                                    delay={0.2}
-                                />
-                            </div>
-
-
-                            {/* Slider */}
-                            <div className="mb-16 w-full max-w-md mx-auto px-4">
-                                {/* Number Display */}
-                                <div className="flex items-center justify-center gap-3 mb-12">
-                                    <span className="text-7xl font-serif text-white tabular-nums">{mood}</span>
-                                    <span className="text-3xl text-white/30 font-light">/10</span>
-                                </div>
-
-                                {/* Slider Container */}
-                                <div className="relative">
-                                    {/* Labels */}
-                                    <div className="flex justify-between mb-4">
-                                        <span className="text-[10px] uppercase tracking-widest font-semibold text-white/40">Heavy</span>
-                                        <span className="text-[10px] uppercase tracking-widest font-semibold text-white/40">Light</span>
-                                    </div>
-
-                                    {/* Track Container */}
-                                    <div className="relative h-12 flex items-center">
-                                        {/* Track */}
-                                        <div className="relative w-full h-2 bg-white/5 rounded-full">
-                                            {/* Fill */}
-                                            <div
-                                                className="absolute left-0 top-0 h-full bg-white/20 rounded-full pointer-events-none"
-                                                style={{ width: `${((mood - 1) / 9) * 100}%` }}
-                                            />
-                                        </div>
-
-                                        {/* Thumb */}
-                                        <div
-                                            className="absolute w-6 h-6 bg-white rounded-full shadow-lg flex items-center justify-center border border-white/10 pointer-events-none"
-                                            style={{
-                                                left: `calc(${((mood - 1) / 9) * 100}% - 12px)`,
-                                                top: '50%',
-                                                transform: 'translateY(-50%)'
-                                            }}
-                                        >
-                                            <div className="w-1.5 h-1.5 bg-black rounded-full" />
-                                        </div>
-
-                                        {/* Invisible Input Overlay */}
-                                        <input
-                                            type="range"
-                                            min="1"
-                                            max="10"
-                                            step="1"
-                                            value={mood}
-                                            onChange={(e) => setMood(Number(e.target.value))}
-                                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                                            style={{ WebkitTapHighlightColor: 'transparent' }}
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-
-
-                            {/* Continue Button */}
+                        {/* STAGE 1: MOOD */}
+                        {stage === 'mood' && (
                             <motion.div
+                                key="mood"
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -20 }}
+                                transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                                className="w-full"
+                            >
+                                <div className="text-center mb-8">
+                                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 mb-6">
+                                        <Heart size={14} className="text-white/70" />
+                                        <span className="text-[10px] font-bold uppercase tracking-wider text-white/60">First Check-in</span>
+                                    </div>
+                                    <h1 className="text-3xl md:text-4xl font-serif text-white/90 mb-16">
+                                        How is your mind feeling right now?
+                                    </h1>
+                                </div>
+                                <FastMoodSlider value={mood} onChange={setMood} />
+                            </motion.div>
+                        )}
+
+                        {/* STAGE 2: REFLECT */}
+                        {stage === 'reflect' && !isAnalyzing && (
+                            <motion.div
+                                key="reflect"
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -20 }}
+                                transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                                className="w-full max-w-lg mx-auto"
+                            >
+                                <div className="text-center mb-8">
+                                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 mb-6">
+                                        <Leaf size={14} className="text-white/70" />
+                                        <span className="text-[10px] font-bold uppercase tracking-wider text-white/60">Reflection</span>
+                                    </div>
+                                    <h1 className="text-3xl md:text-4xl font-serif text-white/90">
+                                        What brought you here today?
+                                    </h1>
+                                </div>
+
+                                {/* Simple Textarea */}
+                                <div className="mt-10">
+                                    <textarea
+                                        ref={textareaRef}
+                                        value={reflection}
+                                        onChange={(e) => setReflection(e.target.value)}
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter' && !e.shiftKey) {
+                                                e.preventDefault()
+                                                handleReflectNext()
+                                            }
+                                        }}
+                                        placeholder="I'm here because..."
+                                        className="w-full bg-white/5 border border-white/10 rounded-xl text-white/90 placeholder-white/30 px-5 py-4 min-h-[140px] resize-none text-lg leading-relaxed outline-none focus:border-white/20 transition-colors"
+                                    />
+                                    <div className="flex justify-end mt-4">
+                                        <button
+                                            onClick={handleReflectNext}
+                                            disabled={!reflection.trim()}
+                                            className={`px-6 py-3 rounded-full font-medium transition-all ${reflection.trim()
+                                                ? 'bg-white text-black hover:scale-105'
+                                                : 'bg-white/10 text-white/30 cursor-not-allowed'
+                                                }`}
+                                        >
+                                            Continue
+                                        </button>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        )}
+
+                        {/* LOADING STATE */}
+                        {isAnalyzing && (
+                            <motion.div
+                                key="analyzing"
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
-                                transition={{ delay: 0.5 }}
-                                className="flex justify-center"
+                                exit={{ opacity: 0 }}
+                                className="flex flex-col items-center justify-center"
                             >
-                                <button
-                                    onClick={handleMoodNext}
-                                    className="group relative px-10 py-5 bg-[#F3F4F6] text-black rounded-full font-medium text-sm tracking-widest uppercase hover:px-12 transition-all duration-300 flex items-center gap-3 overflow-hidden shadow-lg shadow-white/5"
-                                >
-                                    <span className="relative z-10">Continue</span>
-                                    <ArrowRight size={16} className="relative z-10 group-hover:translate-x-1 transition-transform" />
-                                    <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-md" />
-                                </button>
+                                <div className="relative w-24 h-24 mb-8">
+                                    <div className="absolute inset-0 bg-indigo-500/20 blur-[40px] rounded-full animate-pulse" />
+                                    <div className="absolute inset-0 border border-white/10 rounded-full animate-ping" style={{ animationDuration: '2s' }} />
+                                    <div className="absolute inset-8 bg-white/80 rounded-full shadow-[0_0_30px_rgba(255,255,255,0.4)] animate-pulse" />
+                                </div>
+                                <span className="text-white/40 text-xs tracking-[0.2em] uppercase animate-pulse">Analyzing Pattern...</span>
                             </motion.div>
-                        </motion.div>
-                    )}
+                        )}
 
-                    {/* STAGE 2: REFLECT */}
-                    {stage === 'reflect' && !isAnalyzing && (
-                        <motion.div
-                            key="reflect"
-                            initial={{ opacity: 0, scale: 0.98, y: 10 }}
-                            animate={{ opacity: 1, scale: 1, y: 0 }}
-                            exit={{ opacity: 0, scale: 0.98, y: -10 }}
-                            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                            className="w-full flex flex-col items-center"
-                            style={{ willChange: 'opacity, transform' }}
-                        >
-                            {/* Step Identifier */}
-                            <div className="flex justify-center mb-12">
-                                <motion.div
-                                    initial={{ opacity: 0, y: 10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: 0.2 }}
-                                    className="px-4 py-1.5 rounded-full border border-white/5 bg-white/[0.02] backdrop-blur-md flex items-center gap-2"
-                                >
-                                    <Leaf size={12} className="text-white/70" />
-                                    <span className="text-[10px] font-medium uppercase tracking-[0.2em] text-white/50">Reflection</span>
-                                </motion.div>
-                            </div>
+                        {/* STAGE 3: INSIGHT */}
+                        {stage === 'insight' && (
+                            <motion.div
+                                key="insight"
+                                initial={{ opacity: 0, scale: 0.95 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                                className="w-full max-w-lg"
+                            >
+                                <div className="bg-white/[0.02] backdrop-blur-xl p-8 md:p-10 rounded-3xl border border-white/10 shadow-2xl relative overflow-hidden text-center">
+                                    {/* Ambient Glow */}
+                                    <div className="absolute top-0 right-0 w-48 h-48 bg-emerald-500/10 blur-[60px] rounded-full pointer-events-none" />
 
-                            <div className="mb-12 px-2">
-                                <TextBlurReveal
-                                    text="What brought you here today?"
-                                    className="text-3xl md:text-5xl font-serif text-center font-light leading-[1.2] text-white/90"
-                                    delay={0.2}
-                                />
-                            </div>
+                                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500/20 to-purple-500/20 border border-white/5 flex items-center justify-center mx-auto mb-8">
+                                        <Leaf size={20} className="text-white/80" />
+                                    </div>
 
-                            {/* Input Container */}
-                            <div className="w-full max-w-lg mx-auto mb-10">
-                                <div className="relative group">
-                                    <div className="absolute -inset-0.5 bg-gradient-to-r from-indigo-500/20 to-purple-500/20 rounded-[2rem] blur opacity-0 group-focus-within:opacity-100 transition duration-1000"></div>
-                                    <div className="relative bg-white/[0.02] rounded-[2rem] border border-white/10 group-focus-within:border-white/20 transition-all p-2">
-                                        <textarea
-                                            ref={textareaRef}
-                                            value={reflection}
-                                            onChange={(e) => setReflection(e.target.value)}
-                                            onKeyDown={(e) => {
-                                                if (e.key === 'Enter' && !e.shiftKey) {
-                                                    e.preventDefault();
-                                                    handleReflectNext();
-                                                }
-                                            }}
-                                            placeholder="I'm here because..."
-                                            className="w-full bg-transparent border-none outline-none text-white/90 placeholder-white/20 p-6 min-h-[140px] resize-none text-lg leading-relaxed selection:bg-white/20"
-                                        />
-                                        <div className="flex justify-between items-center px-6 pb-4">
-                                            <span className="text-[10px] uppercase tracking-widest text-white/20 font-bold">Encrypted</span>
-                                            <button
-                                                onClick={handleReflectNext}
-                                                disabled={!reflection.trim()}
-                                                className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 ${reflection.trim()
-                                                    ? 'bg-white text-black shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:scale-110'
-                                                    : 'bg-white/5 text-white/30 cursor-not-allowed'
-                                                    }`}
-                                            >
-                                                <Send size={16} className={reflection.trim() ? 'ml-0.5' : ''} />
-                                            </button>
-                                        </div>
+                                    <div className="mb-6 relative">
+                                        {mood <= 3 && (
+                                            <h3 className="text-xl md:text-2xl font-serif text-white/90 leading-relaxed">
+                                                &quot;It takes courage to sit with heavy feelings.&quot;
+                                            </h3>
+                                        )}
+                                        {mood > 3 && mood <= 7 && (
+                                            <h3 className="text-xl md:text-2xl font-serif text-white/90 leading-relaxed">
+                                                &quot;A score of <span className="text-white border-b border-white/20 pb-0.5">{mood}/10</span> means things are in motion.&quot;
+                                            </h3>
+                                        )}
+                                        {mood > 7 && (
+                                            <h3 className="text-xl md:text-2xl font-serif text-white/90 leading-relaxed">
+                                                &quot;It&apos;s great to feel this lightness.&quot;
+                                            </h3>
+                                        )}
+                                    </div>
+
+                                    <p className="text-sm text-white/50 leading-relaxed mb-8 max-w-sm mx-auto">
+                                        You&apos;ve taken the first step to clarify your thoughts. Create your private space to continue.
+                                    </p>
+
+                                    <div className="flex flex-col gap-3">
+                                        <button
+                                            onClick={handleSaveProgress}
+                                            className="w-full py-4 bg-white text-black rounded-full font-semibold text-sm uppercase tracking-wider hover:scale-[1.02] transition-transform flex items-center justify-center gap-2 shadow-[0_0_30px_-10px_rgba(255,255,255,0.3)]"
+                                        >
+                                            Save & Continue <ChevronRight size={16} />
+                                        </button>
+                                        <button
+                                            onClick={() => router.push('/')}
+                                            className="text-[10px] text-white/30 hover:text-white/60 transition-colors py-3 uppercase tracking-widest font-bold"
+                                        >
+                                            Exit without saving
+                                        </button>
                                     </div>
                                 </div>
-                            </div>
-                        </motion.div>
-                    )}
+                            </motion.div>
+                        )}
 
-                    {/* LOADING STATE */}
-                    {isAnalyzing && (
-                        <motion.div
-                            key="analyzing"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            className="flex flex-col items-center justify-center"
-                            style={{ willChange: 'opacity' }}
+                    </AnimatePresence>
+                </div>
+
+                {/* Footer CTA - Fixed at bottom */}
+                {stage === 'mood' && (
+                    <div className="fixed bottom-8 left-0 right-0 flex justify-center px-6">
+                        <motion.button
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.3 }}
+                            onClick={handleMoodNext}
+                            className="px-10 py-4 bg-white text-black rounded-full font-medium text-sm uppercase tracking-wider hover:scale-105 transition-transform shadow-lg flex items-center gap-3"
                         >
-                            <div className="relative w-32 h-32 mb-8">
-                                <div className="absolute inset-0 bg-indigo-500/20 blur-[60px] rounded-full animate-pulse" />
-                                <div className="absolute inset-0 border border-white/10 rounded-full animate-ping duration-[3s]" />
-                                <div className="absolute inset-12 bg-white/80 rounded-full shadow-[0_0_40px_rgba(255,255,255,0.5)] animate-pulse" />
-                            </div>
-                            <span className="text-white/40 text-xs tracking-[0.3em] uppercase animate-pulse">Analyzing Pattern...</span>
-                        </motion.div>
-                    )}
-
-                    {/* STAGE 3: INSIGHT */}
-                    {stage === 'insight' && (
-                        <motion.div
-                            key="insight"
-                            initial={{ opacity: 0, scale: 0.95 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{ type: "spring", stiffness: 200, damping: 25 }}
-                            className="w-full max-w-lg"
-                            style={{ willChange: 'opacity, transform' }}
-                        >
-                            <div className="bg-[#0e0e12]/80 backdrop-blur-xl p-8 md:p-12 rounded-[2.5rem] border border-white/10 shadow-2xl relative overflow-hidden text-center">
-                                {/* Ambient Glow */}
-                                <div className="absolute top-0 right-0 p-32 bg-emerald-500/10 blur-[80px] rounded-full pointer-events-none" />
-
-                                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500/20 to-purple-500/20 border border-white/5 flex items-center justify-center mx-auto mb-8 shadow-inner">
-                                    <Leaf size={20} className="text-white/80" />
-                                </div>
-
-                                <div className="mb-6">
-                                    {mood <= 3 && (
-                                        <h3 className="text-2xl font-serif text-white/90 leading-relaxed">
-                                            &quot;It takes courage to sit with heavy feelings.&quot;
-                                        </h3>
-                                    )}
-                                    {mood > 3 && mood <= 7 && (
-                                        <h3 className="text-2xl font-serif text-white/90 leading-relaxed">
-                                            &quot;A score of <span className="text-white border-b border-white/20 pb-0.5">{mood}/10</span> means things are in motion.&quot;
-                                        </h3>
-                                    )}
-                                    {mood > 7 && (
-                                        <h3 className="text-2xl font-serif text-white/90 leading-relaxed">
-                                            &quot;It&apos;s great to feel this lightness.&quot;
-                                        </h3>
-                                    )}
-                                </div>
-
-                                <p className="text-sm text-white/50 leading-relaxed mb-10 max-w-sm mx-auto">
-                                    You&apos;ve taken the first step to clarify your thoughts. Create your private space to continue this reflection.
-                                </p>
-
-                                <div className="flex flex-col gap-4">
-                                    <button
-                                        onClick={handleSaveProgress}
-                                        className="w-full py-5 bg-white text-black rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-gray-100 transition-all flex items-center justify-center gap-2 shadow-[0_0_30px_-10px_rgba(255,255,255,0.3)] hover:scale-[1.02]"
-                                    >
-                                        Save & Continue <ChevronRight size={14} />
-                                    </button>
-                                    <button
-                                        onClick={() => router.push('/')}
-                                        className="text-[10px] text-white/20 hover:text-white/50 transition-colors py-2 uppercase tracking-widest font-bold"
-                                    >
-                                        Exit without saving
-                                    </button>
-                                </div>
-                            </div>
-                        </motion.div>
-                    )}
-
-                </AnimatePresence>
+                            Continue
+                            <ArrowRight size={16} />
+                        </motion.button>
+                    </div>
+                )}
             </div>
         </div>
     )

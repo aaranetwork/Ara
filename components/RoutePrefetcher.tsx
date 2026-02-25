@@ -17,13 +17,12 @@ export default function RoutePrefetcher() {
             '/therapists'
         ]
 
-        // Execute prefetching with a slight delay to allow initial render priority
+        // Execute prefetching with delay to allow initial render priority
         const timer = setTimeout(() => {
-            console.log('⚡ Prefetching routes...')
             routes.forEach((route) => {
                 router.prefetch(route)
             })
-        }, 1000) // Wait 1s after mount
+        }, 2000) // Wait 2s after mount for better initial load
 
         return () => clearTimeout(timer)
     }, [router])

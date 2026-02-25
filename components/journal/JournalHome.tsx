@@ -70,10 +70,52 @@ export default function JournalHome({ onBegin, onOneLine, onViewHistory, onViewI
         return () => unsubscribe()
     }, [user])
 
+    const containerVariants = {
+        hidden: { opacity: 0 },
+        visible: {
+            opacity: 1,
+            transition: {
+                staggerChildren: 0.1,
+                delayChildren: 0.1
+            }
+        }
+    }
+
+    const itemVariants = {
+        hidden: { opacity: 0, y: 20 },
+        visible: {
+            opacity: 1,
+            y: 0,
+            transition: {
+                type: "tween",
+                ease: [0.23, 1, 0.32, 1],
+                duration: 0.8
+            }
+        }
+    }
+
+    const entryVariants = {
+        hidden: { opacity: 0, x: -10 },
+        visible: {
+            opacity: 1,
+            x: 0,
+            transition: {
+                type: "tween",
+                ease: [0.23, 1, 0.32, 1],
+                duration: 0.5
+            }
+        }
+    }
+
     return (
-        <div className="space-y-12 pb-32 max-w-5xl mx-auto pt-24 px-4 md:px-8">
+        <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={containerVariants}
+            className="space-y-12 pb-32 max-w-5xl mx-auto pt-24 px-4 md:px-8"
+        >
             {/* Hero Section */}
-            <div className="text-center space-y-4">
+            <motion.div variants={itemVariants} className="text-center space-y-4">
                 <TextBlurReveal
                     text="Your Chronicle"
                     className="text-3xl md:text-5xl font-serif text-white/90"
@@ -81,12 +123,13 @@ export default function JournalHome({ onBegin, onOneLine, onViewHistory, onViewI
                 <p className="text-white/60 text-sm md:text-base max-w-sm mx-auto leading-relaxed font-serif italic">
                     Capture the present moment. Reflect on your journey.
                 </p>
-            </div>
+            </motion.div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {/* One Line Starter */}
                 <motion.button
-                    whileHover={{ scale: 1.01 }}
+                    variants={itemVariants}
+                    whileHover={{ scale: 1.02, backgroundColor: "rgba(255, 255, 255, 0.03)" }}
                     whileTap={{ scale: 0.98 }}
                     onClick={onOneLine}
                     className="group relative p-8 bg-gradient-to-br from-indigo-500/10 via-purple-500/5 to-indigo-500/10 border border-white/10 rounded-3xl text-left hover:border-white/20 transition-all overflow-hidden"
@@ -105,10 +148,11 @@ export default function JournalHome({ onBegin, onOneLine, onViewHistory, onViewI
 
                 {/* Full Entry Starter */}
                 <motion.button
-                    whileHover={{ scale: 1.01 }}
+                    variants={itemVariants}
+                    whileHover={{ scale: 1.02, backgroundColor: "rgba(255, 255, 255, 0.05)" }}
                     whileTap={{ scale: 0.98 }}
                     onClick={onBegin}
-                    className="group relative p-8 bg-white/[0.02] border border-white/5 rounded-3xl text-left hover:bg-white/[0.04] hover:border-white/10 transition-all"
+                    className="group relative p-8 bg-white/[0.02] border border-white/5 rounded-3xl text-left hover:border-white/10 transition-all"
                 >
                     <div className="flex items-center gap-6">
                         <div className="w-14 h-14 rounded-2xl bg-white/[0.02] border border-white/5 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform shadow-2xl text-white/40">
@@ -134,20 +178,20 @@ export default function JournalHome({ onBegin, onOneLine, onViewHistory, onViewI
                     </button>
                 </div>
 
-                <div className="grid gap-3">
+                <div className="grid gap-3 min-h-[120px]">
                     {loading ? (
-                        [1, 2, 3].map(i => (
-                            <div key={i} className="h-24 bg-white/[0.01] border border-white/5 rounded-3xl animate-pulse" />
-                        ))
+                        <div className="py-8 text-center animate-pulse">
+                            <p className="text-white/20 text-xs font-serif italic">Gleaning your history...</p>
+                        </div>
                     ) : recentEntries.length > 0 ? (
                         recentEntries.map((entry, idx) => (
                             <motion.button
                                 key={entry.id}
-                                initial={{ opacity: 0, y: 10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 0.1 + idx * 0.05 }}
+                                variants={entryVariants}
+                                whileHover={{ x: 4, backgroundColor: "rgba(255, 255, 255, 0.02)" }}
+                                whileTap={{ scale: 0.995 }}
                                 onClick={() => onViewEntry(entry)}
-                                className="group p-5 bg-white/[0.015] border border-white/5 rounded-3xl text-left hover:bg-white/[0.03] hover:border-white/10 transition-all"
+                                className="group p-5 bg-white/[0.015] border border-white/5 rounded-3xl text-left hover:border-white/10 transition-all"
                             >
                                 <div className="flex items-start justify-between mb-3">
                                     <div className="flex items-center gap-2">
@@ -199,7 +243,7 @@ export default function JournalHome({ onBegin, onOneLine, onViewHistory, onViewI
             </section>
 
             {/* Pro Features Section */}
-            <section className="space-y-6">
+            <motion.section variants={itemVariants} className="space-y-6">
                 <div className="flex items-center gap-4 px-2">
                     <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent to-white/10"></div>
                     <h2 className="text-[10px] font-black tracking-[0.3em] text-white/40 uppercase">Pro Features</h2>
@@ -207,8 +251,9 @@ export default function JournalHome({ onBegin, onOneLine, onViewHistory, onViewI
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <div className="group relative p-5 bg-white/[0.015] border border-white/5 rounded-2xl grayscale hover:grayscale-0 transition-all duration-500 cursor-not-allowed">
-                        <div className="flex items-center gap-4">
+                    <div className="group relative p-5 bg-white/[0.015] border border-white/5 rounded-2xl grayscale hover:grayscale-0 transition-all duration-500 cursor-not-allowed overflow-hidden">
+                        <div className="absolute inset-0 bg-gradient-to-br from-purple-500/0 via-transparent to-purple-500/0 group-hover:from-purple-500/5 transition-all duration-700" />
+                        <div className="relative flex items-center gap-4">
                             <div className="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center shrink-0 border border-purple-500/10">
                                 <Brain size={18} className="text-purple-400/60" />
                             </div>
@@ -222,8 +267,9 @@ export default function JournalHome({ onBegin, onOneLine, onViewHistory, onViewI
                         </div>
                     </div>
 
-                    <div className="group relative p-5 bg-white/[0.015] border border-white/5 rounded-2xl grayscale hover:grayscale-0 transition-all duration-500 cursor-not-allowed">
-                        <div className="flex items-center gap-4">
+                    <div className="group relative p-5 bg-white/[0.015] border border-white/5 rounded-2xl grayscale hover:grayscale-0 transition-all duration-500 cursor-not-allowed overflow-hidden">
+                        <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/0 via-transparent to-emerald-500/0 group-hover:from-emerald-500/5 transition-all duration-700" />
+                        <div className="relative flex items-center gap-4">
                             <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center shrink-0 border border-emerald-500/10">
                                 <Mic size={18} className="text-emerald-400/60" />
                             </div>
@@ -237,7 +283,7 @@ export default function JournalHome({ onBegin, onOneLine, onViewHistory, onViewI
                         </div>
                     </div>
                 </div>
-            </section>
+            </motion.section>
 
 
             <Modal
@@ -265,6 +311,6 @@ export default function JournalHome({ onBegin, onOneLine, onViewHistory, onViewI
                     </div>
                 </div>
             </Modal>
-        </div >
+        </motion.div >
     )
 }

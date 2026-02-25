@@ -77,14 +77,18 @@ export default function MoodFlowPage() {
         if (user) loadMoods()
     }, [user, loadMoods])
 
-    // Calculate overall stats
-    const overallAvg = moods.length > 0
-        ? (moods.reduce((sum, m) => sum + m.average, 0) / moods.length).toFixed(1)
+    // Calculate stats for last 7 days
+    const sevenDaysAgo = new Date()
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
+    const recentMoods = moods.filter(m => m.createdAt >= sevenDaysAgo)
+
+    const overallAvg = recentMoods.length > 0
+        ? (recentMoods.reduce((sum, m) => sum + m.average, 0) / recentMoods.length).toFixed(1)
         : '0.0'
 
     // Calculate signal averages
     const getSignalAverage = (signalId: string) => {
-        const values = moods.filter(m => m.signals && m.signals[signalId]).map(m => m.signals[signalId])
+        const values = recentMoods.filter(m => m.signals && m.signals[signalId]).map(m => m.signals[signalId])
         if (values.length === 0) return null
         return (values.reduce((a, b) => a + b, 0) / values.length).toFixed(1)
     }
@@ -192,14 +196,14 @@ export default function MoodFlowPage() {
                             <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 blur-[80px] rounded-full pointer-events-none" />
 
                             <div className="relative z-10 mb-8">
-                                <span className="text-xs font-bold text-white/40 uppercase tracking-widest block mb-2">Average Score</span>
+                                <span className="text-xs font-bold text-white/40 uppercase tracking-widest block mb-2">7-Day Average</span>
                                 <div className="flex items-baseline gap-1">
                                     <span className="text-7xl font-serif text-white tracking-tighter">{overallAvg}</span>
                                     <span className="text-xl font-light text-white/30">/10</span>
                                 </div>
                                 <div className="mt-4 inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-[10px] font-bold uppercase tracking-wide">
                                     <TrendingUp size={12} />
-                                    <span>{moods.length} Check-ins total</span>
+                                    <span>{recentMoods.length} Check-ins (7 Days)</span>
                                 </div>
                             </div>
 

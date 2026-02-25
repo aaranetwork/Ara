@@ -11,7 +11,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useAuth } from '@/hooks/useAuth'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { db } from '@/lib/firebase/config'
 import { collection, query, orderBy, getDocs, addDoc, deleteDoc, doc, Timestamp } from 'firebase/firestore'
 import Modal from '@/components/ui/Modal'
@@ -148,7 +148,7 @@ export default function GrowthPage() {
         fetchData()
     }, [user, authLoading, router])
 
-    const handleAddGoal = async () => {
+    const handleAddGoal = useCallback(async () => {
         if (!newGoalText.trim() || !user || !db) return
         setIsSubmittingGoal(true)
         try {
@@ -157,7 +157,7 @@ export default function GrowthPage() {
                 createdAt: Timestamp.now(),
                 status: 'active'
             })
-            setGoals([{ id: docRef.id, text: newGoalText, status: 'active' }, ...goals])
+            setGoals(prev => [{ id: docRef.id, text: newGoalText, status: 'active' }, ...prev])
             setNewGoalText('')
             setShowGoalModal(false)
         } catch (error) {
@@ -165,17 +165,17 @@ export default function GrowthPage() {
         } finally {
             setIsSubmittingGoal(false)
         }
-    }
+    }, [newGoalText, user])
 
-    const handleDeleteGoal = async (goalId: string) => {
+    const handleDeleteGoal = useCallback(async (goalId: string) => {
         if (!user || !db) return
         try {
             await deleteDoc(doc(db, 'users', user.uid, 'goals', goalId))
-            setGoals(goals.filter(g => g.id !== goalId))
+            setGoals(prev => prev.filter(g => g.id !== goalId))
         } catch (error) {
             console.error("Error deleting goal:", error)
         }
-    }
+    }, [user])
 
     if (authLoading || loading) {
         return (
@@ -198,8 +198,7 @@ export default function GrowthPage() {
                 <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-purple-500/10 rounded-full blur-[100px]" />
             </div>
 
-            {/* Grain Texture Overlay */}
-            <div className="fixed inset-0 opacity-[0.015] bg-[url('/noise.svg')] pointer-events-none" />
+            {/* Grain texture removed - handled in root layout */}
 
             {/* Back Button */}
             <div className="fixed top-6 left-6 z-[60]">

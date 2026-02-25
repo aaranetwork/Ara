@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect, useMemo } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import JournalHome from '@/components/journal/JournalHome'
 import WritingView from '@/components/journal/WritingView'
@@ -51,10 +51,6 @@ export default function JournalPage() {
     useEffect(() => {
         if (!showSplash || authLoading) return
 
-        // Check session storage to maybe skip if already shown? 
-        // User requested animation, so we play it. Optional: store flag to show only once per session.
-        // if (sessionStorage.getItem('journal_splash_shown')) { setShowSplash(false); return }
-
         let i = 0
         const typeInterval = setInterval(() => {
             if (i < splashMessage.length) {
@@ -64,8 +60,7 @@ export default function JournalPage() {
                 clearInterval(typeInterval)
                 setTimeout(() => {
                     setShowSplash(false)
-                    // sessionStorage.setItem('journal_splash_shown', 'true')
-                }, 800)
+                }, 300)
             }
         }, 50)
         return () => clearInterval(typeInterval)
@@ -165,6 +160,12 @@ export default function JournalPage() {
 
     return (
         <main className="min-h-screen bg-[#030305] text-white">
+            {/* Ambient Background - Reduced for mobile */}
+            <div className="fixed inset-0 pointer-events-none">
+                <div className="absolute top-[-20%] left-[20%] w-[300px] h-[300px] md:w-[500px] md:h-[500px] bg-indigo-500/5 blur-[60px] md:blur-[120px] rounded-full" />
+                <div className="absolute bottom-[-20%] right-[20%] w-[300px] h-[300px] md:w-[500px] md:h-[500px] bg-purple-500/5 blur-[60px] md:blur-[120px] rounded-full" />
+            </div>
+
             {/* Custom Fixed Header */}
             <div className="fixed top-0 left-0 right-0 z-[90] px-4 py-6 pointer-events-none flex items-center justify-between w-full h-[88px]">
                 <div className="relative z-10">
@@ -221,10 +222,14 @@ export default function JournalPage() {
                 <AnimatePresence mode="wait">
                     <motion.div
                         key={state}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -20 }}
-                        transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
+                        initial={{ opacity: 0, scale: 0.99, y: 10 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.99, y: -10 }}
+                        transition={{
+                            type: "tween",
+                            ease: [0.23, 1, 0.32, 1],
+                            duration: 0.4
+                        }}
                     >
                         {renderContent()}
                     </motion.div>

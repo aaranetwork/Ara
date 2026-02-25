@@ -55,8 +55,15 @@ export default function TherapistMatchingPage() {
         setAnswers(prev => ({ ...prev, [field]: value }))
     }
 
+    const [showComingSoon, setShowComingSoon] = useState(false)
+
     const handleNext = (nextStep: Step) => {
         setStep(nextStep)
+    }
+
+    const handleGetStarted = () => {
+        setShowComingSoon(true)
+        setTimeout(() => setShowComingSoon(false), 2000)
     }
 
     // Scroll to top on step change
@@ -158,10 +165,16 @@ export default function TherapistMatchingPage() {
                                     Answer a few quick questions to get matched with licensed professionals who truly understand your needs.
                                 </p>
                                 <button
-                                    onClick={() => handleNext('concern')}
-                                    className="group relative inline-flex items-center gap-3 px-8 py-4 bg-white text-black rounded-full font-bold text-sm tracking-widest uppercase hover:bg-gray-200 transition-all shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:shadow-[0_0_30px_rgba(255,255,255,0.2)] overflow-hidden"
+                                    onClick={handleGetStarted}
+                                    className={`group relative inline-flex items-center gap-3 px-8 py-4 rounded-full font-bold text-sm tracking-widest uppercase transition-all overflow-hidden ${showComingSoon
+                                        ? 'bg-white/10 text-white/40 cursor-not-allowed border border-white/10'
+                                        : 'bg-white text-black hover:bg-gray-200 shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:shadow-[0_0_30px_rgba(255,255,255,0.2)]'
+                                        }`}
                                 >
-                                    <span className="relative z-10 flex items-center gap-2">Get Started <ArrowRight size={16} /></span>
+                                    <span className="relative z-10 flex items-center gap-2">
+                                        {showComingSoon ? 'Coming Soon' : 'Get Started'}
+                                        {!showComingSoon && <ArrowRight size={16} />}
+                                    </span>
                                 </button>
                                 <p className="text-[10px] text-white/40 mt-8 font-bold uppercase tracking-widest">Takes about 2 minutes</p>
                             </motion.div>

@@ -15,7 +15,7 @@ export function TextBlurReveal({ text, className = "", delay = 0 }: TextBlurReve
         hidden: { opacity: 0 },
         visible: (i: number = 1) => ({
             opacity: 1,
-            transition: { staggerChildren: 0.08, delayChildren: delay * 0.1 }
+            transition: { staggerChildren: 0.06, delayChildren: delay * 0.08 }
         })
     }
 
@@ -25,19 +25,19 @@ export function TextBlurReveal({ text, className = "", delay = 0 }: TextBlurReve
             y: 0,
             filter: "blur(0px)",
             transition: {
-                filter: { type: "tween", ease: "easeOut", duration: 0.8 },
+                filter: { type: "tween", ease: [0.23, 1, 0.32, 1], duration: 0.6 },
                 opacity: { duration: 0.4 },
-                y: { type: "spring", damping: 12, stiffness: 100 }
+                y: { type: "tween", ease: [0.23, 1, 0.32, 1], duration: 0.5 }
             }
         },
         hidden: {
             opacity: 0,
-            y: 20,
-            filter: "blur(10px)",
+            y: 15,
+            filter: "blur(8px)",
             transition: {
-                filter: { duration: 0.4 },
-                opacity: { duration: 0.4 },
-                y: { type: "spring", damping: 12, stiffness: 100 }
+                filter: { duration: 0.3 },
+                opacity: { duration: 0.3 },
+                y: { type: "tween", ease: "easeIn", duration: 0.3 }
             }
         }
     }

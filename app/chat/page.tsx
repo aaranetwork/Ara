@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { useAuth } from '@/hooks/useAuth'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -232,14 +232,8 @@ export default function ChatPage() {
     const [userProfile, setUserProfile] = useState<UserProfile | null>(null)
     const [showOnboarding, setShowOnboarding] = useState(false)
 
-    // Only show splash once per session
+    // Splash animation state
     const [showSplash, setShowSplash] = useState(true)
-
-    useEffect(() => {
-        if (sessionStorage.getItem('chat_splash_shown')) {
-            setShowSplash(false)
-        }
-    }, [])
     const [typedText, setTypedText] = useState('')
 
     const messagesEndRef = useRef<HTMLDivElement>(null)
@@ -299,23 +293,6 @@ export default function ChatPage() {
         }
     }, [user, loading, router])
 
-    // Splash Typewriter Effect
-    const splashMessage = 'Initializing Consciousness...'
-    useEffect(() => {
-        if (!showSplash || loading) return
-        let i = 0
-        const typeInterval = setInterval(() => {
-            if (i < splashMessage.length) {
-                setTypedText(splashMessage.slice(0, i + 1))
-                i++
-            } else {
-                clearInterval(typeInterval)
-                setTimeout(() => setShowSplash(false), 500)
-            }
-        }, 50)
-        return () => clearInterval(typeInterval)
-    }, [showSplash, loading])
-
     // Chat history disabled - this is for AI conversations, not journal entries
     // Journal entries should be viewed in /journal page
     useEffect(() => {
@@ -335,23 +312,35 @@ export default function ChatPage() {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
     }, [messages, isLoading])
 
-    // Focus input on load
+    // Splash Typewriter Effect
+    const splashMessage = 'Initializing Consciousness...'
     useEffect(() => {
-        if (!showOnboarding) {
-            inputRef.current?.focus()
-        }
-    }, [showOnboarding])
+        if (!showSplash || loading) return
+        let i = 0
+        const typeInterval = setInterval(() => {
+            if (i < splashMessage.length) {
+                setTypedText(splashMessage.slice(0, i + 1))
+                i++
+            } else {
+                clearInterval(typeInterval)
+                setTimeout(() => {
+                    setShowSplash(false)
+                }, 500)
+            }
+        }, 50)
+        return () => clearInterval(typeInterval)
+    }, [showSplash, loading])
 
     // Note: Journal entries are already saved by WritingView and OneLineJournal components
     // This chat page just displays them - no need to save here
 
-    const handleOnboardingComplete = async (profile: UserProfile) => {
+    const handleOnboardingComplete = useCallback(async (profile: UserProfile) => {
         // Just set profile locally - no need to save to server for now
         setUserProfile(profile)
         setShowOnboarding(false)
-    }
+    }, [])
 
-    const handleSend = async () => {
+    const handleSend = useCallback(async () => {
         if (!input.trim() || !user || isLoading) return
 
         const userMessage: Message = {
@@ -382,7 +371,7 @@ export default function ChatPage() {
             setIsLoading(false)
             setTimeout(() => inputRef.current?.focus(), 100)
         }
-    }
+    }, [input, user, isLoading])
 
     const handleNewSession = () => {
         setMessages([])
